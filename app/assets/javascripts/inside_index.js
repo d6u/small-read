@@ -36,6 +36,129 @@ var NavbarView = Backbone.View.extend({
 
 var navbar_view = new NavbarView();
 
+// Tweets
+// ======
+var TweetView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'tweet clearfix',
+    template: _.template($('#tweet-template').html()),
+    render: function() {
+        this.$el.append(this.template(this.model.attributes));
+        return this;
+    }
+});
+
+var Tweet = Backbone.Model.extend({
+    initialize: function(attributes, options) {
+        this.entities = JSON.parse(attributes.entities);
+        if (this.entities.media) {
+            this.set('entities_image', this.entities.media[0].media_url);
+        } else {
+            this.set('entities_image', null);
+        }
+        this.view = new TweetView({ model: this });
+    // },
+    // toggleRead: function() {
+    //     var that = this;
+    //     this.view.$el.addClass("read");
+    //     this.save(
+    //         {read: true},
+    //         {
+    //             success: function(model, response, options) {
+    //                 var unread_count = model.collection.active_feed.get('unread_count');
+    //                 model.collection.active_feed.set({unread_count: unread_count - 1});
+    //                 // folder
+    //                 if (!model.collection.active_feed.has('folder_id')) {
+    //                     var folder = model.collection.active_feed;
+    //                     var feed = folder.feeds.where({id: that.get('feed_id')})[0];
+    //                     var feed_unread_count = feed.get('unread_count');
+    //                     feed.set('unread_count', feed_unread_count - 1);
+    //                 }
+    //             },
+    //             error: function(model, xhr, options) {}
+    //         }
+    //     );
+    // },
+    // markAllReadToggleRead: function() {
+    //     this.view.$el.addClass("read");
+    }
+});
+
+var TweetsContent = Backbone.View.extend({
+    el: '.tweets',
+    events: {
+        // 'scroll' event won't bubble up, attached in initialize()
+        'click #mark_all_read': 'markAllRead'
+    },
+    initialize: function() {
+        // attach 'scroll' event
+        this.$('.tweets-list').on('scroll', function() {
+            tweets.markRead();
+        });
+    // },
+    // markAllRead: function(event) {
+    //     var that = this;
+    //     if (confirm('Sure to mark everything READ?')) {
+    //         var mark_all_read_ids = this.collection.pluck('id');
+    //         $.get('/mark_all_read', {ids: mark_all_read_ids.join()},
+    //             function(data, textStatus, jqXHR) {
+    //                 _.each(that.collection.models, function(model, index, models) {
+    //                     model.markAllReadToggleRead();
+    //                     var unread_count = model.collection.active_feed.get('unread_count');
+    //                     model.collection.active_feed.set({unread_count: unread_count - 1});
+    //                     // folder
+    //                     if (!model.collection.active_feed.has('folder_id')) {
+    //                         var folder = model.collection.active_feed;
+    //                         var feed = folder.feeds.where({id: that.get('feed_id')})[0];
+    //                         var feed_unread_count = feed.get('unread_count');
+    //                         feed.set('unread_count', feed_unread_count - 1);
+    //                     }
+    //                 });
+    //             }
+    //         );
+    //     }
+    }
+});
+
+var Tweets = Backbone.Collection.extend({
+    model: Tweet,
+    initialize: function(models, options) {
+        this.view = options.view;
+        // empty current set of Tweets
+        this.on('reset', function(collection, options) {
+            _.each(options.previousModels, function(model, index, models) {
+                model.view.remove();
+            }, this);
+        }, this);
+        // add new Tweets
+        this.on('add', function(tweet, tweets, options) {
+            this.view.$('.tweets-list').append(tweet.view.render().el);
+        }, this);
+    },
+    loadTweets: function(source) {
+        this.view.$('.tweets-list').scrollTop(0);
+        this.reset();
+        this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
+        this.current_source = source;
+        this.url = source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        this.fetch({
+            success: function(collection, response) {},
+            error: function(collection, response) {}
+        });
+    },
+    parse: function(response) {
+        this.view.$('.tweets-list').empty();
+        return response;
+    // },
+    // markRead: function() {
+    //     _.each(this.models, function(model, index, models) {
+    //         if (!model.get('read') && (model.view.$el.position().top + 20) < 0) {
+    //             model.toggleRead();
+    //         }
+    //     });
+    }
+});
+
 // Folder
 // ======
 var FolderView = Backbone.View.extend({
@@ -151,9 +274,14 @@ $('.folder').each(function(index, folder_element) {
     ));
 });
 
+// Init Folders and Tweets
 var folders = new Folders(
     folder_models,
     { view: new FeedsContent() }
+);
+var tweets = new Tweets(
+    [],
+    { view: new TweetsContent() }
 );
 
 folders.view.$('.folder-feeds-list').sortable({
