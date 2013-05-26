@@ -27,7 +27,11 @@ var NavbarView = Backbone.View.extend({
             $(event.currentTarget).children('.icon-refresh').addClass('icon-spin');
             $.get(url, function(data, textStatus, jqXHR) {
                 _.each(folders.models, function(folder, index, models) {
-                    folder.feeds.fetch();
+                    folder.feeds.fetch({
+                        success: function(collection, response, options) {
+                            folder.fetch();
+                        }
+                    });
                 });
                 $(event.currentTarget).children('.icon-refresh').removeClass('icon-spin');
             });
@@ -165,9 +169,6 @@ var Tweets = Backbone.Collection.extend({
     parse: function(response) {
         this.view.$('.tweets-list').empty();
         return response;
-    },
-    markRead: function() {
-
     }
 });
 
@@ -199,6 +200,7 @@ var FolderView = Backbone.View.extend({
 });
 
 var Folder = Backbone.Model.extend({
+    urlRoot: '/folders',
     initialize: function(attributes, options) {
         if (!options.view) {
             this.view = new FolderView({model: this});
@@ -206,7 +208,7 @@ var Folder = Backbone.Model.extend({
             this.view = new FolderView({el: options.view, model: this});
         }
         this.feeds = options.feeds;
-        console.log(this);
+        this.feeds.folder = this;
     }
 });
 
@@ -256,12 +258,20 @@ var Feed = Backbone.Model.extend({
         } else {
             this.view = new FeedView({el: options.view, model: this});
         }
-        console.log(this);
     }
 });
 
 var Feeds = Backbone.Collection.extend({
-    model: Feed
+    model: Feed,
+    initialize: function(models, options) {
+        this.url = '/folders/'+options.folder_id+'/feeds';
+        this.on('add', function(feed, feeds, options) {
+            this.folder.view.$('.folder-feeds-list').append(feed.view.render().el);
+        }, this);
+        this.on('remove', function(feed, feeds, options) {
+            feed.view.remove();
+        }, this);
+    }
 });
 
 // Main Views
@@ -293,7 +303,10 @@ $('.folder').each(function(index, folder_element) {
         folder_element.dataset,
         {
             view: folder_element,
-            feeds: new Feeds(feed_models)
+            feeds: new Feeds(
+                feed_models,
+                {folder_id: folder_element.dataset.id}
+            )
         }
     ));
 });
