@@ -4,8 +4,8 @@ class InsideController < ApplicationController
   before_filter :redirect_to_welcome_if_no_email, except: [:welcome, :logout]
   layout "inside_layout"
 
-  # Actions
-  # ========================= index ===========================================
+  # index
+  # =====
   def index
   end
 
