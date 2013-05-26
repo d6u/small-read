@@ -20,7 +20,8 @@ class TweetsController < ApplicationController
                            name: t.retweeted_status_user_name,
                     screen_name: "@" + t.retweeted_status_user_screen_name,
                  this_user_name: t.feed.name,
-          this_user_screen_name: "@" + t.feed.screen_name
+          this_user_screen_name: "@" + t.feed.screen_name,
+           original_tweets_link: "https://twitter.com/#{t.retweeted_status_user_screen_name}/status/#{t.retweeted_status_id_str}"
         }
       else
         content = {
@@ -35,6 +36,7 @@ class TweetsController < ApplicationController
       content[:text]     = parse_text(t.text, t.entities)
       content[:read]     = t.read
       content[:feed_id]  = t.feed_id
+      content[:link]     = "https://twitter.com/#{t.feed.screen_name}/status/#{t.id_str}"
       content
     end)
   end
