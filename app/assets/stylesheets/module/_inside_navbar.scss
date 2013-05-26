@@ -1,0 +1,41 @@
+// layouts
+.navbar {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 60px;
+	padding: 10px;
+}
+.navbar-button {
+	display: block;
+	margin-bottom: 15px;
+	span {
+		display: block;
+		height: 56px;
+		border-width: 2px;
+	}
+}
+
+// modules
+.navbar {
+	background-color: $night;
+}
+.navbar-button {
+	color: white;
+	text-align: center;
+	span {
+		border-style: solid;
+		border-color: $night;
+		border-radius: 30px;
+		font-size: 35px;
+		line-height: 56px;
+	}
+	&:hover {
+		color: white;
+		text-decoration: none;
+		span {
+			border-color: $green;
+		}
+	}
+}

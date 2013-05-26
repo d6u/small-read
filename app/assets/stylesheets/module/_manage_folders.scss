@@ -1,0 +1,47 @@
+.manage-folders {
+
+    .folder-title {
+        margin: 0;
+        font-variant: small-caps;
+        border-bottom: 1px solid $blue;
+    }
+
+    // Feeds
+    $manage_folder_feed_height: 32px;
+    .folder-feeds-container {
+        margin-top: 5px;
+        min-height: $manage_folder_feed_height;
+    }
+    .feed-item {
+        height: $manage_folder_feed_height;
+        width: $manage_folder_feed_height * 5;
+        float: left;
+        white-space: nowrap;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: $manage_folder_feed_height;
+        img {
+            float: left;
+            margin-right: 5px;
+            height: $manage_folder_feed_height;
+            width: $manage_folder_feed_height;
+        }
+        .feed-name {
+            margin: 0;
+            font-size: 14px;
+        }
+    }
+
+    // Sortable
+    .sortable-placeholder {
+        height: $manage_folder_feed_height - 2px;
+        width: $manage_folder_feed_height * 5 - 2px;
+        border: 1px dashed $blue;
+        float: left;
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+
+} // .manage-folders

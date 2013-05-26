@@ -1,0 +1,33 @@
+<section class="welcome-section">
+    <div class="container">
+
+        <div class="nine columns center">
+            <p class="lead welcome-description">Before you continue<br/>Save your email to retrieve password in case you forget.</p>
+        </div>
+
+        <div class="six columns center">
+            <!-- Normal Register -->
+            <div class="welcome-email-form">
+
+                <div class="login-register-form">
+                    <%= form_for @user, url: {action: 'welcome'} do |f| %>
+                        <div class="input-prepend input-block-level">
+                            <span class="add-on"><i class="icon-envelope-alt"></i></span>
+                            <%= f.text_field :email, placeholder: 'Email', class: 'input-block-level' %>
+                        </div>
+                        <% unless @user.errors[:email].empty? %>
+                            <% @user.errors[:email].each do |m| %>
+                                <span class="help-block alert alert-error"><%= m %></span>
+                            <% end %>
+                        <% else %>
+                            <span class="help-block">You have to verify your email after save.</span>
+                        <% end %>
+                        <%= f.submit 'Save', class: 'btn btn-block btn-large btn-primary' %>
+                    <% end %>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>

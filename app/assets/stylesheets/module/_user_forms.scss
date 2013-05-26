@@ -1,0 +1,70 @@
+.register-form,
+.login-form,
+.forget-password-form,
+.welcome-email-form
+{
+    background: $white;
+    .block-button {
+        & > a {
+            display: block;
+            border: none;
+            height: 60px;
+        }
+        .block-button-title {
+            font-size: 24.5px;
+            line-height: 60px;
+            text-align: center;
+        }
+    }
+    .form-title {
+        font-size: 18px;
+        line-height: 40px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+}
+
+.login-register-form {
+    padding: 20px;
+    form {
+        margin-bottom: 0;
+    }
+    .input-prepend.input-block-level {
+        padding-right: 28px;
+        .add-on {
+            float: left;
+        }
+    }
+    .control-group-submit {
+        label {
+            display: inline-block;
+            padding-top: 12px;
+        }
+        input[type=submit] {
+            float: right;
+        }
+    }
+}
+
+.forget-password {
+    margin-top: 20px;
+}
+
+.forget-password-description {
+    text-align: center;
+}
+
+.forget-password-form {
+    button {
+        margin-top: 20px;
+    }
+}
+
+.intro-about-beta {
+    .login-register-form {
+        color: black;
+    }
+    button {
+        margin-top: 20px;
+    }
+}

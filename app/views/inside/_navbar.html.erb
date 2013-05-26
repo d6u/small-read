@@ -1,0 +1,23 @@
+<nav class="navbar">
+	<% if params[:action] == 'index' %>
+		<%= link_to({controller: 'background_opt', :action => "refresh"}, {class: 'refresh-feeds navbar-button'}) do %>
+			<span class="icon-refresh"></span>Refresh
+		<% end %>
+	<% else %>
+		<%= link_to({controller: 'inside', :action => "index"}, {class: 'navbar-button'}) do %>
+			<span class="icon-home"></span>Home
+		<% end %>
+	<% end %>
+
+	<%= link_to('#feedbackModal', {:class => 'navbar-button', :'data-toggle' => 'modal'}) do %>
+		<span class="icon-code"></span>Feedback
+	<% end %>
+
+	<%= link_to({controller: 'settings', :action => "settings"}, {class: 'navbar-button'}) do %>
+		<span class="icon-cog"></span>Settings
+	<% end %>
+
+	<%= link_to({controller: 'inside', :action => "logout", confirmation: 'yes'}, {class: 'navbar-button'}) do %>
+		<span class="icon-off"></span>Logout
+	<% end %>
+</nav>

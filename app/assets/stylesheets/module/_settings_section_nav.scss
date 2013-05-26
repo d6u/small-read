@@ -1,0 +1,21 @@
+.setting-section-nav {
+    background-color: $cloud;
+    a {
+        text-align: center;
+        color: $gray;
+        display: block;
+        float: left;
+        width: 100px;
+        margin: 5px 0 5px 15px;
+        &:hover {
+            color: $blue;
+            text-decoration: none;
+        }
+        span {
+            display: block;
+            height: 60px;
+            font-size: 35px;
+            line-height: 60px;
+        }
+    }
+}

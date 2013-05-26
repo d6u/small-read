@@ -1,0 +1,24 @@
+<section class="settings">
+
+    <%= render 'setting_section_nav' %>
+
+    <div class="settings-body manage-folders">
+
+        <!-- Manage Folder -->
+        <% @folders.each do |folder| %>
+        <div class="folder-container" data-id="<%= folder.id %>">
+            <h3 class="folder-title"><%= folder.name %></h3>
+            <div class="folder-feeds-container clearfix">
+                <% folder.feeds.each do |feed| %>
+                <div class="feed-item" data-id="<%= feed.id %>">
+                    <img src="<%= feed.profile_image_url %>">
+                    <span class="feed-name"><%= feed.name %></span>
+                    <span class="feed-screen-name">@<%= feed.screen_name %></span>
+                </div>
+                <% end %>
+            </div>
+        </div>
+        <% end %>
+
+    </div>
+</section>

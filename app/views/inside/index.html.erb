@@ -1,0 +1,26 @@
+<!-- FeedsContent -->
+<section class="feeds">
+	<div class="toolbox">
+		<%= link_to({controller: 'settings', action: 'manage_folders'}, class: 'feeds-toolbox-button', id: 'manage_folder') do %>
+			<i class="icon-wrench"></i>
+		<% end %>
+	</div>
+	<div class="list-container feeds-list">
+		<div class="progress progress-striped active">
+			<div class="bar" style="width: 100%;"></div>
+		</div>
+	</div>
+</section>
+
+<!-- TweetsContent -->
+<section class="tweets">
+	<div class="toolbox">
+		<%= link_to 'Mark All Read', '#', {class: 'tweets-toolbox-button', id: 'mark_all_read'} %>
+	</div>
+	<div class="list-container tweets-list">
+
+	</div>
+</section>
+
+<!-- Template -->
+<%= render 'underscore_templates' %>

@@ -1,0 +1,39 @@
+<section class="settings">
+
+    <%= render 'setting_section_nav' %>
+
+    <div class="settings-body">
+
+        <%= form_for(:user, html: {class: ""}) do |f| %>
+            <%= field_set_tag('Change Password') do %>
+
+                <!-- Current Password -->
+                <%= f.label(:current_password, {class: ""}) %>
+                <%= f.password_field(:current_password, placeholder: 'Current password') %>
+                <% unless @user.errors[:current_password].empty? %>
+                    <% @user.errors[:current_password].each do |e| %>
+                        <span class="help-block alert"><%= e %></span>
+                    <% end %>
+                <% else %>
+                    <span class="help-block"></span>
+                <% end %>
+
+                <!-- Email -->
+                <%= f.label(:email, {class: ""}) %>
+                <%= f.text_field(:email, placeholder: 'Email') %>
+                <% unless @user.errors[:email].empty? %>
+                    <% @user.errors[:email].each do |e| %>
+                        <span class="help-block alert"><%= e %></span>
+                    <% end %>
+                <% else %>
+                    <span class="help-block"></span>
+                <% end %>
+
+                <!-- Submit -->
+                <%= f.button('Update', class: 'btn btn-primary') %>
+
+            <% end %>
+        <% end %>
+
+    </div>
+</section>

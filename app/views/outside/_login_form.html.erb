@@ -1,0 +1,37 @@
+<div class="login-form">
+    <div class="block-button login-with-twitter">
+        <%= link_to({action: 'twitter_login'}, {class: 'btn btn-primary'}) do %>
+            <div class="block-button-title">Login with Twitter</div>
+        <% end %>
+    </div>
+    <div class="login-register-form">
+        <div class="form-title">Or login with your email</div>
+        <% if flash[:login_warning] %>
+            <div class="alert alert-error"><%= flash[:login_warning] %></div>
+        <% end %>
+        <% if flash[:reset_password] %>
+            <div class="alert alert-success"><%= flash[:reset_password] %></div>
+        <% end %>
+        <%= form_for :user, url: {action: 'login'} do |f| %>
+            <div class="input-prepend input-block-level">
+                <span class="add-on"><i class="icon-envelope-alt"></i></span>
+                <%= f.text_field :email, placeholder: 'Email', class: 'input-block-level' %>
+            </div>
+            <div class="input-prepend input-block-level">
+                <span class="add-on"><i class="icon-key"></i></span>
+                <%= f.password_field :password, placeholder: 'Password', class: 'input-block-level' %>
+            </div>
+            <div class="control-group-submit">
+                <label class="checkbox">
+                    <%= check_box_tag :remember_login, "yes" %> Remember login
+                </label>
+                <%= f.submit 'Sign in', class: 'btn btn-large btn-primary' %>
+            </div>
+        <% end %>
+    </div>
+    <div class="block-button forget-password">
+        <%= link_to({action: 'forget_password'}, {class: 'btn btn-info'}) do %>
+            <div class="block-button-title">Forget Password?</div>
+        <% end %>
+    </div>
+</div>

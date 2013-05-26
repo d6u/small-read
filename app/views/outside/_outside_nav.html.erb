@@ -1,0 +1,14 @@
+<div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="navbar-inner">
+        <div class="container">
+            <div class="sixteen columns">
+                <%= link_to(SiteInformation::NAME, {action: 'index'}, {class: 'brand'}) %>
+                <%= link_to('Login', {action: 'login'}, {class: 'btn btn-info pull-right navbar-login-button'}) %>
+                <ul class="nav pull-right">
+                    <li><%= link_to('Contact', {action: 'contact'}, {class: ''}) %></li>
+                    <li><%= link_to('Register', {action: 'register'}, {class: ''}) %></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

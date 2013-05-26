@@ -1,0 +1,61 @@
+<!-- Intro -->
+<section class="intro-section intro-banner">
+    <div class="container">
+        <div class="ten columns">
+            <div class="intro-description">
+                <h1 class="site-title">Welcome to <%= SiteInformation::NAME %></h1>
+                <p class="lead">A good place to organize your Twitter timeline into a news feeds reader.</p>
+            </div>
+        </div>
+        <div class="six columns">
+            <%= render "register_form" %>
+        </div>
+    </div>
+</section>
+
+<section class="intro-section intro-read-count">
+    <div class="container">
+        <div class="seven columns offset-by-nine">
+            <div class="intro-description">
+                <h3>Know your "feeds"</h3>
+                <p class="">Small Read fetch tweets from Twitter timeline automatically, so you know what you have ready read and what not.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="intro-section intro-manage-feeds">
+    <div class="container">
+        <div class="eight columns">
+            <div class="intro-description">
+                <h3>Pay attention to your favorite</h3>
+                <p class="">You decide what is important and what should be muted. Manage all your "feeds" as your wish them to.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="intro-section intro-about-beta">
+    <div class="container">
+        <div class="eight columns center">
+            <div class="intro-description">
+                <h3>We are still in BETA</h3>
+                <p class="">Small Read is still beta testing. you can try it now. We will let you know when it's ready.</p>
+                <div class="login-register-form">
+                    <%= form_for :future_user do |f| %>
+                        <% if @future_user && !@future_user.errors[:email].empty? %>
+                            <% @future_user.errors[:email].each do |m| %>
+                                <span class="help-block alert alert-error"><%= m %></span>
+                            <% end %>
+                        <% end %>
+                        <div class="input-prepend input-block-level">
+                            <span class="add-on"><i class="icon-envelope-alt"></i></span>
+                            <%= f.text_field :email, placeholder: 'Email', class: 'input-block-level' %>
+                        </div>
+                        <%= f.button "Let me know when it's ready.", :class => 'btn btn-block btn-primary' %>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

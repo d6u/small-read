@@ -1,0 +1,44 @@
+.toolbox {
+    a {
+        display: inline-block;
+        height: 34px;
+        color: white;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
+
+.feeds {
+    .toolbox {
+        a {
+            width: 34px;
+            &:hover {
+                background-color: lighten($green, 10%);
+            }
+        }
+        i {
+            height: 100%;
+            width: 100%;
+            float: left;
+            font-size: 24px;
+            line-height: 34px;
+            text-align: center;
+        }
+        #manage_folder {
+            float: right;
+        }
+    }
+}
+
+.tweets-toolbox-button {
+    line-height: 34px;
+    font-size: 14px;
+    padding: 0 10px;
+    &:hover {
+        background-color: lighten($night, 10%);
+    }
+}
+#mark_all_read {
+    float: right;
+}

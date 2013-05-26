@@ -1,0 +1,7 @@
+<%= render :layout => 'layouts/htmldoc' do %>
+    <%= render 'outside_nav' %>
+    <div class="full-height-wrapper">
+        <%= yield %>
+        <%= render 'footer' %>
+    </div>
+<% end %>
