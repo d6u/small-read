@@ -10,6 +10,7 @@
 //= require modules/feedback_modal.js
 
 
+var needle;
 $(document).ready(function() {
 
 // Navbar View
@@ -59,25 +60,29 @@ var Tweet = Backbone.Model.extend({
         this.view = new TweetView({ model: this });
     },
     toggleRead: function(save) {
+        save = typeof save !== 'undefined' ? save : true;
         var that = this;
         this.view.$el.addClass("read");
         this.set('read', true);
-        save = typeof save !== 'undefined' ? save : true;
         if (save === true) {
+            var unread_count = tweets.current_source.get('unread_count');
+            tweets.current_source.set('unread_count', unread_count - 1);
+            if (!tweets.current_source.has('folder_id')) {
+                // folder
+                var source_feed = tweets.current_source.feeds.where({id: this.get('feed_id').toString()})[0];
+                var feed_unread_count = source_feed.get('unread_count');
+                source_feed.set('unread_count', feed_unread_count - 1);
+            } else {
+                // feed
+                var parent_folder_id = tweets.current_source.get('folder_id');
+                var parent_folder = folders.where({id: parent_folder_id})[0];
+                var parent_folder_unread_count = parent_folder.get('unread_count');
+                parent_folder.set('unread_count', parent_folder_unread_count - 1);
+            }
             this.save(
                 {read: true},
                 {
-                    success: function(model, response, options) {
-                        // var unread_count = model.collection.active_feed.get('unread_count');
-                        // model.collection.active_feed.set({unread_count: unread_count - 1});
-                        // // folder
-                        // if (!model.collection.active_feed.has('folder_id')) {
-                        //     var folder = model.collection.active_feed;
-                        //     var feed = folder.feeds.where({id: that.get('feed_id')})[0];
-                        //     var feed_unread_count = feed.get('unread_count');
-                        //     feed.set('unread_count', feed_unread_count - 1);
-                        // }
-                    },
+                    success: function(model, response, options) {},
                     error: function(model, xhr, options) {}
                 }
             );
@@ -109,20 +114,20 @@ var TweetsContent = Backbone.View.extend({
         event.preventDefault();
         var that = this;
         if (confirm('Mark everything READ?')) {
-            var all_tweets_ids = this.collection.pluck('id');
+            var all_tweets_ids = [];
+            _.each(this.collection.where({read: null}), function(ele, index, eles) {
+                all_tweets_ids.push(ele.id);
+            });
             $.post('/mark_all_read', {ids: all_tweets_ids.join()},
                 function(data, textStatus, jqXHR) {
                     _.each(that.collection.models, function(tweet, index, models) {
                         tweet.toggleRead(false);
-                        // var unread_count = model.collection.active_feed.get('unread_count');
-                        // model.collection.active_feed.set({unread_count: unread_count - 1});
-                        // // folder
-                        // if (!model.collection.active_feed.has('folder_id')) {
-                        //     var folder = model.collection.active_feed;
-                        //     var feed = folder.feeds.where({id: that.get('feed_id')})[0];
-                        //     var feed_unread_count = feed.get('unread_count');
-                        //     feed.set('unread_count', feed_unread_count - 1);
-                        // }
+                        tweets.current_source.set('unread_count', 0);
+                        if (!tweets.current_source.has('folder_id')) {
+                            // folder
+                            var source_feed = tweets.current_source.feeds.where({id: this.get('feed_id').toString()})[0];
+                            source_feed.set('unread_count', 0);
+                        }
                     });
                 }
             );
@@ -175,6 +180,13 @@ var FolderView = Backbone.View.extend({
     events: {
         'click .folder-face': 'loadTweets'
     },
+    initialize: function(options) {
+        var that = this;
+        this.listenTo(this.model, 'change:unread_count', function(model, value, options) {
+            that.el.dataset.unread_count = value;
+            that.$('.folder-face .unread-count').html(value);
+        });
+    },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
         return this;
@@ -219,6 +231,10 @@ var FeedView = Backbone.View.extend({
         var that = this;
         this.listenTo(this.model, 'change:folder_id', function(model, value, options) {
             that.el.dataset.folder_id = value;
+        });
+        this.listenTo(this.model, 'change:unread_count', function(model, value, options) {
+            that.el.dataset.unread_count = value;
+            that.$('.unread-count').html(value);
         });
     },
     render: function() {
