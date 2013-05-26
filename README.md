@@ -1,3 +1,3 @@
-# Social Feed
+# Small Read
 
 By Daiwei
