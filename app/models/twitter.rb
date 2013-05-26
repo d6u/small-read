@@ -27,7 +27,7 @@ class Twitter < ActiveRecord::Base
       new_friends    = self.users_lookup(:user_id => new_ids)
       general_folder = self.user.folders.where(:name => 'general')[0]
       new_feeds      = new_friends.map {|f| Feed.create_from_raw(f)}
-      new_feeds.count_unread
+      new_feeds.each {|f| f.count_unread}
       self.feeds     << new_feeds
       general_folder.feeds << new_feeds
     end

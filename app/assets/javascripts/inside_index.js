@@ -254,7 +254,7 @@ var Feed = Backbone.Model.extend({
     urlRoot: "/feeds",
     initialize: function(attributes, options) {
         if (!options.view) {
-            this.view = new FeedView({model: this});
+            this.view = new FeedView({model: this, attributes: this.attributes});
         } else {
             this.view = new FeedView({el: options.view, model: this});
         }
