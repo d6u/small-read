@@ -20,20 +20,21 @@ class Twitter < ActiveRecord::Base
 
     # Compare friends list
     new_ids        = remote_id_strs - local_id_strs
-    deleted_ids    = local_id_strs - remote_id_strs
+    deleting_ids   = local_id_strs - remote_id_strs
 
     # Add new friends: 180/15min
+    affected_feeds = []
     if !new_ids.empty?
       new_friends    = self.users_lookup(:user_id => new_ids)
       general_folder = self.user.folders.where(:name => 'general')[0]
       new_feeds      = new_friends.map {|f| Feed.create_from_raw(f)}
-      new_feeds.each {|f| f.count_unread}
       self.feeds     << new_feeds
       general_folder.feeds << new_feeds
+      affected_feeds += new_feeds
     end
 
     # Delete friends
-    self.feeds.where(:id_str => deleted_ids).destroy_all if !deleted_ids.empty?
+    self.feeds.where(:id_str => deleting_ids).destroy_all if !deleting_ids.empty?
 
     # Update tweets
     page_num = options[:as_much_as_possible] == true ? 9 : nil
@@ -44,7 +45,7 @@ class Twitter < ActiveRecord::Base
     end
 
     if !raw_tweets.empty?
-      affected_feeds = Feed.create_tweets_from_raw(raw_tweets, self.id, :return_affected_feeds => true)
+      affected_feeds += Feed.create_tweets_from_raw(raw_tweets, self.id, :return_affected_feeds => true)
       self.update_attribute(:newest_tweet_id, raw_tweets[0]['id_str'])
 
       # Update unread_count
