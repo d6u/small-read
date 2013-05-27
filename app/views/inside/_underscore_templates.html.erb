@@ -37,15 +37,16 @@
     </div>
     <div class="tweet-detail">
         <div class="owners-names">
-            <a class="original-owner-name" href="#">{{= name }}
+            <a class="original-owner-name" href="{{= link }}" target="_blank">{{= name }}
                 <span class="original-owner-screen_name">{{= screen_name }}</span>
             </a>
             {{ if (is_status_a_retweet === true) { }}
                 Retweeted by
-                <a class="owner-name" href="#">{{= this_user_name }}
+                <a class="owner-name" href="{{= original_tweets_link }}" target="_blank">{{= this_user_name }}
                     <span class="owner-sreen_name">{{= this_user_screen_name }}</span>
                 </a>
             {{ } }}
+            <a href="{{= link }}" target="_blank" class="tweet-link"><i class="icon-link"></i></a>
         </div>
         <p class="tweet-content">{{= text }}</p>
     </div>

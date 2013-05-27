@@ -47,9 +47,17 @@ var TweetView = Backbone.View.extend({
     tagName: 'div',
     className: 'tweet clearfix',
     template: _.template($('#tweet-template').html()),
+    events: {
+        'click': 'toggleReadWhenClick'
+    },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
         return this;
+    },
+    toggleReadWhenClick: function(event) {
+        if (this.model.get('read') !== true) {
+            this.model.toggleRead();
+        }
     }
 });
 
