@@ -10,95 +10,135 @@
 //= require modules/feedback_modal.js
 
 
+var needle;
 $(document).ready(function() {
 
-// ================================ Tweets ====================================
+// Navbar View
+// ===========
+var NavbarView = Backbone.View.extend({
+    el: '.navbar',
+    events: {
+        'click .refresh-feeds': 'fetchFoldersAndFeeds'
+    },
+    fetchFoldersAndFeeds: function(event) {
+        event.preventDefault();
+        if (!$(event.currentTarget).children('.icon-refresh').hasClass('icon-spin')) {
+            var url = $(event.currentTarget).attr('href');
+            $(event.currentTarget).children('.icon-refresh').addClass('icon-spin');
+            $.get(url, function(data, textStatus, jqXHR) {
+                _.each(folders.models, function(folder, index, models) {
+                    folder.feeds.fetch({
+                        success: function(collection, response, options) {
+                            folder.fetch();
+                        }
+                    });
+                });
+                $(event.currentTarget).children('.icon-refresh').removeClass('icon-spin');
+            });
+        }
+    }
+});
 
-// TweetView
+var navbar_view = new NavbarView();
+
+// Tweets
+// ======
 var TweetView = Backbone.View.extend({
-
     tagName: 'div',
     className: 'tweet clearfix',
     template: _.template($('#tweet-template').html()),
-
-    initialize: function() {
-        this.render();
+    events: {
+        'click': 'toggleReadWhenClick'
     },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
         return this;
+    },
+    toggleReadWhenClick: function(event) {
+        if (this.model.get('read') !== true) {
+            this.model.toggleRead();
+        }
     }
 });
 
-// Tweet
 var Tweet = Backbone.Model.extend({
-
-    initialize: function(attrs, options) {
-        this.entities = JSON.parse(attrs.entities);
+    initialize: function(attributes, options) {
+        this.entities = JSON.parse(attributes.entities);
         if (this.entities.media) {
             this.set('entities_image', this.entities.media[0].media_url);
         } else {
             this.set('entities_image', null);
         }
-        this.view = new TweetView({model:this});
+        this.view = new TweetView({ model: this });
     },
-    toggleRead: function() {
+    toggleRead: function(save) {
+        save = typeof save !== 'undefined' ? save : true;
         var that = this;
         this.view.$el.addClass("read");
-        this.save(
-            {read: true},
-            {
-                success: function(model, response, options) {
-                    var unread_count = model.collection.active_feed.get('unread_count');
-                    model.collection.active_feed.set({unread_count: unread_count - 1});
-                    // folder
-                    if (!model.collection.active_feed.has('folder_id')) {
-                        var folder = model.collection.active_feed;
-                        var feed = folder.feeds.where({id: that.get('feed_id')})[0];
-                        var feed_unread_count = feed.get('unread_count');
-                        feed.set('unread_count', feed_unread_count - 1);
-                    }
-                },
-                error: function(model, xhr, options) {}
+        this.set('read', true);
+        if (save === true) {
+            var unread_count = tweets.current_source.get('unread_count');
+            tweets.current_source.set('unread_count', unread_count - 1);
+            if (!tweets.current_source.has('folder_id')) {
+                // folder
+                var source_feed = tweets.current_source.feeds.where({id: this.get('feed_id').toString()})[0];
+                var feed_unread_count = source_feed.get('unread_count');
+                source_feed.set('unread_count', feed_unread_count - 1);
+            } else {
+                // feed
+                var parent_folder_id = tweets.current_source.get('folder_id');
+                var parent_folder = folders.where({id: parent_folder_id})[0];
+                var parent_folder_unread_count = parent_folder.get('unread_count');
+                parent_folder.set('unread_count', parent_folder_unread_count - 1);
             }
-        );
-    },
-    markAllReadToggleRead: function() {
-        this.view.$el.addClass("read");
+            this.save(
+                {read: true},
+                {
+                    success: function(model, response, options) {},
+                    error: function(model, xhr, options) {}
+                }
+            );
+        }
     }
 });
 
-// TweetsContent view
 var TweetsContent = Backbone.View.extend({
-
     el: '.tweets',
     events: {
         // 'scroll' event won't bubble up, attached in initialize()
         'click #mark_all_read': 'markAllRead'
     },
-
     initialize: function() {
         // attach 'scroll' event
+        var that = this;
         this.$('.tweets-list').on('scroll', function() {
-            tweets.markRead();
+            that.markRead();
+        });
+    },
+    markRead: function() {
+        _.each(this.collection.models, function(model, index, models) {
+            if (!model.get('read') && (model.view.$el.position().top + 20) < 0) {
+                model.toggleRead();
+            }
         });
     },
     markAllRead: function(event) {
+        event.preventDefault();
         var that = this;
-        if (confirm('Sure to mark everything READ?')) {
-            var mark_all_read_ids = this.collection.pluck('id');
-            $.get('/mark_all_read', {ids: mark_all_read_ids.join()},
+        if (confirm('Mark everything READ?')) {
+            var all_tweets_ids = [];
+            _.each(this.collection.where({read: null}), function(ele, index, eles) {
+                all_tweets_ids.push(ele.id);
+            });
+            $.post('/mark_all_read', {ids: all_tweets_ids.join()},
                 function(data, textStatus, jqXHR) {
-                    _.each(that.collection.models, function(model, index, models) {
-                        model.markAllReadToggleRead();
-                        var unread_count = model.collection.active_feed.get('unread_count');
-                        model.collection.active_feed.set({unread_count: unread_count - 1});
-                        // folder
-                        if (!model.collection.active_feed.has('folder_id')) {
-                            var folder = model.collection.active_feed;
-                            var feed = folder.feeds.where({id: that.get('feed_id')})[0];
-                            var feed_unread_count = feed.get('unread_count');
-                            feed.set('unread_count', feed_unread_count - 1);
+                    _.each(that.collection.models, function(tweet, index, models) {
+                        tweet.toggleRead(false);
+                        tweets.current_source.set('unread_count', 0);
+                        if (!tweets.current_source.has('folder_id')) {
+                            // folder
+                            var source_feed = tweets.current_source.feeds.where({id: this.get('feed_id').toString()})[0];
+                            source_feed.set('unread_count', 0);
                         }
                     });
                 }
@@ -107,33 +147,28 @@ var TweetsContent = Backbone.View.extend({
     }
 });
 
-// Tweets
 var Tweets = Backbone.Collection.extend({
-
     model: Tweet,
-
-    // Functions
-    initialize: function() {
-        this.view = new TweetsContent({collection: this});
-        this.on('add', function(tweet, tweets, options) {
-            this.view.$('.tweets-list').append(tweet.view.el);
-        }, this);
+    initialize: function(models, options) {
+        this.view = options.view;
+        this.view.collection = this;
+        // empty current set of Tweets
         this.on('reset', function(collection, options) {
             _.each(options.previousModels, function(model, index, models) {
                 model.view.remove();
             }, this);
         }, this);
+        // add new Tweets
+        this.on('add', function(tweet, tweets, options) {
+            this.view.$('.tweets-list').append(tweet.view.render().el);
+        }, this);
     },
-    loadTweets: function(feed) {
+    loadTweets: function(source) {
         this.view.$('.tweets-list').scrollTop(0);
         this.reset();
         this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
-        this.active_feed = feed;
-        if (feed.has('folder_id')) {
-            this.url = "/feeds/" + this.active_feed.id + "/tweets";
-        } else {
-            this.url = "/folders/" + this.active_feed.id + "/tweets";
-        }
+        this.current_source = source;
+        this.url = source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
         this.fetch({
             success: function(collection, response) {},
             error: function(collection, response) {}
@@ -142,98 +177,104 @@ var Tweets = Backbone.Collection.extend({
     parse: function(response) {
         this.view.$('.tweets-list').empty();
         return response;
-    },
-    markRead: function() {
-        _.each(this.models, function(model, index, models) {
-            if (!model.get('read') && (model.view.$el.position().top + 20) < 0) {
-                model.toggleRead();
-            }
-        });
     }
 });
 
-// ================================ Feeds =====================================
-
-// FolderView
+// Folder
+// ======
 var FolderView = Backbone.View.extend({
-
     tagName: 'div',
     className: 'folder list-container-item',
-    attributes: {},
     template: _.template($('#folder-template').html()),
     events: {
         'click .folder-face': 'loadTweets'
     },
-
-    initialize: function() {
-        this.render();
+    initialize: function(options) {
+        var that = this;
+        this.listenTo(this.model, 'change:unread_count', function(model, value, options) {
+            that.el.dataset.unread_count = value;
+            that.$('.folder-face .unread-count').html(value);
+        });
     },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
         return this;
     },
-
     // events callbacks
     loadTweets: function(event) {
-        tweets.loadTweets(this.model);
         event.preventDefault();
+        tweets.loadTweets(this.model);
     }
 });
 
-// FeedView
-var FeedView = Backbone.View.extend({
+var Folder = Backbone.Model.extend({
+    urlRoot: '/folders',
+    initialize: function(attributes, options) {
+        if (!options.view) {
+            this.view = new FolderView({model: this});
+        } else {
+            this.view = new FolderView({el: options.view, model: this});
+        }
+        this.feeds = options.feeds;
+        this.feeds.folder = this;
+    }
+});
 
+var Folders = Backbone.Collection.extend({
+    model: Folder,
+    initialize: function(models, options){
+        this.view = options.view;
+        this.view.collection = this;
+    }
+});
+
+// Feed
+// ====
+var FeedView = Backbone.View.extend({
     tagName: 'div',
     className: 'feed list-container-item',
     template: _.template($('#feed-template').html()),
     events: {
         'click .item-face': 'loadTweets'
     },
-
-    initialize: function() {
-        this.render();
-        this.listenTo(this.model, 'change:unread_count', function() {
-            this.$('.unread-count').html(this.model.get('unread_count'));
+    initialize: function(options){
+        var that = this;
+        this.listenTo(this.model, 'change:folder_id', function(model, value, options) {
+            that.el.dataset.folder_id = value;
+        });
+        this.listenTo(this.model, 'change:unread_count', function(model, value, options) {
+            that.el.dataset.unread_count = value;
+            that.$('.unread-count').html(value);
         });
     },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
         return this;
     },
-
     // events callbacks
     loadTweets: function(event) {
-        tweets.loadTweets(this.model);
         event.preventDefault();
+        tweets.loadTweets(this.model);
     }
 });
 
-// Feed model
 var Feed = Backbone.Model.extend({
-
     urlRoot: "/feeds",
-
-    initialize: function() {
-        this.view = new FeedView({
-            model: this,
-            attributes: {
-                'data-id': this.id
-            }
-        });
+    initialize: function(attributes, options) {
+        if (!options.view) {
+            this.view = new FeedView({model: this, attributes: this.attributes});
+        } else {
+            this.view = new FeedView({el: options.view, model: this});
+        }
     }
 });
 
-// Feeds collection
 var Feeds = Backbone.Collection.extend({
-
     model: Feed,
-    folder: null,
-
     initialize: function(models, options) {
-        this.folder = options.folder;
-        this.url = '/folders/'+this.folder.id+'/feeds';
+        this.url = '/folders/'+options.folder_id+'/feeds';
         this.on('add', function(feed, feeds, options) {
-            this.folder.view.$('.folder-feeds-list').append(feed.view.el);
+            this.folder.view.$('.folder-feeds-list').append(feed.view.render().el);
         }, this);
         this.on('remove', function(feed, feeds, options) {
             feed.view.remove();
@@ -241,119 +282,73 @@ var Feeds = Backbone.Collection.extend({
     }
 });
 
-// Folder model
-var Folder = Backbone.Model.extend({
-
-    initialize: function() {
-        this.view = new FolderView({
-            model: this,
-            attributes: {
-                'data-id': this.id
-            }
-        });
-        this.feeds = new Feeds([], {folder: this});
-        // events
-        this.view.listenTo(this.feeds, 'change:unread_count', function(feed, value, options) {
-            var unread_count = 0;
-            _.each(this.model.feeds.models, function(model, index, models) {
-                unread_count += model.get('unread_count');
-            });
-            this.model.set('unread_count', unread_count);
-        });
-        this.view.listenTo(this, 'change:unread_count', function(folder, value, options) {
-            this.$('.folder-name + .unread-count').html(this.model.get('unread_count'));
-        });
-    }
-});
-
-// FeedsContent view
+// Main Views
+// ==========
 var FeedsContent = Backbone.View.extend({
-
     el: '.feeds'
 });
 
-// Folders collection
-var Folders = Backbone.Collection.extend({
-
-    model: Folder,
-    url: '/folders',
-
-    initialize: function() {
-        this.view = new FeedsContent({collection: this});
-        this.on('add', function(folder, folders, options) {
-            this.view.$('.feeds-list').append(folder.view.el);
-        }, this);
-    }
-});
-
-// ================================ Navbar ====================================
-
-// Navbar view
-var NavbarView = Backbone.View.extend({
-
-    el: '.navbar',
-    events: {
-        'click .refresh-feeds': 'animateRefreshButton'
-    },
-
-    animateRefreshButton: function(event) {
-        if (!$(event.currentTarget).children('.icon-refresh').hasClass('icon-spin')) {
-            var url = $(event.currentTarget).attr('href');
-            $(event.currentTarget).children('.icon-refresh').addClass('icon-spin');
-            $.get(url, function(data, textStatus, jqXHR) {
-                $(event.currentTarget).children('.icon-refresh').removeClass('icon-spin');
-                _.each(folders.models, function(folder, index, models) {
-                    folder.feeds.fetch();
-                });
-            });
-        }
-        event.preventDefault();
-    }
-});
-
-var navbar_view = new NavbarView();
-
 // Initialization of App
-var folders, tweets;
+// =====================
+var folder_models = [];
 
-$.get('/bg/load_folders_and_feeds', function(response, textStatus, jqXHR) {
+$('.folder').each(function(index, folder_element) {
+    var $folder_ele = $(folder_element);
 
-    folders = new Folders();
-    tweets = new Tweets();
+    // Feed
+    var feed_models = [];
 
-    folders.view.$('.feeds-list').empty();
-    var last_folder;
-    _.each(response, function(element, index, response) {
-        // folder
-        if (element.color) {
-            last_folder = new Folder(element);
-            folders.add(last_folder);
-        }
-        // feed
-        else {
-            last_folder.feeds.add(element);
-        }
+    $folder_ele.find('.feed').each(function(index, feed_element) {
+        // var $feed_ele = $(feed_element);
+        feed_models.push(new Feed(
+            feed_element.dataset,
+            { view: feed_element }
+        ));
     });
-    folders.view.$('.folder-feeds-list').sortable({
-        axis: "y",
-        connectWith: ".folder-feeds-list",
-        placeholder: "feed-sortable-placeholder",
-        scrollSpeed: 40,
-        zIndex: 100,
-        update: function(event, ui) {
-            if (ui.sender) {
-                var sender_id = Number(ui.sender.closest('.folder').attr('data-id')),
-                    receiver_id = Number(ui.item.closest('.folder').attr('data-id')),
-                    item_id = Number(ui.item.attr('data-id'));
-                var sender = folders.where({id: sender_id})[0],
-                    receiver = folders.where({id: receiver_id})[0],
-                    feed = sender.feeds.where({id: item_id})[0];
-                feed.save({folder_id: receiver_id});
-                sender.feeds.remove(feed, {silent: true});
-                receiver.feeds.add(feed, {silent: true});
-            }
+
+    // Folder
+    folder_models.push(new Folder(
+        folder_element.dataset,
+        {
+            view: folder_element,
+            feeds: new Feeds(
+                feed_models,
+                {folder_id: folder_element.dataset.id}
+            )
         }
-    });
+    ));
 });
 
-}); // End of doc ready
+// Init Folders and Tweets
+var folders = new Folders(
+    folder_models,
+    { view: new FeedsContent() }
+);
+var tweets = new Tweets(
+    [],
+    { view: new TweetsContent() }
+);
+
+folders.view.$('.folder-feeds-list').sortable({
+    axis: "y",
+    connectWith: ".folder-feeds-list",
+    placeholder: "feed-sortable-placeholder",
+    scrollSpeed: 40,
+    zIndex: 100,
+    update: function(event, ui) {
+        if (ui.sender) {
+            var sender_id   = ui.sender.closest('.folder')[0].dataset.id,
+                receiver_id = ui.item.closest('.folder')[0].dataset.id,
+                feed_id     = ui.item[0].dataset.id;
+            var sender      = folders.where({id: sender_id})[0],
+                receiver    = folders.where({id: receiver_id})[0],
+                feed        = sender.feeds.where({id: feed_id})[0];
+            feed.save({folder_id: receiver_id});
+            sender.feeds.remove(feed, {silent: true});
+            receiver.feeds.add(feed, {silent: true});
+        }
+    }
+});
+
+// END of Document Ready
+});

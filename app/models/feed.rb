@@ -6,7 +6,7 @@ class Feed < ActiveRecord::Base
   has_many    :read_tweets, :dependent => :destroy
 
   attr_accessible :id_str, :screen_name, :name, :profile_image_url,
-                  :folder_id
+                  :folder_id, :unread_count
 
   # self.create_from_raw(twitter_user)
   def self.create_from_raw(twitter_user)
@@ -14,7 +14,8 @@ class Feed < ActiveRecord::Base
                  id_str: twitter_user['id_str'],
             screen_name: twitter_user['screen_name'],
                    name: twitter_user['name'],
-      profile_image_url: twitter_user['profile_image_url']
+      profile_image_url: twitter_user['profile_image_url'],
+           unread_count: 0
     })
   end
 

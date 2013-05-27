@@ -24,4 +24,13 @@
 .owners-names {
     font-size: 16px;
     line-height: 16px;
+
+}
+.tweet-link {
+    margin-left: 15px;
+    color: $gray;
+    &:hover {
+        text-decoration: none;
+        color: black;
+    }
 }

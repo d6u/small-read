@@ -20,7 +20,8 @@ class TweetsController < ApplicationController
                            name: t.retweeted_status_user_name,
                     screen_name: "@" + t.retweeted_status_user_screen_name,
                  this_user_name: t.feed.name,
-          this_user_screen_name: "@" + t.feed.screen_name
+          this_user_screen_name: "@" + t.feed.screen_name,
+           original_tweets_link: "https://twitter.com/#{t.retweeted_status_user_screen_name}/status/#{t.retweeted_status_id_str}"
         }
       else
         content = {
@@ -35,6 +36,7 @@ class TweetsController < ApplicationController
       content[:text]     = parse_text(t.text, t.entities)
       content[:read]     = t.read
       content[:feed_id]  = t.feed_id
+      content[:link]     = "https://twitter.com/#{t.feed.screen_name}/status/#{t.id_str}"
       content
     end)
   end
@@ -98,10 +100,10 @@ class TweetsController < ApplicationController
     parsed_text = text.clone
     entities = MultiJson.load(raw_entities)
     if entities['urls']
-      entities['urls'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"blank\">#{u['display_url']}</a>"}
+      entities['urls'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"_blank\">#{u['display_url']}</a>"}
     end
     if entities['media']
-      entities['media'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"blank\">#{u['display_url']}</a>"}
+      entities['media'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"_blank\">#{u['display_url']}</a>"}
     end
     return parsed_text
   end
