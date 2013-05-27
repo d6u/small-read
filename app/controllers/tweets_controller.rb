@@ -100,10 +100,10 @@ class TweetsController < ApplicationController
     parsed_text = text.clone
     entities = MultiJson.load(raw_entities)
     if entities['urls']
-      entities['urls'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"blank\">#{u['display_url']}</a>"}
+      entities['urls'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"_blank\">#{u['display_url']}</a>"}
     end
     if entities['media']
-      entities['media'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"blank\">#{u['display_url']}</a>"}
+      entities['media'].each {|u| parsed_text[u['indices'][0], u['indices'][1]] = "<a href=\"#{u['url']}\" target=\"_blank\">#{u['display_url']}</a>"}
     end
     return parsed_text
   end
