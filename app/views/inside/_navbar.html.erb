@@ -1,23 +1,28 @@
-<nav class="navbar">
+<nav class="navbar navbar-vertical">
+	<%= link_to({:controller => 'settings', :action => 'settings'}, :class => 'navbar-element gravatar-image-element') do %>
+		<div class="gravatar-image">
+			<%= image_tag Gravatar.new(@user.email).image_url, :class => '', :alt => 'Profile Image' %>
+		</div>
+	<% end %>
+
 	<% if params[:action] == 'index' %>
-		<%= link_to({controller: 'background_opt', :action => "refresh"}, {class: 'refresh-feeds navbar-button'}) do %>
-			<span class="icon-refresh"></span>Refresh
+		<%= link_to('#', :class => 'navbar-element twitter-api-counts') do %>
+			<span class="badge badge-info" id="twitter_api_counts">0</span>
+		<% end %>
+		<%= link_to({controller: 'settings', :action => "settings"}, {:class => 'navbar-element navbar-element-button'}) do %>
+			<span class="icon-cog"></span>Settings
 		<% end %>
 	<% else %>
-		<%= link_to({controller: 'inside', :action => "index"}, {class: 'navbar-button'}) do %>
+		<%= link_to({controller: 'inside', :action => "index"}, {:class => 'navbar-element navbar-element-button'}) do %>
 			<span class="icon-home"></span>Home
 		<% end %>
 	<% end %>
 
-	<%= link_to('#feedbackModal', {:class => 'navbar-button', :'data-toggle' => 'modal'}) do %>
-		<span class="icon-code"></span>Feedback
-	<% end %>
-
-	<%= link_to({controller: 'settings', :action => "settings"}, {class: 'navbar-button'}) do %>
-		<span class="icon-cog"></span>Settings
-	<% end %>
-
-	<%= link_to({controller: 'inside', :action => "logout", confirmation: 'yes'}, {class: 'navbar-button'}) do %>
+	<%= link_to({controller: 'inside', :action => "logout", confirmation: 'yes'}, {:class => 'navbar-element navbar-element-button'}) do %>
 		<span class="icon-off"></span>Logout
+	<% end %>
+
+	<%= link_to('#feedbackModal', {:class => 'navbar-element navbar-element-button navbar-element-bottom', :'data-toggle' => 'modal'}) do %>
+		<span class="icon-code"></span>Feedback
 	<% end %>
 </nav>

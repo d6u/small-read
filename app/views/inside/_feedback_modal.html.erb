@@ -4,11 +4,13 @@
         <button type="button" class="close feedback-modal-cancel">×</button>
         <h3>Feedback? We'd like to hear!</h3>
     </div>
-    <%= form_tag({:controller => 'inside', :action => 'feedback'}, {:remote => true}) do %>
+    <%= form_tag({:controller => 'background_opt', :action => 'feedback'}, {:remote => true}) do %>
     <div class="modal-body">
 
         <!-- Body -->
         <%= hidden_field_tag :page_name %>
+        <%= hidden_field_tag :feedback_user_id, @user.id %>
+        <%= hidden_field_tag :feedback_user_email, @user.email %>
         <%= label_tag :subject %>
         <%= text_field_tag :subject, nil, {:placeholder => 'Subject', :class => 'input-block-level'} %>
         <%= label_tag :content %>

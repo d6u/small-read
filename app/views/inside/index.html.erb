@@ -1,6 +1,9 @@
 <!-- FeedsContent -->
 <section class="feeds">
 	<div class="toolbox">
+		<%= link_to({controller: 'background_opt', :action => "refresh"}, {class: 'refresh-feeds feeds-toolbox-button', :id => 'refresh'}) do %>
+			<i class="icon-refresh"></i>
+		<% end %>
 		<%= link_to({controller: 'settings', action: 'manage_folders'}, class: 'feeds-toolbox-button', id: 'manage_folder') do %>
 			<i class="icon-wrench"></i>
 		<% end %>
