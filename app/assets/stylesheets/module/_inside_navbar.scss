@@ -35,6 +35,12 @@
 		text-align: center;
 	}
 }
+.tooltip.in {
+	opacity: 0.9;
+}
+.tooltip .lead {
+	margin-bottom: 5px;
+}
 
 // Button
 .navbar-element-button {

@@ -6,11 +6,12 @@
 //= require json2.js
 //= require backbone.min.js
 //= require jquery.simplemodal.1.4.4.min.js
+//= require bootstrap.tooltips.min.js
 //= require custom-functions.js
 //= require modules/feedback_modal.js
 
 
-var needle;
+// var needle;
 $(document).ready(function() {
 
 // Navbar View
@@ -19,6 +20,17 @@ var NavbarView = Backbone.View.extend({
     el: '.navbar-vertical',
     initialize: function() {
         this.fetchTwitterAPILimits();
+        $('.gravatar-image-element').tooltip({
+            title: 'Change your profile image at Gravatar.com',
+            placement: 'right',
+            container: 'body'
+        });
+        $('#twitter_api_counts').tooltip({
+            title: '<p class="lead">What is this?</p><p>Twitter limits how many times each user can fetch contents from its sever within 15 minutes. The number indicates remaining counts untill next reset time (within 15 minutes).</p>',
+            html: true,
+            placement: 'right',
+            container: 'body'
+        });
     },
     fetchTwitterAPILimits: function() {
         var that = this;

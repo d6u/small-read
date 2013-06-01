@@ -5,18 +5,17 @@
 		</div>
 	<% end %>
 
-	<%= link_to('#', :class => 'navbar-element twitter-api-counts') do %>
-		<span class="badge badge-info" id="twitter_api_counts">0</span>
-	<% end %>
-
-	<% if params[:action] != 'index' %>
+	<% if params[:action] == 'index' %>
+		<%= link_to('#', :class => 'navbar-element twitter-api-counts') do %>
+			<span class="badge badge-info" id="twitter_api_counts">0</span>
+		<% end %>
+		<%= link_to({controller: 'settings', :action => "settings"}, {:class => 'navbar-element navbar-element-button'}) do %>
+			<span class="icon-cog"></span>Settings
+		<% end %>
+	<% else %>
 		<%= link_to({controller: 'inside', :action => "index"}, {:class => 'navbar-element navbar-element-button'}) do %>
 			<span class="icon-home"></span>Home
 		<% end %>
-	<% end %>
-
-	<%= link_to({controller: 'settings', :action => "settings"}, {:class => 'navbar-element navbar-element-button'}) do %>
-		<span class="icon-cog"></span>Settings
 	<% end %>
 
 	<%= link_to({controller: 'inside', :action => "logout", confirmation: 'yes'}, {:class => 'navbar-element navbar-element-button'}) do %>
