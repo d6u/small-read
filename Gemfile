@@ -9,6 +9,7 @@ gem 'thin'
 gem 'oj', '~> 2.0'
 gem 'oauth_twitter'
 # gem 'oauth_twitter', :path => '../oauth_twitter'
+gem 'gravatar-ultimate'
 gem "resque", "~> 1.24.1"
 # gem 'resque-scheduler', :require => 'resque_scheduler'
 
