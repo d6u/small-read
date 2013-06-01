@@ -1,10 +1,10 @@
 class FeedbackMailer < ActionMailer::Base
   default from: "feedback@getsmallread.com"
 
-  def inside_feedback(page_name, subject, content)
-    @page_name = page_name
-    @subject = subject
-    @content = content
-    mail(:to => 'contact@getsmallread.com', :subject => "Feedbacks: #{subject}")
+  def inside_feedback(params)
+    @params_fields = params
+    puts "--> generating emails"
+    mail(:to => 'contact@getsmallread.com', :subject => "Feedbacks: #{params[:subject]}")
+    puts "--> feedbacks email generated"
   end
 end

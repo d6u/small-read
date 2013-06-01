@@ -1,7 +1,9 @@
 class SendFeedback
   @queue = :send_feedback_queue
 
-  def self.perform(page_name, subject, content)
-    FeedbackMailer.inside_feedback(page_name, subject, content).deliver
+  def self.perform(params)
+    puts "--> sedding feedbacks"
+    FeedbackMailer.inside_feedback(params).deliver
+    puts "--> feedbacks sent"
   end
 end
