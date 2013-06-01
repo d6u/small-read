@@ -3,14 +3,17 @@ source 'https://rubygems.org'
 # Core
 gem 'rails', '3.2.13'
 gem 'pg'
-gem 'thin'
+gem 'unicorn'
+gem 'sidekiq'
+gem 'clockwork'
+# gem 'thin'
 
 # Core plugin
 gem 'oj', '~> 2.0'
 gem 'oauth_twitter'
 # gem 'oauth_twitter', :path => '../oauth_twitter'
 gem 'gravatar-ultimate'
-gem "resque", "~> 1.24.1"
+# gem "resque", "~> 1.24.1"
 # gem 'resque-scheduler', :require => 'resque_scheduler'
 
 group :development do
@@ -37,9 +40,6 @@ end
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
 
 # Deploy with Capistrano
 # gem 'capistrano'

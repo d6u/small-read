@@ -1,8 +1,9 @@
 class CleanDuplicates
-  @queue = :clean_duplicates_query
+  include Sidekiq::Worker
 
-  def self.perform
-    puts "Perform CleanDuplicates"
+  def perform
+    puts "--> Performing CleanDuplicates"
+
     User.all.each do |user|
       user.twitters.each do |twitter|
         # clean duplicate feeds
@@ -35,7 +36,8 @@ class CleanDuplicates
 
       end
     end
-    puts "Finish Perform CleanDuplicates"
+
+    puts "--> Finish Performing CleanDuplicates"
   end
 
 end

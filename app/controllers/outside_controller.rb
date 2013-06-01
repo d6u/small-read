@@ -47,7 +47,8 @@ class OutsideController < ApplicationController
           @user = User.new(:name => response['screen_name'])
           @user.twitters << Twitter.new(response)
           @user.save
-          Resque.enqueue(FetchTweets, @user.id, false)
+          FetchTweets.perform_async(@user.id, false)
+          # Resque.enqueue(FetchTweets, @user.id, false)
           remember_user_login(:cookies => true)
           redirect_to controller: 'inside', action: 'welcome'
         # Re-login

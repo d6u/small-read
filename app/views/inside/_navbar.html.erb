@@ -1,8 +1,10 @@
 <nav class="navbar navbar-vertical">
-	<%= link_to({:controller => 'settings', :action => 'settings'}, :class => 'navbar-element gravatar-image-element') do %>
-		<div class="gravatar-image">
-			<%= image_tag Gravatar.new(@user.email).image_url, :class => '', :alt => 'Profile Image' %>
-		</div>
+	<% if @user.email %>
+		<%= link_to({:controller => 'settings', :action => 'settings'}, :class => 'navbar-element gravatar-image-element') do %>
+			<div class="gravatar-image">
+				<%= image_tag Gravatar.new(@user.email).image_url, :class => '', :alt => 'Profile Image' %>
+			</div>
+		<% end %>
 	<% end %>
 
 	<% if params[:action] == 'index' %>

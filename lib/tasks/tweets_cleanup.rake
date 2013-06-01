@@ -1,3 +1,3 @@
 task "tweets:cleanup" => :environment do
-  Resque.enqueue(CleanDuplicates)
+  # Resque.enqueue(CleanDuplicates)
 end
