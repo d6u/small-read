@@ -1,3 +1,1 @@
-web:    bundle exec rails server -p $PORT
-worker: bundle exec rake resque:work QUEUE=*
-# scheduler: bundle exec rake feeds:update
+web: bundle exec unicorn -p $PORT -E $RACK_ENV -c ./config/unicorn.rb

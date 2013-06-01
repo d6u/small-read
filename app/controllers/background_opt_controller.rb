@@ -21,7 +21,8 @@ class BackgroundOptController < ApplicationController
   # ========
   def feedback
     redirect_to :action => 'index' unless params[:subject] && params[:content] && params[:page_name]
-    Resque.enqueue(SendFeedback, {
+    # Resque.enqueue(SendFeedback, {
+    SendFeedback.perform_async({
       :page_name           => params[:page_name],
       :feedback_user_id    => params[:feedback_user_id],
       :feedback_user_email => params[:feedback_user_email],
