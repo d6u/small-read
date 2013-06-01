@@ -9,6 +9,7 @@
 	bottom: 0;
 	width: 60px;
 	padding: 10px;
+	min-height: 400px;
 }
 
 // Element
@@ -24,6 +25,15 @@
 	height: 50px;
 	border-radius: 2px;
 	overflow: hidden;
+}
+
+// Twitter API Count
+.twitter-api-counts {
+	span {
+		display: table;
+		margin: 0 auto;
+		text-align: center;
+	}
 }
 
 // Button

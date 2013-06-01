@@ -28,6 +28,7 @@ SmallRead::Application.routes.draw do
   # => Background
   match 'bg/refresh'                => 'background_opt#refresh'
   match 'bg/load_folders_and_feeds' => 'background_opt#load_folders_and_feeds'
+  get   'bg/twitter_api_counts'     => 'background_opt#twitter_api_counts'
 
   # => Resources
   resources :folders do

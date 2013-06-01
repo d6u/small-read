@@ -17,4 +17,11 @@ class BackgroundOptController < ApplicationController
     render json: json
   end
 
+  # twitter_api_counts
+  # ==================
+  def twitter_api_counts
+    rate_limit_status = @user.twitters[0].rate_limit_status(:resources => 'statuses')
+    render :json => {:limits => rate_limit_status['resources']['statuses']['/statuses/home_timeline']['remaining']}
+  end
+
 end
