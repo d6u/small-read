@@ -9,13 +9,6 @@ class InsideController < ApplicationController
   def index
   end
 
-  # feedback
-  # ========
-  def feedback
-    redirect_to :action => 'index' unless params[:subject] && params[:content] && params[:page_name]
-    Resque.enqueue(SendFeedback, params[:page_name], params[:subject], params[:content])
-  end
-
   # ========================= logout ==========================================
   def logout
     if params[:confirmation] == 'yes'
