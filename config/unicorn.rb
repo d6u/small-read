@@ -42,11 +42,11 @@ after_fork do |server, worker|
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
 
   Sidekiq.configure_client do |config|
-    config.redis = { :url => ENV["REDISTOGO_URL"], :namespace => 'small-read-sidekiq', :size => 1 }
+    config.redis = { :url => ENV["REDISTOGO_URL"], :size => 1 }
   end
 
   Sidekiq.configure_server do |config|
-    config.redis = { :url => ENV["REDISTOGO_URL"], :namespace => 'small-read-sidekiq', :size => 5 }
+    config.redis = { :url => ENV["REDISTOGO_URL"], :size => 5 }
   end
 
 end
