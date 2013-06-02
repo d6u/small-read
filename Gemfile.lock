@@ -29,6 +29,9 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.2)
+    asset_sync (0.5.4)
+      activemodel
+      fog
     awesome_print (1.1.0)
     better_errors (0.9.0)
       coderay (>= 1.0.0)
@@ -45,10 +48,22 @@ GEM
     connection_pool (1.0.0)
     debug_inspector (0.0.2)
     erubis (2.7.0)
+    excon (0.22.1)
     execjs (1.4.0)
       multi_json (~> 1.0)
+    fog (1.11.1)
+      builder
+      excon (~> 0.20)
+      formatador (~> 0.2.0)
+      json (~> 1.7)
+      mime-types
+      net-scp (~> 1.1)
+      net-ssh (>= 2.1.3)
+      nokogiri (~> 1.5.0)
+      ruby-hmac
     font-awesome-rails (3.1.1.2)
       railties (>= 3.2, < 5.0)
+    formatador (0.2.4)
     garelic (0.2.1)
     gravatar-ultimate (1.0.3)
     hike (1.2.2)
@@ -64,7 +79,11 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.23)
     multi_json (1.7.4)
+    net-scp (1.1.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.6.7)
     newrelic_rpm (3.6.3.104)
+    nokogiri (1.5.9)
     oauth_twitter (0.2.2)
       multi_json (~> 1.7)
       rack (>= 1.4.5)
@@ -100,6 +119,7 @@ GEM
     redis (3.0.4)
     redis-namespace (1.3.0)
       redis (~> 3.0.0)
+    ruby-hmac (0.4.0)
     sass (3.2.9)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -135,6 +155,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  asset_sync
   awesome_print
   better_errors
   binding_of_caller
