@@ -53,3 +53,11 @@ production:
   pool: 5
   username: social-feed
   password:
+
+staging:
+  adapter: postgresql
+  encoding: unicode
+  database: social-feed_production
+  pool: 5
+  username: social-feed
+  password:

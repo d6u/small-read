@@ -43,7 +43,7 @@ SmallRead::Application.configure do
   # config.cache_store = :mem_cache_store
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
-  config.action_controller.asset_host = "http://d2la1xdzxssk6h.cloudfront.net"
+  config.action_controller.asset_host = "//d2la1xdzxssk6h.cloudfront.net"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   config.assets.precompile += %w(.svg .eot .woff .ttf .otf inside.css outside.css settings.css font-awesome-ie7.min.css inside_*.js outside_*.js settings_*.js)

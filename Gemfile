@@ -33,6 +33,13 @@ group :production do
 end
 
 
+group :staging do
+  # Monitor
+  gem 'newrelic_rpm'
+  gem 'garelic'
+end
+
+
 group :assets do
   gem 'sass-rails', '~> 3.2'
   gem 'jquery-rails'
