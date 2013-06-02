@@ -68,6 +68,7 @@ var TweetView = Backbone.View.extend({
 });
 
 var Tweet = Backbone.Model.extend({
+    urlRoot: '/tweets/',
     initialize: function(attributes, options) {
         this.entities = JSON.parse(attributes.entities);
         if (this.entities.media) {
@@ -119,6 +120,7 @@ var TweetsContent = Backbone.View.extend({
         var that = this;
         this.$('.tweets-list').on('scroll', function() {
             that.markRead();
+            that.loadMoreTweets();
         });
     },
     markRead: function() {
@@ -150,18 +152,30 @@ var TweetsContent = Backbone.View.extend({
                 }
             );
         }
+    },
+    loadMoreTweets: function() {
+        if (!tweets.reachesEnd) {
+            var containerHeight = this.collection.models[this.collection.models.length - 1].view.$el.parent().height();
+            var lastTweetViewDistanceToTop = this.collection.models[this.collection.models.length - 1].view.$el.position().top;
+            if (containerHeight + 100 >= lastTweetViewDistanceToTop && !tweets.loadingMoreTweets) {
+                tweets.loadingMoreTweets = true;
+                tweets.loadMoreTweets();
+            }
+        }
     }
 });
 
 var Tweets = Backbone.Collection.extend({
     model: Tweet,
     initialize: function(models, options) {
+        this.loadingMoreTweets = false;
         this.view = options.view;
         this.view.collection = this;
         // empty current set of Tweets
         this.on('reset', function(collection, options) {
             _.each(options.previousModels, function(model, index, models) {
                 model.view.remove();
+                collection.reachesEnd = null;
             }, this);
         }, this);
         // add new Tweets
@@ -170,18 +184,41 @@ var Tweets = Backbone.Collection.extend({
         }, this);
     },
     loadTweets: function(source) {
+        var that = this;
         this.view.$('.tweets-list').scrollTop(0);
         this.reset();
         this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
         this.current_source = source;
-        this.url = source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        this.url = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
         this.fetch({
-            success: function(collection, response) {},
+            success: function(collection, response) {
+                if (response.length < 20) {
+                    that.reachesEnd = true;
+                }
+            },
+            error: function(collection, response) {}
+        });
+    },
+    loadMoreTweets: function() {
+        var that = this;
+        var max_id = this.models[this.models.length - 1].get('id') - 1;
+        this.url = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets?max_id=" + max_id) : ("/folders/"+this.current_source.id + "/tweets?max_id=" + max_id);
+        this.fetch({
+            remove: false,
+            success: function(collection, response) {
+                if (response.length < 20) {
+                    that.reachesEnd = true;
+                }
+            },
             error: function(collection, response) {}
         });
     },
     parse: function(response) {
-        this.view.$('.tweets-list').empty();
+        if (!this.loadingMoreTweets) {
+            this.view.$('.tweets-list').empty();
+        } else {
+            this.loadingMoreTweets = false;
+        }
         return response;
     }
 });

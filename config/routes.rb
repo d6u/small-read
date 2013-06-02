@@ -31,6 +31,8 @@ SmallRead::Application.routes.draw do
   get   'bg/twitter_api_counts'     => 'background_opt#twitter_api_counts'
 
   # => Resources
+  resources :tweets
+
   resources :folders do
     resources :feeds
     resources :tweets
