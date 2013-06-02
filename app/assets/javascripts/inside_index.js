@@ -11,7 +11,7 @@
 //= require modules/feedback_modal.js
 
 
-// var needle;
+var needle;
 $(document).ready(function() {
 
 // Navbar View
@@ -124,9 +124,9 @@ var TweetsContent = Backbone.View.extend({
         });
     },
     markRead: function() {
-        _.each(this.collection.models, function(model, index, models) {
-            if (!model.get('read') && (model.view.$el.position().top + 20) < 0) {
-                model.toggleRead();
+        this.collection.each(function(tweet) {
+            if (!tweet.get('read') && (tweet.view.$el.position().top + 20) < 0) {
+                tweet.toggleRead();
             }
         });
     },
@@ -135,7 +135,7 @@ var TweetsContent = Backbone.View.extend({
         var that = this;
         if (confirm('Mark everything READ?')) {
             var all_tweets_ids = [];
-            _.each(this.collection.where({read: null}), function(ele, index, eles) {
+            _.each(this.collection.where({read: false}), function(ele, index, eles) {
                 all_tweets_ids.push(ele.id);
             });
             $.post('/mark_all_read', {ids: all_tweets_ids.join()},
@@ -154,12 +154,12 @@ var TweetsContent = Backbone.View.extend({
         }
     },
     loadMoreTweets: function() {
-        if (!tweets.reachesEnd) {
+        if (!this.collection.reachesEnd && !this.collection.loadingMoreTweets) {
             var containerHeight = this.collection.models[this.collection.models.length - 1].view.$el.parent().height();
             var lastTweetViewDistanceToTop = this.collection.models[this.collection.models.length - 1].view.$el.position().top;
-            if (containerHeight + 100 >= lastTweetViewDistanceToTop && !tweets.loadingMoreTweets) {
-                tweets.loadingMoreTweets = true;
-                tweets.loadMoreTweets();
+            if (containerHeight + 50 >= lastTweetViewDistanceToTop && !this.collection.loadingMoreTweets) {
+                this.collection.loadingMoreTweets = true;
+                this.collection.loadMoreTweets();
             }
         }
     }
@@ -169,29 +169,31 @@ var Tweets = Backbone.Collection.extend({
     model: Tweet,
     initialize: function(models, options) {
         this.loadingMoreTweets = false;
+        this.reachesEnd = null;
         this.view = options.view;
         this.view.collection = this;
         // empty current set of Tweets
-        this.on('reset', function(collection, options) {
+        this.on('reset', function(that, options) {
             _.each(options.previousModels, function(model, index, models) {
                 model.view.remove();
-                collection.reachesEnd = null;
             }, this);
+            that.reachesEnd = null;
         }, this);
         // add new Tweets
         this.on('add', function(tweet, tweets, options) {
             this.view.$('.tweets-list').append(tweet.view.render().el);
         }, this);
+        needle = this;
     },
     loadTweets: function(source) {
-        var that = this;
         this.view.$('.tweets-list').scrollTop(0);
         this.reset();
         this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
         this.current_source = source;
-        this.url = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        this.url = this.urlRoot;
         this.fetch({
-            success: function(collection, response) {
+            success: function(that, response) {
                 if (response.length < 20) {
                     that.reachesEnd = true;
                 }
@@ -200,12 +202,12 @@ var Tweets = Backbone.Collection.extend({
         });
     },
     loadMoreTweets: function() {
-        var that = this;
-        var max_id = this.models[this.models.length - 1].get('id') - 1;
-        this.url = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets?max_id=" + max_id) : ("/folders/"+this.current_source.id + "/tweets?max_id=" + max_id);
+        this.view.$('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
+        var max_id = this.last().get('id') - 1;
+        this.url = this.urlRoot + "?max_id=" + max_id;
         this.fetch({
             remove: false,
-            success: function(collection, response) {
+            success: function(that, response) {
                 if (response.length < 20) {
                     that.reachesEnd = true;
                 }
@@ -217,6 +219,7 @@ var Tweets = Backbone.Collection.extend({
         if (!this.loadingMoreTweets) {
             this.view.$('.tweets-list').empty();
         } else {
+            this.view.$('.progress.progress-striped.active').remove();
             this.loadingMoreTweets = false;
         }
         return response;
