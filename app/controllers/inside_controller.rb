@@ -31,19 +31,6 @@ class InsideController < ApplicationController
     end
   end
 
-  # ========================= welmark_all_readcome ============================
-  def mark_all_read
-    tweets_ids = params[:ids].split(/,/)
-    tweets = Tweet.find(tweets_ids)
-    updated_feeds = []
-    tweets.each do |t|
-      t.update_attributes(:read => true)
-      updated_feeds << t.feed unless updated_feeds.include? t.feed
-    end
-    updated_feeds.each {|fd| fd.count_unread }
-    head :no_content
-  end
-
   # Filters & Private
   private
 

@@ -119,8 +119,10 @@ var TweetsContent = Backbone.View.extend({
         // attach 'scroll' event
         var that = this;
         this.$('.tweets-list').on('scroll', function() {
-            that.markRead();
-            that.loadMoreTweets();
+            if (!that.collection.isEmpty()) {
+                that.markRead();
+                that.loadMoreTweets();
+            }
         });
     },
     markRead: function() {
@@ -133,24 +135,39 @@ var TweetsContent = Backbone.View.extend({
     markAllRead: function(event) {
         event.preventDefault();
         var that = this;
-        if (confirm('Mark everything READ?')) {
-            var all_tweets_ids = [];
-            _.each(this.collection.where({read: false}), function(ele, index, eles) {
-                all_tweets_ids.push(ele.id);
-            });
-            $.post('/mark_all_read', {ids: all_tweets_ids.join()},
-                function(data, textStatus, jqXHR) {
-                    _.each(that.collection.models, function(tweet, index, models) {
-                        tweet.toggleRead(false);
-                        tweets.current_source.set('unread_count', 0);
-                        if (!tweets.current_source.has('folder_id')) {
-                            // folder
-                            var source_feed = tweets.current_source.feeds.where({id: this.get('feed_id').toString()})[0];
-                            source_feed.set('unread_count', 0);
-                        }
-                    });
-                }
-            );
+        if (!this.collection.isEmpty() && confirm('Mark everything READ?')) {
+            if (this.collection.current_source.has('folder_id')) {
+                // this is a feed
+                $.post(
+                    '/mark_all_read',
+                    {feed_id: this.collection.current_source.get('id')},
+                    function(data, textStatus, jqXHR) {
+                        that.collection.each(function(tweet) {
+                            tweet.toggleRead(false);
+                        });
+                        var feed_previous_unread_count = that.collection.current_source.get('unread_count');
+                        that.collection.current_source.set('unread_count', 0);
+                        var current_folder = that.collection.current_source.collection.folder;
+                        var current_folder_unread_count = current_folder.get('unread_count');
+                        current_folder.set('unread_count', current_folder_unread_count - feed_previous_unread_count);
+                    }
+                );
+            } else {
+                // this is a folder
+                $.post(
+                    '/mark_all_read',
+                    {folder_id: this.collection.current_source.get('id')},
+                    function(data, textStatus, jqXHR) {
+                        that.collection.each(function(tweet) {
+                            tweet.toggleRead(false);
+                        });
+                        that.collection.current_source.set('unread_count', 0);
+                        that.collection.current_source.feeds.each(function(feed){
+                            feed.set('unread_count', 0);
+                        });
+                    }
+                );
+            }
         }
     },
     loadMoreTweets: function() {
