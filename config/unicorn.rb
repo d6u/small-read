@@ -14,8 +14,20 @@ before_fork do |server, worker|
 
   defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
 
-  @sidekiq_pid ||= spawn("bundle exec sidekiq -c 2")
-  @clockwork_pid ||= spawn("bundle exec clockwork ./config/clock.rb")
+  if $redis
+    puts "--> Disconnecting Redis"
+    $redis.quit
+  end
+
+  unless @sidekiq_pid
+    puts "--> Starting Sidekiq"
+    @sidekiq_pid ||= spawn("bundle exec sidekiq -c 2")
+  end
+
+  unless @clockwork_pid
+    puts "--> Starting Clockwork"
+    @clockwork_pid ||= spawn("bundle exec clockwork ./config/clock.rb")
+  end
 
 end
 
@@ -30,11 +42,11 @@ after_fork do |server, worker|
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
 
   Sidekiq.configure_client do |config|
-    config.redis = { :size => 1 }
+    config.redis = { :url => ENV["REDISTOGO_URL"], :namespace => 'small-read-sidekiq', :size => 1 }
   end
 
   Sidekiq.configure_server do |config|
-    config.redis = { :size => 5 }
+    config.redis = { :url => ENV["REDISTOGO_URL"], :namespace => 'small-read-sidekiq', :size => 5 }
   end
 
 end
