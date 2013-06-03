@@ -1,0 +1,13 @@
+.list-container {
+    position: absolute;
+    top: 34px;
+    bottom: 0;
+    width: 100%;
+    overflow-y: auto;
+    .progress {
+        margin: 20px;
+    }
+}
+.list-container-item {
+    position: relative;
+}

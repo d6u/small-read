@@ -1,10 +1,10 @@
 <!-- FeedsContent -->
 <section class="feeds">
 	<div class="toolbox">
-		<%= link_to({controller: 'background_opt', :action => "refresh"}, {class: 'refresh-feeds feeds-toolbox-button', :id => 'refresh'}) do %>
+		<%= link_to({controller: 'background_opt', :action => "refresh"}, {:class => 'refresh-feeds toolbox-button feeds-toolbox-button', :id => 'refresh'}) do %>
 			<i class="icon-refresh"></i>
 		<% end %>
-		<%= link_to({controller: 'settings', action: 'manage_folders'}, class: 'feeds-toolbox-button', id: 'manage_folder') do %>
+		<%= link_to({controller: 'settings', action: 'manage_folders'}, :class => 'toolbox-button feeds-toolbox-button', id: 'manage_folder') do %>
 			<i class="icon-wrench"></i>
 		<% end %>
 	</div>
@@ -58,7 +58,11 @@
 <!-- TweetsContent -->
 <section class="tweets">
 	<div class="toolbox">
-		<%= link_to 'Mark All Read', '#', {class: 'tweets-toolbox-button', id: 'mark_all_read'} %>
+		<div class="toolbox-button toolbox-button-tweets display-only-unread-wrap">
+			<%= check_box_tag :display_only_unread, 1, true, :id => 'display_only_unread' %>
+			<%= label_tag :display_only_unread, "Display Only Unread" %>
+		</div>
+		<%= link_to 'Mark All Read', '#', {:class => 'toolbox-button toolbox-button-tweets', id: 'mark_all_read'} %>
 	</div>
 	<div class="list-container tweets-list">
 

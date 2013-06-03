@@ -7,12 +7,14 @@
 //= require backbone.min.js
 //= require jquery.simplemodal.1.4.4.min.js
 //= require bootstrap.tooltips.min.js
+//= require jquery.icheck.min.js
 //= require custom-functions.js
 //= require modules/feedback_modal.js
 
 
 var needle;
 $(document).ready(function() {
+
 
 // Navbar View
 // ===========
@@ -58,6 +60,9 @@ var TweetView = Backbone.View.extend({
     },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
+        if (this.model.get('read')) {
+            this.$el.addClass('read');
+        }
         return this;
     },
     toggleReadWhenClick: function(event) {
@@ -124,6 +129,10 @@ var TweetsContent = Backbone.View.extend({
                 that.loadMoreTweets();
             }
         });
+        this.$('#display_only_unread').iCheck({
+            checkboxClass: 'icheckbox_square-blue display-only-unread-icheck',
+            increaseArea: '20%'
+        });
     },
     markRead: function() {
         this.collection.each(function(tweet) {
@@ -185,8 +194,10 @@ var TweetsContent = Backbone.View.extend({
 var Tweets = Backbone.Collection.extend({
     model: Tweet,
     initialize: function(models, options) {
+        var that = this;
         this.loadingMoreTweets = false;
         this.reachesEnd = null;
+        this.loadingBehavior = 'unreadOnly';
         this.view = options.view;
         this.view.collection = this;
         // empty current set of Tweets
@@ -200,14 +211,49 @@ var Tweets = Backbone.Collection.extend({
         this.on('add', function(tweet, tweets, options) {
             this.view.$('.tweets-list').append(tweet.view.render().el);
         }, this);
-        needle = this;
+        this.view.$('#display_only_unread')
+        .on('ifChecked', function(event) {
+            that.loadingBehavior = 'unreadOnly';
+            if (that.current_source) {
+                that.reloadTweets();
+            }
+        })
+        .on('ifUnchecked', function(event) {
+            that.loadingBehavior = 'all';
+            if (that.current_source) {
+                that.reloadTweets();
+            }
+        });
     },
     loadTweets: function(source) {
         this.view.$('.tweets-list').scrollTop(0);
         this.reset();
         this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
         this.current_source = source;
-        this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        if (this.loadingBehavior === 'unreadOnly') {
+            this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        } else if (this.loadingBehavior === 'all') {
+            this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets?all=true") : ("/folders/"+this.current_source.id + "/tweets?all=true");
+        }
+        this.url = this.urlRoot;
+        this.fetch({
+            success: function(that, response) {
+                if (response.length < 20) {
+                    that.reachesEnd = true;
+                }
+            },
+            error: function(collection, response) {}
+        });
+    },
+    reloadTweets: function() {
+        this.view.$('.tweets-list').scrollTop(0);
+        this.reset();
+        this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
+        if (this.loadingBehavior === 'unreadOnly') {
+            this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        } else if (this.loadingBehavior === 'all') {
+            this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets?all=true") : ("/folders/"+this.current_source.id + "/tweets?all=true");
+        }
         this.url = this.urlRoot;
         this.fetch({
             success: function(that, response) {
@@ -221,7 +267,7 @@ var Tweets = Backbone.Collection.extend({
     loadMoreTweets: function() {
         this.view.$('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
         var max_id = this.last().get('id') - 1;
-        this.url = this.urlRoot + "?max_id=" + max_id;
+        this.url = (this.loadingBehavior === 'unreadOnly') ? (this.urlRoot + "?max_id=" + max_id) : (this.urlRoot + "&max_id=" + max_id);
         this.fetch({
             remove: false,
             success: function(that, response) {
