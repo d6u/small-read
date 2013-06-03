@@ -14,7 +14,6 @@ SmallRead::Application.routes.draw do
   match 'home'                     => 'inside#index'
   match 'logout'                   => 'inside#logout'
   match 'welcome'                  => 'inside#welcome'
-  match 'mark_all_read'            => 'inside#mark_all_read'
 
   # => Settings
   match 'settings'                 => 'settings#settings'
@@ -29,8 +28,11 @@ SmallRead::Application.routes.draw do
   match 'bg/load_folders_and_feeds' => 'background_opt#load_folders_and_feeds'
   post  'bg/feedback'               => 'background_opt#feedback'
   get   'bg/twitter_api_counts'     => 'background_opt#twitter_api_counts'
+  post  'mark_all_read'             => 'background_opt#mark_all_read'
 
   # => Resources
+  resources :tweets
+
   resources :folders do
     resources :feeds
     resources :tweets

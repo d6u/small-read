@@ -4,13 +4,31 @@ class TweetsController < ApplicationController
 
   # GET /tweets
   def index
+    query = params[:max_id] ? ['tweets.id <= ?', params[:max_id]] : ''
+    query_loading_behavior = params[:all] === 'true' ? '' : 'read IS FALSE'
     if params[:folder_id]
-      tweets = Folder.find(params[:folder_id]).tweets.where('read IS NULL OR read IS FALSE').sort {|a,b| b.created_at <=> a.created_at}
+      tweets = Folder.find(params[:folder_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
     elsif params[:feed_id]
-      tweets = Feed.find(params[:feed_id]).tweets.where('read IS NULL OR read IS FALSE').sort {|a,b| b.created_at <=> a.created_at }
+      tweets = Feed.find(params[:feed_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
     else
       head :no_content
     end
+
+    # if params[:folder_id]
+    #   unless params[:max_id]
+    #     tweets = Folder.find(params[:folder_id]).tweets.where('read IS FALSE').order('id DESC').limit(20)
+    #   else
+    #     tweets = Folder.find(params[:folder_id]).tweets.where(['read IS FALSE AND tweets.id <= ?', params[:max_id]]).order('id DESC').limit(20)
+    #   end
+    # elsif params[:feed_id]
+    #   unless params[:max_id]
+    #     tweets = Feed.find(params[:feed_id]).tweets.where('read IS FALSE').order('id DESC').limit(20)
+    #   else
+    #     tweets = Feed.find(params[:feed_id]).tweets.where(['read IS FALSE AND tweets.id <= ?', params[:max_id]]).order('id DESC').limit(20)
+    #   end
+    # else
+    #   head :no_content
+    # end
 
     render json: (tweets.map do |t|
       if t.retweeted_status_id_str
@@ -73,11 +91,7 @@ class TweetsController < ApplicationController
 
   # PUT /tweets/1
   def update
-    if params[:folder_id]
-      @tweet = Folder.find(params[:folder_id]).tweets.find(params[:id])
-    else
-      @tweet = Feed.find(params[:feed_id]).tweets.find(params[:id])
-    end
+    @tweet = Tweet.find(params[:id])
 
     if @tweet.update_attributes(params[:tweet])
       @tweet.feed.count_unread.folder.count_unread

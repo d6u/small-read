@@ -1,17 +1,31 @@
+// Common
 .toolbox {
-    a {
-        display: inline-block;
-        height: 34px;
+    position: relative;
+    height: 34px;
+}
+
+.toolbox-button {
+    line-height: 34px;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    min-width: 24px;
+    height: 34px;
+    color: white;
+    &:hover {
+        text-decoration: none;
         color: white;
-        &:hover {
-            text-decoration: none;
-        }
+    }
+    label {
+        line-height: 34px;
+        margin-bottom: 0;
     }
 }
 
+// Feeds
 .feeds {
     .toolbox {
-        a {
+        .toolbox-button {
             width: 34px;
             &:hover {
                 background-color: lighten($green, 10%);
@@ -31,14 +45,24 @@
     }
 }
 
-.tweets-toolbox-button {
-    line-height: 34px;
-    font-size: 14px;
+// Tweets
+.toolbox-button-tweets {
     padding: 0 10px;
     &:hover {
-        background-color: lighten($night, 10%);
+        background-color: $red;
     }
 }
+
+.display-only-unread-wrap {
+    padding-left: 34px;
+}
+.display-only-unread-icheck {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    background-color: $gray3;
+}
+
 #mark_all_read {
     float: right;
 }
