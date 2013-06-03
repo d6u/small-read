@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130525062716) do
+ActiveRecord::Schema.define(:version => 20130602062437) do
 
   create_table "feeds", :force => true do |t|
     t.string   "id_str"
@@ -98,13 +98,12 @@ ActiveRecord::Schema.define(:version => 20130525062716) do
     t.text     "text"
     t.text     "entities"
     t.string   "lang"
-    t.boolean  "read"
+    t.boolean  "read",                                    :default => false
     t.integer  "feed_id"
-    t.datetime "created_at",                              :null => false
-    t.datetime "updated_at",                              :null => false
+    t.datetime "created_at",                                                 :null => false
+    t.datetime "updated_at",                                                 :null => false
   end
 
-  add_index "tweets", ["feed_id", "id_str"], :name => "index_tweets_on_feed_id_and_id_str", :unique => true
   add_index "tweets", ["feed_id"], :name => "index_tweets_on_feed_id"
   add_index "tweets", ["read"], :name => "index_tweets_on_read"
 

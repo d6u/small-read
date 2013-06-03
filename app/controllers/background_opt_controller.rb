@@ -38,4 +38,20 @@ class BackgroundOptController < ApplicationController
     render :json => {:limits => rate_limit_status['resources']['statuses']['/statuses/home_timeline']['remaining']}
   end
 
+  # welmark_all_readcome
+  # ====================
+  def mark_all_read
+    if params[:feed_id]
+      feed = Feed.find_by_id params[:feed_id]
+      feed.tweets.each {|t| t.update_attributes(:read => true)}
+      feed.count_unread
+      feed.folder.count_unread
+    elsif params[:folder_id]
+      folder = Folder.find_by_id params[:folder_id]
+      folder.tweets.each {|t| t.update_attributes(:read => true)}
+      folder.count_unread(:count_feeds_unread => true)
+    end
+    head :no_content
+  end
+
 end

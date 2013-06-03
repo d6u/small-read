@@ -36,7 +36,7 @@ class Twitter < ActiveRecord::Base
     # Delete friends
     self.feeds.where(:id_str => deleting_ids).destroy_all if !deleting_ids.empty?
 
-    # Update tweets
+    # Retrive tweets from Twitter
     page_num = options[:as_much_as_possible] == true ? 9 : nil
     if self.newest_tweet_id
       raw_tweets = self.home_timeline({:since_id => self.newest_tweet_id, :count => 200}, {:pages => page_num})
@@ -44,12 +44,13 @@ class Twitter < ActiveRecord::Base
       raw_tweets = self.home_timeline({:count => 200}, {:pages => page_num})
     end
 
+    # Insert tweets into db
     if !raw_tweets.empty?
+      raw_tweets.reverse!
       affected_feeds += Feed.create_tweets_from_raw(raw_tweets, self.id, :return_affected_feeds => true)
       self.update_attribute(:newest_tweet_id, raw_tweets[0]['id_str'])
 
       # Update unread_count
-      # self.user.folders.each {|fd| fd.count_unread(:count_feeds_unread => true)}
       affected_feeds.each {|fe| fe.count_unread}
       self.user.folders.each {|fd| fd.count_unread}
     end

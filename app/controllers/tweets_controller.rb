@@ -5,9 +5,17 @@ class TweetsController < ApplicationController
   # GET /tweets
   def index
     if params[:folder_id]
-      tweets = Folder.find(params[:folder_id]).tweets.where('read IS NULL OR read IS FALSE').sort {|a,b| b.created_at <=> a.created_at}
+      unless params[:max_id]
+        tweets = Folder.find(params[:folder_id]).tweets.where('read IS FALSE').order('id DESC').limit(20)
+      else
+        tweets = Folder.find(params[:folder_id]).tweets.where(['read IS FALSE AND tweets.id <= ?', params[:max_id]]).order('id DESC').limit(20)
+      end
     elsif params[:feed_id]
-      tweets = Feed.find(params[:feed_id]).tweets.where('read IS NULL OR read IS FALSE').sort {|a,b| b.created_at <=> a.created_at }
+      unless params[:max_id]
+        tweets = Feed.find(params[:feed_id]).tweets.where('read IS FALSE').order('id DESC').limit(20)
+      else
+        tweets = Feed.find(params[:feed_id]).tweets.where(['read IS FALSE AND tweets.id <= ?', params[:max_id]]).order('id DESC').limit(20)
+      end
     else
       head :no_content
     end
@@ -73,11 +81,7 @@ class TweetsController < ApplicationController
 
   # PUT /tweets/1
   def update
-    if params[:folder_id]
-      @tweet = Folder.find(params[:folder_id]).tweets.find(params[:id])
-    else
-      @tweet = Feed.find(params[:feed_id]).tweets.find(params[:id])
-    end
+    @tweet = Tweet.find(params[:id])
 
     if @tweet.update_attributes(params[:tweet])
       @tweet.feed.count_unread.folder.count_unread

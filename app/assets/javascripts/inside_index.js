@@ -11,7 +11,7 @@
 //= require modules/feedback_modal.js
 
 
-// var needle;
+var needle;
 $(document).ready(function() {
 
 // Navbar View
@@ -68,6 +68,7 @@ var TweetView = Backbone.View.extend({
 });
 
 var Tweet = Backbone.Model.extend({
+    urlRoot: '/tweets/',
     initialize: function(attributes, options) {
         this.entities = JSON.parse(attributes.entities);
         if (this.entities.media) {
@@ -118,37 +119,65 @@ var TweetsContent = Backbone.View.extend({
         // attach 'scroll' event
         var that = this;
         this.$('.tweets-list').on('scroll', function() {
-            that.markRead();
+            if (!that.collection.isEmpty()) {
+                that.markRead();
+                that.loadMoreTweets();
+            }
         });
     },
     markRead: function() {
-        _.each(this.collection.models, function(model, index, models) {
-            if (!model.get('read') && (model.view.$el.position().top + 20) < 0) {
-                model.toggleRead();
+        this.collection.each(function(tweet) {
+            if (!tweet.get('read') && (tweet.view.$el.position().top + 20) < 0) {
+                tweet.toggleRead();
             }
         });
     },
     markAllRead: function(event) {
         event.preventDefault();
         var that = this;
-        if (confirm('Mark everything READ?')) {
-            var all_tweets_ids = [];
-            _.each(this.collection.where({read: null}), function(ele, index, eles) {
-                all_tweets_ids.push(ele.id);
-            });
-            $.post('/mark_all_read', {ids: all_tweets_ids.join()},
-                function(data, textStatus, jqXHR) {
-                    _.each(that.collection.models, function(tweet, index, models) {
-                        tweet.toggleRead(false);
-                        tweets.current_source.set('unread_count', 0);
-                        if (!tweets.current_source.has('folder_id')) {
-                            // folder
-                            var source_feed = tweets.current_source.feeds.where({id: this.get('feed_id').toString()})[0];
-                            source_feed.set('unread_count', 0);
-                        }
-                    });
-                }
-            );
+        if (!this.collection.isEmpty() && confirm('Mark everything READ?')) {
+            if (this.collection.current_source.has('folder_id')) {
+                // this is a feed
+                $.post(
+                    '/mark_all_read',
+                    {feed_id: this.collection.current_source.get('id')},
+                    function(data, textStatus, jqXHR) {
+                        that.collection.each(function(tweet) {
+                            tweet.toggleRead(false);
+                        });
+                        var feed_previous_unread_count = that.collection.current_source.get('unread_count');
+                        that.collection.current_source.set('unread_count', 0);
+                        var current_folder = that.collection.current_source.collection.folder;
+                        var current_folder_unread_count = current_folder.get('unread_count');
+                        current_folder.set('unread_count', current_folder_unread_count - feed_previous_unread_count);
+                    }
+                );
+            } else {
+                // this is a folder
+                $.post(
+                    '/mark_all_read',
+                    {folder_id: this.collection.current_source.get('id')},
+                    function(data, textStatus, jqXHR) {
+                        that.collection.each(function(tweet) {
+                            tweet.toggleRead(false);
+                        });
+                        that.collection.current_source.set('unread_count', 0);
+                        that.collection.current_source.feeds.each(function(feed){
+                            feed.set('unread_count', 0);
+                        });
+                    }
+                );
+            }
+        }
+    },
+    loadMoreTweets: function() {
+        if (!this.collection.reachesEnd && !this.collection.loadingMoreTweets) {
+            var containerHeight = this.collection.models[this.collection.models.length - 1].view.$el.parent().height();
+            var lastTweetViewDistanceToTop = this.collection.models[this.collection.models.length - 1].view.$el.position().top;
+            if (containerHeight + 50 >= lastTweetViewDistanceToTop && !this.collection.loadingMoreTweets) {
+                this.collection.loadingMoreTweets = true;
+                this.collection.loadMoreTweets();
+            }
         }
     }
 });
@@ -156,32 +185,60 @@ var TweetsContent = Backbone.View.extend({
 var Tweets = Backbone.Collection.extend({
     model: Tweet,
     initialize: function(models, options) {
+        this.loadingMoreTweets = false;
+        this.reachesEnd = null;
         this.view = options.view;
         this.view.collection = this;
         // empty current set of Tweets
-        this.on('reset', function(collection, options) {
+        this.on('reset', function(that, options) {
             _.each(options.previousModels, function(model, index, models) {
                 model.view.remove();
             }, this);
+            that.reachesEnd = null;
         }, this);
         // add new Tweets
         this.on('add', function(tweet, tweets, options) {
             this.view.$('.tweets-list').append(tweet.view.render().el);
         }, this);
+        needle = this;
     },
     loadTweets: function(source) {
         this.view.$('.tweets-list').scrollTop(0);
         this.reset();
         this.view.$('.tweets-list').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
         this.current_source = source;
-        this.url = source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        this.urlRoot = this.current_source.has('folder_id') ? ("/feeds/"+this.current_source.id + "/tweets") : ("/folders/"+this.current_source.id + "/tweets");
+        this.url = this.urlRoot;
         this.fetch({
-            success: function(collection, response) {},
+            success: function(that, response) {
+                if (response.length < 20) {
+                    that.reachesEnd = true;
+                }
+            },
+            error: function(collection, response) {}
+        });
+    },
+    loadMoreTweets: function() {
+        this.view.$('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
+        var max_id = this.last().get('id') - 1;
+        this.url = this.urlRoot + "?max_id=" + max_id;
+        this.fetch({
+            remove: false,
+            success: function(that, response) {
+                if (response.length < 20) {
+                    that.reachesEnd = true;
+                }
+            },
             error: function(collection, response) {}
         });
     },
     parse: function(response) {
-        this.view.$('.tweets-list').empty();
+        if (!this.loadingMoreTweets) {
+            this.view.$('.tweets-list').empty();
+        } else {
+            this.view.$('.progress.progress-striped.active').remove();
+            this.loadingMoreTweets = false;
+        }
         return response;
     }
 });
