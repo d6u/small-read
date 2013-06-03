@@ -61,8 +61,6 @@ GEM
       net-ssh (>= 2.1.3)
       nokogiri (~> 1.5.0)
       ruby-hmac
-    font-awesome-rails (3.1.1.2)
-      railties (>= 3.2, < 5.0)
     formatador (0.2.4)
     garelic (0.2.1)
     gravatar-ultimate (1.0.3)
@@ -160,7 +158,6 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   clockwork
-  font-awesome-rails
   garelic
   gravatar-ultimate
   jquery-rails
