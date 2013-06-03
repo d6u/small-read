@@ -1,0 +1,56 @@
+.feeds {
+    position: fixed;
+    top: 0;
+    left: 80px;
+    bottom: 0;
+    width: 250px;
+}
+
+.item-face {
+    display: block;
+    height: 40px;
+    & > *[class$="name"] {
+        margin-right: 35px;
+    }
+}
+.feed-name {
+    margin-left: 40px;
+}
+.item-icon-left {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    left: 5px;
+    top: 5px;
+}
+.item-icon-right {
+    @extend .item-icon-left;
+    left: auto;
+    right: 5px;
+}
+.feeds-list {
+    &:after {
+        display: block;
+        content: "";
+        height: 100px;
+    }
+}
+
+// folder
+.folder {
+    & > .item-face {
+        position: absolute;
+        width: 100%;
+    }
+}
+.folder-name {
+    margin-left: 10px;
+}
+.folder-feeds-list {
+    padding-top: 40px;
+}
+.feed-sortable-placeholder {
+    height: 30px;
+    border-width: 1px;
+    margin: 4px;
+}

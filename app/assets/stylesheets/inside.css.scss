@@ -12,24 +12,18 @@
 
 // Module
 @import "module/inside_navbar";
+@import "module/feedback_modal";
 @import "module/inside_sections";
 @import "module/user_forms";
 @import "module/toolboxes";
-@import "module/feedback_modal";
+@import "module/list_container";
+@import "module/feeds";
+@import "module/feeds_module";
+@import "module/tweets";
+@import "module/tweets_module";
 
 // State
 
+
 // Utility
-@import "utility/utilities"; // Has to be last to override when necessary
-
-
-
-
-
-// layouts
-@import "inside/inside_layouts";
-
-// modules
-@import "inside/toolbox_and_list_container";
-@import "inside/feeds_module";
-@import "inside/tweets_module";
+@import "utility/utilities";
