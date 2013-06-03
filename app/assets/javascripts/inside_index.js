@@ -60,6 +60,9 @@ var TweetView = Backbone.View.extend({
     },
     render: function() {
         this.$el.append(this.template(this.model.attributes));
+        if (this.model.get('read')) {
+            this.$el.addClass('read');
+        }
         return this;
     },
     toggleReadWhenClick: function(event) {
