@@ -7,12 +7,20 @@
 //= require backbone.min.js
 //= require jquery.simplemodal.1.4.4.min.js
 //= require bootstrap.tooltips.min.js
+//= require jquery.icheck.min.js
 //= require custom-functions.js
 //= require modules/feedback_modal.js
 
 
 var needle;
 $(document).ready(function() {
+
+// iCheck checkbox
+// ===============
+$('#display_only_unread').iCheck({
+    checkboxClass: 'icheckbox_square-blue',
+    increaseArea: '20%'
+});
 
 // Navbar View
 // ===========

@@ -51,6 +51,15 @@
         background-color: $red;
     }
 }
+.display-only-unread {
+    padding-left: 34px;
+}
+.icheckbox_square-blue {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    background-color: $gray3;
+}
 #mark_all_read {
     float: right;
 }
