@@ -60,7 +60,7 @@ module SmallRead
     config.assets.version = '1.0'
 
     # Add font directory to asset pipeline
-    config.assets.paths << Rails.root.join("vendor", "assets", "font")
+    config.assets.paths << Rails.root.join("vendor", "assets", "fonts")
     config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif)
 
     # Use heroku precompiler
