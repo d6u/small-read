@@ -48,7 +48,7 @@ class Twitter < ActiveRecord::Base
     if !raw_tweets.empty?
       raw_tweets.reverse!
       affected_feeds += Feed.create_tweets_from_raw(raw_tweets, self.id, :return_affected_feeds => true)
-      self.update_attribute(:newest_tweet_id, raw_tweets[0]['id_str'])
+      self.update_attribute(:newest_tweet_id, raw_tweets.last['id_str'])
 
       # Update unread_count
       affected_feeds.each {|fe| fe.count_unread}
