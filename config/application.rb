@@ -63,8 +63,6 @@ module SmallRead
     config.assets.paths << Rails.root.join("vendor", "assets", "fonts")
     config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif)
 
-    config.assets.paths << Rails.root.join("vendor", "assets", "stylesheets")
-
     # Use heroku precompiler
     config.assets.initialize_on_precompile = false
 
