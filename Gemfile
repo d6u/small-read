@@ -36,7 +36,7 @@ end
 group :assets do
   gem 'sass-rails', '~> 3.2'
   gem 'jquery-rails'
-  gem 'font-awesome-rails'
+  # gem 'font-awesome-rails'
   gem 'uglifier', '>= 1.0.3'
 end
 

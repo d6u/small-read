@@ -1,0 +1,25 @@
+defaults: &defaults
+  fog_provider: 'AWS'
+  aws_access_key_id: "AKIAIN2U6UJ6OCDHLPNQ"
+  aws_secret_access_key: "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"
+  fog_directory: "small-read-assets"
+  # fog_region: "eu-west-1"
+  existing_remote_files: keep
+  # gzip_compression: true
+  # fail_silently: true
+  # always_upload: [/.\.svg/, /.eot/, '*.woff', '*.ttf', '*.otf', 'inside.css', /outside\.css./', 'settings.css', 'font-awesome-ie7.css', 'inside_*.js', 'outside_*.js', 'settings_*.js']
+
+development:
+  <<: *defaults
+  enabled: false
+
+test:
+  <<: *defaults
+  enabled: false
+
+staging:
+  <<: *defaults
+  fog_directory: "smallread-staging-assets"
+
+production:
+  <<: *defaults
