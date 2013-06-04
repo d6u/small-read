@@ -1,23 +1,18 @@
-<section class="settings">
+<div class="settings-body">
 
-    <%= render 'setting_section_nav' %>
-
-    <div class="settings-body">
-
-        <!-- Settings Form -->
-        <%= form_for(:user, html: {}) do |f| %>
-            <%= field_set_tag('General Settings') do %>
-                <%= f.label(:name, {class: ""}) %>
-                <%= f.text_field(:name, placeholder: 'Name') %>
-                <span class="help-block"><%
-                if !@user.errors[:name].empty?
-                    @user.errors[:name].each do |e|
-                        %><%= e %><%
-                    end
-                end %></span>
-                <%= f.button('Update', class: 'btn btn-primary') %>
-            <% end %>
+    <!-- Settings Form -->
+    <%= form_for(:user, html: {}) do |f| %>
+        <%= field_set_tag('General Settings') do %>
+            <%= f.label(:name, {class: ""}) %>
+            <%= f.text_field(:name, placeholder: 'Name') %>
+            <span class="help-block"><%
+            if !@user.errors[:name].empty?
+                @user.errors[:name].each do |e|
+                    %><%= e %><%
+                end
+            end %></span>
+            <%= f.button('Update', class: 'btn btn-primary') %>
         <% end %>
+    <% end %>
 
-    </div>
-</section>
+</div>
