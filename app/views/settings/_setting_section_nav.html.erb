@@ -1,17 +1,24 @@
-<div class="setting-section-nav clearfix">
-    <%= link_to({action: 'settings'}) do %>
-        <span class="icon-user"></span>General
-    <% end %>
-    <%= link_to({action: 'manage_folders'}) do %>
-        <span class="icon-folder-open"></span>Folders
-    <% end %>
-    <%= link_to({action: 'manage_twitter_account'}) do %>
-        <span class="icon-twitter"></span>Twitter Account
-    <% end %>
-    <%= link_to({action: 'manage_email'}) do %>
-        <span class="icon-envelope"></span>Manage Email
-    <% end %>
-    <%= link_to({action: 'manage_password'}) do %>
-        <span class="icon-lock"></span>Manage Password
-    <% end %>
+<div class="setting-section-nav">
+    <div class="settings-section-nav-inner clearfix">
+        <%= link_to({action: 'settings'}) do %>
+            <span class="icon-user"></span>General
+            <%= indicator_if "settings" %>
+        <% end %>
+        <%= link_to({action: 'manage_folders'}) do %>
+            <span class="icon-folder-close"></span>Folders
+            <%= indicator_if "manage_folders" %>
+        <% end %>
+        <%= link_to({action: 'manage_twitter_account'}) do %>
+            <span class="icon-twitter"></span>Twitters
+            <%= indicator_if "manage_twitter_account" %>
+        <% end %>
+        <%= link_to({action: 'manage_email'}) do %>
+            <span class="icon-envelope"></span>Email
+            <%= indicator_if "manage_email" %>
+        <% end %>
+        <%= link_to({action: 'manage_password'}) do %>
+            <span class="icon-lock"></span>Password
+            <%= indicator_if "manage_password" %>
+        <% end %>
+    </div>
 </div>
