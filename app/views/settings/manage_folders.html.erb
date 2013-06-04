@@ -1,7 +1,27 @@
 <div class="settings-body">
 
+    <div class="folder-management">
+        <div class="form-inline create-new-folder-block">
+            <span class="help-inline">Create new folder </span>
+            <%= text_field_tag :new_folder_name, nil, :class => 'input-xlarge', :placeholder => 'New folder name' %>
+            <%= button_tag "Create", :type => 'button', :class => 'btn btn-primary', :id => 'create_new_folder_button' %>
+        </div>
 
+        <div class="folder-list">
+            <% @folders.each do |folder| %>
+            <div class="folder-list-item alert alert-info">
+                <div class="btn-group">
+                    <button class="btn btn-small btn-primary" <%= disabled_if_reserved(folder) %>><i class="icon-resize-vertical"></i></button>
+                    <button class="btn btn-small btn-primary" <%= disabled_if_reserved(folder) %>>Rename</button>
+                </div>
+                <span class="folder-list-item-name"><%= folder.name %></span>
+                <button class="btn btn-small btn-primary delete-folder" <%= disabled_if_reserved(folder) %>><i class="icon-trash"></i></button>
+            </div>
+            <% end %>
+        </div>
+    </div>
 
+    <div class="manage-folders">
         <!-- Manage Folder -->
         <% @folders.each do |folder| %>
         <div class="folder-container" data-id="<%= folder.id %>">
