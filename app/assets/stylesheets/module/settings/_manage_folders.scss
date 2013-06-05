@@ -1,5 +1,30 @@
+.settings-folders {
+    .lead-title {
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin-bottom: 20px;
+        font-size: 21px;
+        line-height: 40px;
+        color: #333333;
+        border: 0;
+        border-bottom: 1px solid $gray3;
+    }
+}
+
+// Manage Folders
+// ==============
 .create-new-folder-block {
     margin-bottom: 20px;
+}
+
+.folder-list-item {
+    margin-bottom: 0;
+    // border: none;
+    // border-bottom: 1px solid $blue;
+    :last-child {
+        // border-bottom: none;
+    }
 }
 
 .folder-list-item-name {
@@ -10,7 +35,9 @@
     float: right;
 }
 
-.manage-folders {
+// Re-arrange Feeds
+// ================
+.feeds-management {
 
     .folder-title {
         margin: 0;
@@ -57,3 +84,19 @@
     }
 
 } // .manage-folders
+
+.jump-to-edit-folder-button {
+    margin-left: 15px;
+    span {
+        opacity: 0;
+    }
+    &:hover {
+        text-decoration: none;
+        small {
+            color: black;
+        }
+        span {
+            opacity: 1;
+        }
+    }
+}
