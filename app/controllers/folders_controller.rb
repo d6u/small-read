@@ -4,7 +4,7 @@ class FoldersController < ApplicationController
 
   # GET /folders
   def index
-    @folders = @user.folders.all
+    @folders = @user.folders.all.order('position ASC')
     render json: @folders
   end
 
