@@ -1,0 +1,15 @@
+<!-- div.folder-list-item.alert.alert-info -->
+<script type="text/template" id="folder-management-template">
+    <div class="btn-group">
+        <button class="btn btn-primary rearrange-folder" {{ if (reserved === true) { }}
+            {{= "disabled" }}
+        {{ } }}><i class="icon-resize-vertical"></i></button>
+        <button class="btn btn-primary rename-folder" {{ if (reserved === true) { }}
+            {{= "disabled" }}
+        {{ } }}>Rename</button>
+    </div>
+    <span class="folder-list-item-name">{{= name }}</span>
+    <button class="btn btn-primary delete-folder" {{ if (reserved === true) { }}
+            {{= "disabled" }}
+        {{ } }}><i class="icon-trash"></i></button>
+</script>

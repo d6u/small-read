@@ -54,3 +54,93 @@
     border-width: 1px;
     margin: 4px;
 }
+
+// Item style
+// ==========
+.feeds {
+    .toolbox {
+        background-color: $green;
+    }
+    .list-container {
+        background-color: white;
+    }
+}
+.list-container-item {
+    // overflow-y: hidden;
+    &:hover {
+        & > .list-item-hover > a {
+            // display: block;
+        }
+    }
+}
+.item-face {
+    color: inherit;
+    &:hover {
+        text-decoration: none;
+        background-color: $cloud;
+        .unread-count {
+            background-color: white;
+            -webkit-box-shadow: -10px 0px 20px 10px rgba(242, 242, 242, 1);
+            box-shadow: -10px 0px 20px 10px rgba(242, 242, 242, 1);
+        }
+    }
+}
+.feed-name {
+    line-height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.feed-screen-name {
+    font-size: 14px;
+    font-weight: normal;
+    color: $silver;
+}
+.unread-count {
+    line-height: 30px;
+    font-weight: bold;
+    text-align: center;
+    background-color: $cloud;
+    -webkit-box-shadow: -10px 0px 20px 10px rgba(255, 255, 255, 1);
+    box-shadow: -10px 0px 20px 10px rgba(255, 255, 255, 1);
+}
+.list-item-hover {
+    & > a {
+        display: none;
+        background-color: white;
+        text-align: center;
+        font-size: 20px;
+        line-height: 30px;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
+.feed-option-fav {
+    color: $yellow;
+    &:hover {
+        background-color: $yellow;
+        color: white;
+    }
+}
+.feed-option-more {
+    color: $blue;
+    &:hover {
+        background-color: $blue;
+        color: white;
+    }
+}
+.folder-name {
+    line-height: 40px;
+    font-size: 16px;
+    font-weight: normal;
+    font-variant: small-caps;
+}
+.folder-feeds-list {
+
+}
+.feed-sortable-placeholder {
+    border-style: dashed;
+    border-color: $orange;
+}
