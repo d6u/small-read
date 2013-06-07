@@ -21,10 +21,10 @@ var ManageFoldersView = Backbone.View.extend({
         'click #create_new_folder_button': 'addNewFolder'
     },
     initialize: function(options) {
-        var that = this;
         this.initSortable();
     },
     initSortable: function() {
+        var that = this;
         this.$('.folder-list').sortable({
             handle: ".rearrange-folder",
             placeholder: "folder-list-sortable-placeholder",
