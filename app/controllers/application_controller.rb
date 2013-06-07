@@ -1,9 +1,14 @@
 class ApplicationController < ActionController::Base
 
   protect_from_forgery
+  before_filter :redirect_if_in_production_if_not_www
   before_filter :check_cookies_and_session
 
   protected
+  def redirect_if_in_production_if_not_www
+    redirect_to 'http://www.getsmallread.com' if Rails.env.production? && request.host != 'www.getsmallread.com'
+  end
+
   # remember_user_login
   def remember_user_login(args={}, user=@user)
     # cookies
