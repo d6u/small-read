@@ -12,43 +12,36 @@
 
 		<!-- Folders and Feeds -->
 		<% @user.folders.order("position ASC").each do |folder| %>
-			<div class="folder list-container-item"
-				 data-id="<%= folder.id %>"
-				 data-name="<%= folder.name %>"
-				 data-unread_count="<%= folder.unread_count %>">
-				<a href="#" class="item-face folder-face">
-				    <div class="folder-name"><%= folder.name %></div>
-				    <span class="item-icon-right unread-count"><%= folder.unread_count %></span>
-				</a>
-				<div class="list-item-hover">
-				    <a href="#" class="item-icon-right icon-angle-down feed-option-more"></a>
-				</div>
-				<div class="folder-feeds-list">
-
-					<!-- Feeds -->
-					<% folder.feeds.order("unread_count DESC").each do |feed| %>
-						<div class="feed list-container-item"
-							 data-id="<%= feed.id %>"
-							 data-name="<%= feed.name %>"
-							 data-profile_image_url="<%= feed.profile_image_url %>"
-							 data-screen_name="<%= feed.screen_name %>"
-							 data-unread_count="<%= feed.unread_count %>"
-							 data-folder_id="<%= feed.folder_id%>">
-							<a href="#" class="item-face">
-							    <img class="item-icon-left feed-profile-image" src="<%= feed.profile_image_url %>">
-							    <div class="feed-name"><%= feed.name %> <span class="feed-screen-name">@<%= feed.screen_name %></span></div>
-							    <span class="item-icon-right unread-count"><%= feed.unread_count %></span>
-							</a>
-							<div class="list-item-hover">
-							    <a href="#" class="item-icon-left icon-star feed-option-fav"></a>
-							    <a href="#" class="item-icon-right icon-angle-down feed-option-more"></a>
-							</div>
-						</div>
-					<% end %>
-					<!-- END of Feeds -->
-
-				</div>
+		<div class="folder list-container-item" <%= output_attributes_as_dataset(folder) %>>
+			<a href="#" class="item-face folder-face">
+			    <div class="folder-name">
+			    	<%= folder.name %>
+			    </div>
+			    <span class="item-icon-right unread-count"><%= folder.unread_count %></span>
+			</a>
+			<div class="list-item-hover list-item-hover-folder">
+			    <a href="#" class="item-icon-right icon-expand-alt folder-option-expand"></a>
 			</div>
+			<div class="folder-feeds-list">
+
+				<!-- Feeds -->
+				<% folder.feeds.order("unread_count DESC").each do |feed| %>
+				<div class="feed list-container-item" <%= output_attributes_as_dataset(feed) %>>
+					<a href="#" class="item-face">
+					    <img class="item-icon-left feed-profile-image" src="<%= feed.profile_image_url %>">
+					    <div class="feed-name"><%= feed.name %> <span class="feed-screen-name">@<%= feed.screen_name %></span></div>
+					    <span class="item-icon-right unread-count"><%= feed.unread_count %></span>
+					</a>
+					<div class="list-item-hover">
+					    <a href="#" class="item-icon-left icon-star feed-option-fav"></a>
+					    <a href="#" class="item-icon-right icon-angle-down feed-option-more"></a>
+					</div>
+				</div>
+				<% end %>
+				<!-- END of Feeds -->
+
+			</div>
+		</div>
 		<% end %>
 		<!-- END of Folders -->
 
