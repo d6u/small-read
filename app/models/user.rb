@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest("Put #{self.salt} on the #{entered_password}")
   end
 
+  # before_create
   def create_default_folders
     self.folders << [
       Folder.new(name: "Favorite", position: 0),
