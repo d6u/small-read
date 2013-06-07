@@ -18,6 +18,7 @@ SmallRead::Application.routes.draw do
   # => Settings
   match 'settings'                 => 'settings#settings'
   match 'manage_folders'           => 'settings#manage_folders'
+  get   'manage_feeds'              => 'settings#manage_feeds'
   match 'manage_twitter_account'   => 'settings#manage_twitter_account'
   match 'add_twitter'              => 'settings#add_twitter'
   match 'manage_email'             => 'settings#manage_email'

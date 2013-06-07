@@ -8,6 +8,10 @@
             <span class="icon-folder-close"></span>Folders
             <%= indicator_if "manage_folders" %>
         <% end %>
+        <%= link_to({action: 'manage_feeds'}) do %>
+            <span class="icon-comments"></span>Feeds
+            <%= indicator_if "manage_feeds" %>
+        <% end %>
         <%= link_to({action: 'manage_twitter_account'}) do %>
             <span class="icon-twitter"></span>Twitters
             <%= indicator_if "manage_twitter_account" %>

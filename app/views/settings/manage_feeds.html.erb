@@ -1,0 +1,24 @@
+<div class="settings-body settings-folders">
+
+    <!-- Feeds Management -->
+    <div class="feeds-management">
+        <p class="lead-title">Categorize Feeds</p>
+        <% @folders.each do |folder| %>
+        <div class="folder-container" <%= output_attributes_as_dataset(folder) %>>
+            <h3 class="folder-title">
+                <%= folder.name %>
+            </h3>
+            <div class="folder-feeds-container clearfix">
+                <% folder.feeds.each do |feed| %>
+                <div class="feed-item" <%= output_attributes_as_dataset(feed) %>>
+                    <img src="<%= feed.profile_image_url %>">
+                    <span class="feed-name"><%= feed.name %></span>
+                    <span class="feed-screen-name">@<%= feed.screen_name %></span>
+                </div>
+                <% end %>
+            </div>
+        </div>
+        <% end %>
+    </div>
+
+</div>

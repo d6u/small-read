@@ -15,44 +15,22 @@
             <div class="folder-list-item alert alert-info form-inline"
                  <%= output_attributes_as_dataset(folder) %>>
                 <div class="btn-group">
-                    <a class="btn btn-primary rearrange-folder"><i class="icon-resize-vertical"></i></a>
+                    <a class="btn btn-primary rearrange-folder">
+                        <i class="icon-resize-vertical"></i>
+                    </a>
                     <button class="btn btn-primary rename-folder" <%= disabled_if_reserved(folder) %>>Rename</button>
                 </div>
                 <span class="folder-list-item-name"><%= folder.name %></span>
                 <span class="folder-list-item-rename hide">
-                    <input type="text" value="<%= folder.name %>"><button class="btn submit-folder-rename">Change</button>
+                    <input type="text" value="<%= folder.name %>">
+                    <button class="btn submit-folder-rename">Change</button>
                 </span>
-                <button class="btn btn-primary delete-folder" <%= disabled_if_reserved(folder) %>><i class="icon-trash"></i></button>
+                <button class="btn btn-primary delete-folder" <%= disabled_if_reserved(folder) %>>
+                    <i class="icon-trash"></i>
+                </button>
             </div>
             <% end %>
         </div>
-    </div>
-
-    <!-- Feeds Management -->
-    <div class="feeds-management">
-        <p class="lead-title">Categorize Feeds</p>
-        <% @folders.each do |folder| %>
-        <div class="folder-container" <%= output_attributes_as_dataset(folder) %>>
-            <h3 class="folder-title">
-                <%= folder.name %>
-                <a href="#" class="jump-to-edit-folder-button">
-                    <small>
-                        <i class="icon-chevron-up"></i>
-                        <span class="">edit</span>
-                    </small>
-                </a>
-            </h3>
-            <div class="folder-feeds-container clearfix">
-                <% folder.feeds.each do |feed| %>
-                <div class="feed-item" <%= output_attributes_as_dataset(feed) %>>
-                    <img src="<%= feed.profile_image_url %>">
-                    <span class="feed-name"><%= feed.name %></span>
-                    <span class="feed-screen-name">@<%= feed.screen_name %></span>
-                </div>
-                <% end %>
-            </div>
-        </div>
-        <% end %>
     </div>
 
 </div>

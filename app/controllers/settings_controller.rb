@@ -5,7 +5,10 @@ class SettingsController < ApplicationController
   layout "settings_layout"
 
   # Actions
-  # ========================= settings ========================================
+  # =======
+
+  # settings
+  # --------
   def settings
     if params[:user]
       redirect_to action: 'settings' if @user.update_attributes(params[:user])
@@ -18,7 +21,14 @@ class SettingsController < ApplicationController
     @folders = @user.folders.order('position ASC')
   end
 
-  # ========================= manage_twitter_account ==========================
+  # manage_feeds
+  # ------------
+  def manage_feeds
+    @folders = @user.folders.order('position ASC')
+  end
+
+  # manage_twitter_account
+  # ----------------------
   def manage_twitter_account
     # delete twitter
     if params[:delete_twitter] && params[:delete_twitter] == 'true' && params[:twitter_id]
@@ -42,7 +52,7 @@ class SettingsController < ApplicationController
   end
 
   # add_twitter
-  # ===========
+  # -----------
   def add_twitter
     if params[:oauth_token] && params[:oauth_verifier]
       if params[:oauth_token] == session[:twitter_request_token]
@@ -72,14 +82,16 @@ class SettingsController < ApplicationController
     end
   end
 
-  # ========================= manage_email ====================================
+  # manage_email
+  # ------------
   def manage_email
     if params[:user]
       redirect_to action: 'manage_email' if @user.update_attributes(params[:user])
     end
   end
 
-  # ========================= manage_password =================================
+  # manage_password
+  # ---------------
   def manage_password
     if params[:user]
       if @user.update_attributes(params[:user])
