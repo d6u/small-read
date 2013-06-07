@@ -44,7 +44,7 @@
             </h3>
             <div class="folder-feeds-container clearfix">
                 <% folder.feeds.each do |feed| %>
-                <div class="feed-item" <%= output_attributes_as_dataset(folder) %>>
+                <div class="feed-item" <%= output_attributes_as_dataset(feed) %>>
                     <img src="<%= feed.profile_image_url %>">
                     <span class="feed-name"><%= feed.name %></span>
                     <span class="feed-screen-name">@<%= feed.screen_name %></span>

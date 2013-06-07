@@ -191,7 +191,7 @@ $('.folder-feeds-container').sortable({
             var sender_id = Number(ui.sender.closest('.folder-container').attr('data-id')),
                 receiver_id = Number(ui.item.closest('.folder-container').attr('data-id')),
                 item_id = Number(ui.item.attr('data-id'));
-            $.post('/manage_folders', {
+            $.post('/bg/manage_feeds', {
                 source_folder_id: sender_id,
                 dest_folder_id:   receiver_id,
                 feed_id:          item_id

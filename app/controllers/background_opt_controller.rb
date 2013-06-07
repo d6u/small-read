@@ -67,4 +67,22 @@ class BackgroundOptController < ApplicationController
     head :no_content
   end
 
+  # manage_feeds
+  # ------------
+  def manage_feeds
+    if params[:source_folder_id] && params[:dest_folder_id] && params[:feed_id]
+      @feed = @user.twitters.first.feeds.find(params[:feed_id])
+      previous_folder = @feed.folder
+      if @feed.update_attributes(:folder_id => params[:dest_folder_id])
+        previous_folder.count_unread
+        @feed.folder.count_unread
+        head :no_content
+      else
+        render json: @feed.errors, status: :unprocessable_entity
+      end
+    else
+      head :no_content
+    end
+  end
+
 end

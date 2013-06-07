@@ -12,21 +12,10 @@ class SettingsController < ApplicationController
     end
   end
 
-  # ========================= manage_folders ==================================
+  # manage_folders
+  # --------------
   def manage_folders
-    if params[:source_folder_id] && params[:dest_folder_id] && params[:feed_id]
-      @feed = @user.twitters.first.feeds.find(params[:feed_id])
-      previous_folder = @feed.folder
-      if @feed.update_attributes(:folder_id => params[:dest_folder_id])
-        previous_folder.count_unread
-        @feed.folder.count_unread
-        head :no_content
-      else
-        render json: @feed.errors, status: :unprocessable_entity
-      end
-    else
-      @folders = @user.folders.order('position ASC')
-    end
+    @folders = @user.folders.order('position ASC')
   end
 
   # ========================= manage_twitter_account ==========================
