@@ -16,7 +16,7 @@
                  data-name="<%= folder.name %>"
                  data-color="<%= folder.color %>">
                 <div class="btn-group">
-                    <button class="btn btn-primary rearrange-folder" <%= disabled_if_reserved(folder) %>><i class="icon-resize-vertical"></i></button>
+                    <a class="btn btn-primary rearrange-folder" <%= disabled_if_reserved(folder) %>><i class="icon-resize-vertical"></i></a>
                     <button class="btn btn-primary rename-folder" <%= disabled_if_reserved(folder) %>>Rename</button>
                 </div>
                 <span class="folder-list-item-name"><%= folder.name %></span>

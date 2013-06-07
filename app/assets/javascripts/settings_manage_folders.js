@@ -21,6 +21,16 @@ var ManageFoldersView = Backbone.View.extend({
         'click #create_new_folder_button': 'addNewFolder'
     },
     initialize: function(options) {
+        var that = this;
+        this.$('.folder-list').sortable({
+            handle: ".rearrange-folder:not([disabled])",
+            placeholder: "folder-list-sortable-placeholder",
+            scrollSpeed: 40,
+            zIndex: 100,
+            update: function(event, ui) {
+                that.collection.updatedFolderPositions();
+            }
+        }).disableSelection();
     },
     addNewFolder: function(event) {
         event.preventDefault();
@@ -58,7 +68,6 @@ var FolderOnlyView = Backbone.View.extend({
         'click .delete-folder': 'deleteFolder'
     },
     initialize: function(options) {
-        console.log(this.model);
         var that = this;
         this.listenTo(this.model, 'change:name', function(model, value, options) {
             that.$('.folder-list-item-name').html(model.get('name'));
@@ -69,8 +78,9 @@ var FolderOnlyView = Backbone.View.extend({
         return this;
     },
     renameFolder: function(event) {
-        this.$('.folder-list-item-name').hide();
-        this.$('.folder-list-item-rename').show();
+        this.$('.folder-list-item-rename input').val(this.model.get('name'));
+        this.$('.folder-list-item-name').toggle();
+        this.$('.folder-list-item-rename').toggle();
     },
     finishRenaming: function(event) {
         var new_name = this.$('.folder-list-item-rename input').val();
@@ -113,6 +123,27 @@ var FolderOnlyCollection = Backbone.Collection.extend({
         this.on('add', function(model, collection, options) {
             this.view.$('.folder-list').append(model.view.render().el);
         }, this);
+    },
+    updatedFolderPositions: function() {
+        var position_pair = [];
+        this.each(function(folder_only_model) {
+            position_pair.push({
+                id: folder_only_model.id,
+                position: folder_only_model.view.$el.index()
+            });
+        });
+        var id_str = _.pluck(position_pair, 'id').join();
+        var position_str = _.pluck(position_pair, 'position').join();
+        console.log([id_str, position_str]);
+        $.post(
+            '/bg/update_folder_positions',
+            {
+                id_str: id_str,
+                position_str: position_str
+            },
+            function(data, textStatus, jqXHR) {
+            }
+        );
     }
 });
 

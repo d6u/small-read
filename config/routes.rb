@@ -29,6 +29,7 @@ SmallRead::Application.routes.draw do
   post  'bg/feedback'               => 'background_opt#feedback'
   get   'bg/twitter_api_counts'     => 'background_opt#twitter_api_counts'
   post  'mark_all_read'             => 'background_opt#mark_all_read'
+  post  '/bg/update_folder_positions' => 'background_opt#update_folder_positions'
 
   # => Resources
   resources :tweets

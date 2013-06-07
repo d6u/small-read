@@ -25,7 +25,7 @@ class SettingsController < ApplicationController
         render json: @feed.errors, status: :unprocessable_entity
       end
     else
-      @folders = @user.folders.order('position DESC')
+      @folders = @user.folders.order('position ASC')
     end
   end
 
