@@ -26,7 +26,7 @@ class Twitter < ActiveRecord::Base
     affected_feeds = []
     if !new_ids.empty?
       new_friends    = self.users_lookup(:user_id => new_ids)
-      general_folder = self.user.folders.where(:name => 'general')[0]
+      general_folder = self.user.folders.where("lower(name) = 'general'").first
       new_feeds      = new_friends.map {|f| Feed.create_from_raw(f)}
       self.feeds     << new_feeds
       general_folder.feeds << new_feeds

@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
   def create_default_folders
     self.folders << [
       Folder.new(name: "Favorite", position: 0),
-      Folder.new(name: "General",  position: 1),
+      Folder.new(name: "General",  position: 1, :reserved => true),
       Folder.new(name: "Muted",    position: 2, :reserved => true)
     ]
   end
