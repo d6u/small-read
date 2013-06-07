@@ -22,8 +22,11 @@ var ManageFoldersView = Backbone.View.extend({
     },
     initialize: function(options) {
         var that = this;
+        this.initSortable();
+    },
+    initSortable: function() {
         this.$('.folder-list').sortable({
-            handle: ".rearrange-folder:not([disabled])",
+            handle: ".rearrange-folder",
             placeholder: "folder-list-sortable-placeholder",
             scrollSpeed: 40,
             zIndex: 100,
@@ -81,6 +84,11 @@ var FolderOnlyView = Backbone.View.extend({
         this.$('.folder-list-item-rename input').val(this.model.get('name'));
         this.$('.folder-list-item-name').toggle();
         this.$('.folder-list-item-rename').toggle();
+        if ( this.$('.rename-folder').html() === "Rename" ) {
+            this.$('.rename-folder').html('Cancel');
+        } else {
+            this.$('.rename-folder').html('Rename');
+        }
     },
     finishRenaming: function(event) {
         var new_name = this.$('.folder-list-item-rename input').val();
@@ -91,7 +99,17 @@ var FolderOnlyView = Backbone.View.extend({
         this.$('.folder-list-item-name').show();
     },
     deleteFolder: function(event) {
-
+        if (confirm('Do you want to delete folder: '+this.model.get('name')+'?')) {
+            var that = this;
+            var collection = this.model.collection;
+            this.model.destroy({
+                wait: true,
+                success: function(model, response, options) {
+                    that.remove();
+                    collection.updatedFolderPositions();
+                }
+            });
+        }
     }
 });
 
@@ -122,6 +140,7 @@ var FolderOnlyCollection = Backbone.Collection.extend({
         this.view.collection = this;
         this.on('add', function(model, collection, options) {
             this.view.$('.folder-list').append(model.view.render().el);
+            this.updatedFolderPositions();
         }, this);
     },
     updatedFolderPositions: function() {
@@ -134,7 +153,6 @@ var FolderOnlyCollection = Backbone.Collection.extend({
         });
         var id_str = _.pluck(position_pair, 'id').join();
         var position_str = _.pluck(position_pair, 'position').join();
-        console.log([id_str, position_str]);
         $.post(
             '/bg/update_folder_positions',
             {
@@ -147,11 +165,8 @@ var FolderOnlyCollection = Backbone.Collection.extend({
     }
 });
 
-
-
 // Initialization
 // ==============
-
 var folder_list_items = [];
 $('.folder-list-item').each(function(index, ele) {
     folder_list_items.push(new FolderOnly(
@@ -165,9 +180,7 @@ var folder_only_collection = new FolderOnlyCollection(
     { view: new ManageFoldersView() }
 );
 
-
-
-
+// Feeds Management
 $('.folder-feeds-container').sortable({
     connectWith: ".folder-feeds-container",
     placeholder: "sortable-placeholder",
