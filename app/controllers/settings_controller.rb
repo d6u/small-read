@@ -2,34 +2,33 @@ class SettingsController < ApplicationController
   # Filter
   before_filter :redirect_if_not_logged_in
   before_filter :redirect_to_welcome_if_no_email
-  layout "inside_layout"
+  layout "settings_layout"
 
   # Actions
-  # ========================= settings ========================================
+  # =======
+
+  # settings
+  # --------
   def settings
     if params[:user]
       redirect_to action: 'settings' if @user.update_attributes(params[:user])
     end
   end
 
-  # ========================= manage_folders ==================================
+  # manage_folders
+  # --------------
   def manage_folders
-    if params[:source_folder_id] && params[:dest_folder_id] && params[:feed_id]
-      @feed = @user.twitters.first.feeds.find(params[:feed_id])
-      previous_folder = @feed.folder
-      if @feed.update_attributes(:folder_id => params[:dest_folder_id])
-        previous_folder.count_unread
-        @feed.folder.count_unread
-        head :no_content
-      else
-        render json: @feed.errors, status: :unprocessable_entity
-      end
-    else
-      @folders = @user.folders.order('position DESC')
-    end
+    @folders = @user.folders.order('position ASC')
   end
 
-  # ========================= manage_twitter_account ==========================
+  # manage_feeds
+  # ------------
+  def manage_feeds
+    @folders = @user.folders.order('position ASC')
+  end
+
+  # manage_twitter_account
+  # ----------------------
   def manage_twitter_account
     # delete twitter
     if params[:delete_twitter] && params[:delete_twitter] == 'true' && params[:twitter_id]
@@ -53,7 +52,7 @@ class SettingsController < ApplicationController
   end
 
   # add_twitter
-  # ===========
+  # -----------
   def add_twitter
     if params[:oauth_token] && params[:oauth_verifier]
       if params[:oauth_token] == session[:twitter_request_token]
@@ -83,14 +82,16 @@ class SettingsController < ApplicationController
     end
   end
 
-  # ========================= manage_email ====================================
+  # manage_email
+  # ------------
   def manage_email
     if params[:user]
       redirect_to action: 'manage_email' if @user.update_attributes(params[:user])
     end
   end
 
-  # ========================= manage_password =================================
+  # manage_password
+  # ---------------
   def manage_password
     if params[:user]
       if @user.update_attributes(params[:user])

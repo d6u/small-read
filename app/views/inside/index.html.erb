@@ -11,7 +11,7 @@
 	<div class="list-container feeds-list">
 
 		<!-- Folders and Feeds -->
-		<% @user.folders.order("position DESC").each do |folder| %>
+		<% @user.folders.order("position ASC").each do |folder| %>
 			<div class="folder list-container-item"
 				 data-id="<%= folder.id %>"
 				 data-name="<%= folder.name %>"
