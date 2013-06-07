@@ -296,7 +296,8 @@ var FolderView = Backbone.View.extend({
     className: 'folder list-container-item',
     template: _.template($('#folder-template').html()),
     events: {
-        'click .folder-face': 'loadTweets'
+        'click .folder-face': 'loadTweets',
+        'click .folder-option-expand': 'expandFolderList'
     },
     initialize: function(options) {
         var that = this;
@@ -308,6 +309,15 @@ var FolderView = Backbone.View.extend({
     render: function() {
         this.$el.append(this.template(this.model.attributes));
         return this;
+    },
+    expandFolderList: function(event) {
+        event.preventDefault();
+        var $feeds_list = this.$('.folder-feeds-list');
+        if ( $feeds_list.height() === 0 ) {
+            this.$('.folder-feeds-list').css({height: 'auto'});
+        } else {
+            this.$('.folder-feeds-list').css({height: 0});
+        }
     },
     // events callbacks
     loadTweets: function(event) {

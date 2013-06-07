@@ -48,6 +48,8 @@
 }
 .folder-feeds-list {
     padding-top: 40px;
+    overflow: hidden;
+    height: 0;
 }
 .feed-sortable-placeholder {
     height: 30px;
@@ -66,10 +68,10 @@
     }
 }
 .list-container-item {
-    // overflow-y: hidden;
+    overflow-y: hidden;
     &:hover {
-        & > .list-item-hover > a {
-            // display: block;
+        > .list-item-hover-folder > a {
+            display: block;
         }
     }
 }
@@ -137,9 +139,7 @@
     font-weight: normal;
     font-variant: small-caps;
 }
-.folder-feeds-list {
 
-}
 .feed-sortable-placeholder {
     border-style: dashed;
     border-color: $orange;
