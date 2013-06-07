@@ -18,6 +18,7 @@ SmallRead::Application.routes.draw do
   # => Settings
   match 'settings'                 => 'settings#settings'
   match 'manage_folders'           => 'settings#manage_folders'
+  get   'manage_feeds'              => 'settings#manage_feeds'
   match 'manage_twitter_account'   => 'settings#manage_twitter_account'
   match 'add_twitter'              => 'settings#add_twitter'
   match 'manage_email'             => 'settings#manage_email'
@@ -29,6 +30,8 @@ SmallRead::Application.routes.draw do
   post  'bg/feedback'               => 'background_opt#feedback'
   get   'bg/twitter_api_counts'     => 'background_opt#twitter_api_counts'
   post  'mark_all_read'             => 'background_opt#mark_all_read'
+  post  '/bg/update_folder_positions' => 'background_opt#update_folder_positions'
+  post '/bg/manage_feeds'           => 'background_opt#manage_feeds'
 
   # => Resources
   resources :tweets

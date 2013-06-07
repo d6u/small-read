@@ -6,7 +6,7 @@ class Folder < ActiveRecord::Base
   has_many   :read_tweets, :through => :feeds
 
   # Atrributes
-  attr_accessible :name, :color, :position
+  attr_accessible :name, :color, :position, :reserved
 
 
   def count_unread(args = {})

@@ -1,31 +1,26 @@
-<section class="settings">
+<div class="settings-body">
 
-    <%= render 'setting_section_nav' %>
-
-    <div class="settings-body">
-
-        <% if flash[:add_twitter_error] %>
-        <div class="alert alert-error">
-            <p class="lead"><%= flash[:add_twitter_error] %></p>
-        </div>
-        <% end %>
-
-        <% if @status_message %>
-        <div class="alert alert-success">
-            <p class="lead"><%= @status_message %></p>
-        </div>
-        <% end %>
-
-        <!-- Settings Form -->
-        <% @user.twitters.each do |t| %>
-        <div class="alert alert-info twitter-account">
-            <%= link_to({:delete_twitter => true, twitter_id: t.id}, {class: "close", confirm: "Are your sure to un-connect @#{t.screen_name} ?", 'data-dismiss' => 'alert'}) do %>
-            <i class="icon-remove"></i>
-            <% end %>
-            @<%= t.screen_name %>
-        </div>
-        <% end %>
-        <%= link_to('Link another Twitter account', {link_twitter: true}, {class: "btn btn-info"}) %>
-
+    <% if flash[:add_twitter_error] %>
+    <div class="alert alert-error">
+        <p class="lead"><%= flash[:add_twitter_error] %></p>
     </div>
-</section>
+    <% end %>
+
+    <% if @status_message %>
+    <div class="alert alert-success">
+        <p class="lead"><%= @status_message %></p>
+    </div>
+    <% end %>
+
+    <!-- Settings Form -->
+    <% @user.twitters.each do |t| %>
+    <div class="alert alert-info twitter-account">
+        <%= link_to({:delete_twitter => true, twitter_id: t.id}, {class: "close", confirm: "Are your sure to un-connect @#{t.screen_name} ?", 'data-dismiss' => 'alert'}) do %>
+        <i class="icon-remove"></i>
+        <% end %>
+        @<%= t.screen_name %>
+    </div>
+    <% end %>
+    <%= link_to('Link another Twitter account', {link_twitter: true}, {class: "btn btn-info"}) %>
+
+</div>
