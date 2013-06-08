@@ -1,5 +1,5 @@
 do_fetch_tweets:
-  every: 1m
+  every: 15m
   class: FetchTweets
   args:
   description: "This job fetch content from Twitter every 15mins"
