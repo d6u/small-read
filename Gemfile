@@ -16,6 +16,7 @@ gem 'resque-scheduler', :require => 'resque_scheduler'
 # Core plugin
 gem 'oj', '~> 2.0'
 gem 'gravatar-ultimate'
+gem 'newrelic_rpm'
 
 
 group :development do
@@ -28,7 +29,6 @@ end
 
 group :production do
   # Monitor
-  # gem 'newrelic_rpm'
   gem 'garelic'
 end
 

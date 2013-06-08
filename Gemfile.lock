@@ -76,6 +76,7 @@ GEM
     net-scp (1.1.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.6.7)
+    newrelic_rpm (3.6.3.104)
     nokogiri (1.5.9)
     oauth_twitter (0.2.2)
       multi_json (~> 1.7)
@@ -169,6 +170,7 @@ DEPENDENCIES
   garelic
   gravatar-ultimate
   jquery-rails
+  newrelic_rpm
   oauth_twitter
   oj (~> 2.0)
   pg
