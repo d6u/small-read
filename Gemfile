@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'pg'
 gem 'thin'
+gem 'asset_sync'
 # gem 'clockwork'
 gem 'oauth_twitter'
 # gem 'oauth_twitter', :path => '../oauth_twitter'
@@ -15,7 +16,7 @@ gem 'resque-scheduler', :require => 'resque_scheduler'
 # Core plugin
 gem 'oj', '~> 2.0'
 gem 'gravatar-ultimate'
-gem 'asset_sync'
+gem 'system-metrics'
 
 
 group :development do
