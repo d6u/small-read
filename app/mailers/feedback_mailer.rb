@@ -3,8 +3,8 @@ class FeedbackMailer < ActionMailer::Base
 
   def inside_feedback(params)
     @params_fields = params
-    puts "--> generating emails"
+    puts "--> Generating contents of email"
     mail(:to => 'contact@getsmallread.com', :subject => "Feedbacks: #{params[:subject]}")
-    puts "--> feedbacks email generated"
+    puts "--> Email content generated"
   end
 end
