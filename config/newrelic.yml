@@ -3,7 +3,7 @@
 # Ruby, Java, .NET, PHP, and Python applications with deep visibility and low overhead.
 # For more information, visit www.newrelic.com.
 #
-# Generated May 24, 2013
+# Generated June 08, 2013
 #
 # This configuration file is custom generated for Small Read
 
@@ -42,7 +42,10 @@ common: &default_settings
   #       - Ajax Service
   #       - All Services
   #
-  app_name: Small Read
+  app_name:
+    - Small Read
+    - Small Read - worker
+    - Small Read - scheduler
 
   # When "true", the agent collects performance data about your
   # application and reports this data to the New Relic service at
@@ -57,7 +60,7 @@ common: &default_settings
   # The newrelic agent generates its own log file to keep its logging
   # information separate from that of your application. Specify its
   # log level here.
-  log_level: info
+  log_level: warn
 
   # Optionally set the path to the log file This is expanded from the
   # root directory (may be relative or absolute, e.g. 'log/' or
@@ -140,16 +143,16 @@ common: &default_settings
     # call. In other words, when SQL statements exceed this threshold,
     # then capture and send to New Relic the current stack trace. This is
     # helpful for pinpointing where long SQL calls originate from.
-    stack_trace_threshold: 0.500
+    stack_trace_threshold: 0.300
 
     # Determines whether the agent will capture query plans for slow
     # SQL queries.  Only supported in mysql and postgres.  Should be
     # set to false when using other adapters.
-    # explain_enabled: true
+    explain_enabled: true
 
     # Threshold for query execution time below which query plans will
     # not be captured.  Relevant only when `explain_enabled` is true.
-    # explain_threshold: 0.5
+    explain_threshold: 0.3
 
   # Error collector captures information about uncaught exceptions and
   # sends them to New Relic for viewing
@@ -203,6 +206,7 @@ development:
 
   # Enable textmate links
   # textmate: true
+  log_level: debug
 
 test:
   <<: *default_settings

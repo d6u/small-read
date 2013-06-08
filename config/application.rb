@@ -77,5 +77,6 @@ module SmallRead
       :authentication       => 'plain',
       :domain               => 'getsmallread.com'
     }
+
   end
 end

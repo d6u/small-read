@@ -20,3 +20,6 @@ logfile
 
 # foremand local settings
 .env
+
+# Resque crash files
+dump.rdb

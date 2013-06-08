@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130606201354) do
+ActiveRecord::Schema.define(:version => 20130608184844) do
 
   create_table "feeds", :force => true do |t|
     t.string   "id_str"
@@ -88,6 +88,19 @@ ActiveRecord::Schema.define(:version => 20130606201354) do
 
   add_index "remember_logins", ["matching_code"], :name => "index_remember_logins_on_matching_code"
   add_index "remember_logins", ["user_id"], :name => "index_remember_logins_on_user_id"
+
+  create_table "system_metrics", :force => true do |t|
+    t.string   "name",               :null => false
+    t.datetime "started_at",         :null => false
+    t.string   "transaction_id"
+    t.text     "payload"
+    t.float    "duration",           :null => false
+    t.float    "exclusive_duration", :null => false
+    t.integer  "request_id"
+    t.integer  "parent_id"
+    t.string   "action",             :null => false
+    t.string   "category",           :null => false
+  end
 
   create_table "tweets", :force => true do |t|
     t.string   "id_str"
