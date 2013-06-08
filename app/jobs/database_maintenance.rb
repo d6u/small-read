@@ -38,7 +38,7 @@ class DatabaseMaintenance
       end
     end
 
-    puts "--> Database maintenance: cleaning up duplicates"
+    puts "--> Database maintenance: recounting unread_count"
     Folder.all.each do |folder|
       folder.count_unread(:count_feeds_unread => true)
     end
