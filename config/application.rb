@@ -77,5 +77,8 @@ module SmallRead
       :authentication       => 'plain',
       :domain               => 'getsmallread.com'
     }
+
+    # System Metrics
+    config.system_metrics.path_exclude_patterns << /^\/resque/
   end
 end

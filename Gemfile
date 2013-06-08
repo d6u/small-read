@@ -16,13 +16,13 @@ gem 'resque-scheduler', :require => 'resque_scheduler'
 # Core plugin
 gem 'oj', '~> 2.0'
 gem 'gravatar-ultimate'
-gem 'system-metrics'
 
 
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print'
+  gem 'system-metrics'
 end
 
 
