@@ -1,0 +1,12 @@
+do_fetch_tweets:
+  every: 1m
+  class: FetchTweets
+  args:
+  description: "This job fetch content from Twitter every 15mins"
+
+do_database_maintenance:
+  every: 1d
+  class: DatabaseMaintenance
+  queue: database_maintenance_queue
+  args:
+  description: "This job do some basic database cleaning works every day at 2"

@@ -5,12 +5,11 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'pg'
 gem 'thin'
-gem 'sidekiq'
-gem 'clockwork'
+# gem 'clockwork'
 gem 'oauth_twitter'
 # gem 'oauth_twitter', :path => '../oauth_twitter'
 gem "resque", "~> 1.24.1"
-# gem 'resque-scheduler', :require => 'resque_scheduler'
+gem 'resque-scheduler', :require => 'resque_scheduler'
 
 
 # Core plugin
