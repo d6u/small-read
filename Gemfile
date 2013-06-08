@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # Core
 gem 'rails', '3.2.13'
 gem 'pg'
-gem 'thin'
+gem 'unicorn'
 gem 'asset_sync'
 # gem 'clockwork'
 gem 'oauth_twitter'
