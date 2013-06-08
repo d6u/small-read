@@ -4,12 +4,12 @@ source 'https://rubygems.org'
 # Core
 gem 'rails', '3.2.13'
 gem 'pg'
-gem 'unicorn'
+gem 'thin'
 gem 'sidekiq'
 gem 'clockwork'
 gem 'oauth_twitter'
 # gem 'oauth_twitter', :path => '../oauth_twitter'
-# gem "resque", "~> 1.24.1"
+gem "resque", "~> 1.24.1"
 # gem 'resque-scheduler', :require => 'resque_scheduler'
 
 
@@ -36,7 +36,6 @@ end
 group :assets do
   gem 'sass-rails', '~> 3.2'
   gem 'jquery-rails'
-  # gem 'font-awesome-rails'
   gem 'uglifier', '>= 1.0.3'
 end
 

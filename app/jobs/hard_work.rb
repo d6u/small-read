@@ -1,10 +1,10 @@
 class HardWork
-  include Sidekiq::Worker
+  @queue = :testing_queue
 
-  def perform(name="")
-    puts "--> Thinking hard!"
+  def self.perform(name="Default")
+    puts "--> Working hard for #{name}!"
     sleep 3
-    puts "--> Finish hard work! #{name}"
+    puts "--> Finish hard work!"
   end
 
 end
