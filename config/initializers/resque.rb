@@ -10,6 +10,8 @@ Resque.redis  = Redis.new(
   :thread_safe => true
 )
 Resque.redis.namespace = "small_read:resque"
+Resque.logger          = Logger.new(STDOUT)
+Resque.logger.level    = Logger::INFO
 
 
 # if Rails.env.production?

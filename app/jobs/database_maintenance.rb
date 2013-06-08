@@ -1,9 +1,10 @@
-class CleanDuplicates
-  include Sidekiq::Worker
+class DatabaseMaintenance
+  @queue = :database_maintenance_queue
 
-  def perform
-    puts "--> Performing CleanDuplicates"
+  def self.perform
+    puts "--> Begin database maintenance"
 
+    puts "--> Database maintenance: cleaning up duplicates"
     User.all.each do |user|
       user.twitters.each do |twitter|
         # clean duplicate feeds
@@ -37,7 +38,7 @@ class CleanDuplicates
       end
     end
 
-    puts "--> Finish Performing CleanDuplicates"
+    puts "--> Finish database maintenance"
   end
 
 end

@@ -1,11 +1,11 @@
 class SendFeedback
-  include Sidekiq::Worker
+  @queue = :email_queue
 
-  def perform(params)
-    puts "--> Sedding feedbacks"
+  def self.perform(params)
+    puts "--> Begin sending feedback email"
 
     FeedbackMailer.inside_feedback(params).deliver
 
-    puts "--> Feedbacks sent"
+    puts "--> Finish sending feedback email"
   end
 end

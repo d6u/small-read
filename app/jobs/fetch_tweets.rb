@@ -1,19 +1,27 @@
 class FetchTweets
-  include Sidekiq::Worker
+  @queue = :fetch_twitter_content_queue
 
-  def perform(user_id=nil, as_much_as_possible=true)
-    puts "--> Performing FetchTweets - all"
+  def self.perform(user_id=nil, as_much_as_possible=true)
+    if as_much_as_possible == true
+      puts "--> Begin fetching tweets (all users)"
+    else
+      puts "--> Begin fetching tweets (for user.id = #{user_id})"
+    end
 
     if user_id
       user = User.find_by_id user_id
-      user.twitters[0].refresh_account(:as_much_as_possible => as_much_as_possible) if !user.twitters.empty?
+      user.twitters.first.refresh_account(:as_much_as_possible => as_much_as_possible) if !user.twitters.empty?
     else
-      User.all.each do |u|
-        u.twitters[0].refresh_account(:as_much_as_possible => true) if !u.twitters.empty?
+      Twitter.all.each do |twitter|
+        twitter.refresh_account(:as_much_as_possible => true)
       end
     end
 
-    puts "--> Finish performing FetchTweets - all"
+    if as_much_as_possible == true
+      puts "--> Finish fetching tweets (all users)"
+    else
+      puts "--> Finish fetching tweets (for user.id = #{user_id})"
+    end
   end
 
 end
