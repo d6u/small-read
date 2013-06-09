@@ -16,9 +16,10 @@ Resque.redis  = Redis.new(
   :thread_safe => true
 )
 Resque.redis.namespace = "small_read:resque"
+Resque.after_fork      = Proc.new { ActiveRecord::Base.establish_connection }
 Resque.schedule        = YAML.load_file(Rails.root.join('config', 'resque_schedule.yml'))
 Resque::Server.use(Rack::Auth::Basic) do |user, password|
-  user == "daiweilu123@gmail.com"
+  user     == "daiweilu123@gmail.com"
   password == "daiweiResqueS"
 end
 
