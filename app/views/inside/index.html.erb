@@ -1,4 +1,4 @@
-<!-- FeedsContent -->
+<!-- Feeds Content -->
 <section class="feeds">
 	<div class="toolbox">
 		<%= link_to({controller: 'background_opt', :action => "refresh"}, {:class => 'refresh-feeds toolbox-button feeds-toolbox-button', :id => 'refresh'}) do %>
@@ -8,11 +8,14 @@
 			<i class="icon-wrench"></i>
 		<% end %>
 	</div>
+
+	<!-- Feeds List -->
 	<div class="list-container feeds-list">
 
-		<!-- Folders and Feeds -->
+		<!-- Folders -->
 		<% @user.folders.order("position ASC").each do |folder| %>
-		<div class="folder list-container-item" <%= output_attributes_as_dataset(folder) %>>
+		<div class="folder list-container-item"
+			 folder="<%= folder.id %>">
 			<a href="#" class="item-face folder-face">
 			    <div class="folder-name">
 			    	<%= folder.name %>
@@ -46,9 +49,10 @@
 		<!-- END of Folders -->
 
 	</div>
+
 </section>
 
-<!-- TweetsContent -->
+<!-- Tweets Content -->
 <section class="tweets">
 	<div class="toolbox">
 		<div class="toolbox-button toolbox-button-tweets display-only-unread-wrap">
@@ -57,9 +61,14 @@
 		</div>
 		<%= link_to 'Mark All Read', '#', {:class => 'toolbox-button toolbox-button-tweets', id: 'mark_all_read'} %>
 	</div>
-	<div class="list-container tweets-list">
 
+	<!-- Tweets List -->
+	<div class="list-container tweets-list">
+		<div class="tweet clearfix" ng-repeat="tweet in tweets">
+			<div class="tweet-content" ng-bind-html-unsafe="tweet.text"></div>
+		</div>
 	</div>
+
 </section>
 
 <!-- Template -->
