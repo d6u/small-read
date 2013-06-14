@@ -1,11 +1,11 @@
 //= require angular.min.js
-//  require angular-sanitize.js
+//= require angular-sanitize.js
 //  require angular-resource.js
 
 
 // App Init
 // ========
-var app = angular.module('SmallRead', []);
+var app = angular.module('SmallRead', ['ngSanitize']);
 
 // Service
 app.factory(
@@ -88,3 +88,45 @@ app.directive(
     }
 );
 
+app.filter(
+    'tweetTextFilter',
+    function() {
+        return function(input, entities) {
+            // extract and sort entities
+            var entity_array = [];
+            for(var entity in entities) {
+                angular.forEach(entities[entity], function(value, key){
+                    value.type = entity;
+                    entity_array.push(value);
+                });
+            }
+            entity_array.sort(function(a,b){
+                return a.indices[0] - b.indices[0];
+            });
+            // extract input pieces
+            var input_pieces = [];
+            var beginning_point = 0;
+            angular.forEach(entity_array, function(value, key) {
+                input_pieces.push(input.slice(beginning_point, value.indices[0]));
+                switch (value.type) {
+                    case "urls":
+                        input_pieces.push('<a href="'+value.expanded_url+'" target="_blank">'+value.display_url+'</a>');
+                        break;
+                    case "hashtags":
+                        input_pieces.push('<a href="https://twitter.com/search?q=%23'+value.text+'&src=hash" target="_blank>#'+value.text+'</a>');
+                        break;
+                    case "user_mentions":
+                        input_pieces.push('<a href="http://twitter.com/'+value.screen_name+'" target="_blank>@'+value.screen_name+'</a>');
+                        break;
+                    case "medias":
+                        input_pieces.push('<a href="'+value.media_url+'" target="_blank>'+value.display_url+'</a>');
+                        break;
+                }
+                beginning_point = value.indices[1];
+            });
+            input_pieces.push(input.slice(beginning_point));
+            // return input
+            return input_pieces.join("");
+        };
+    }
+);
