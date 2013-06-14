@@ -77,7 +77,7 @@ app.directive(
         };
 
         var link = function(scope, element, attrs) {
-            element.html(getTemplate(scope.retweeted_status_id_str));
+            element.html(getTemplate(scope.tweet.retweeted_status_id_str));
             $compile(element.contents())(scope);
         };
 

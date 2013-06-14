@@ -8,12 +8,28 @@ class TweetsController < ApplicationController
   # GET   /tweets
   # -----------
   def index
-    query = params[:max_id] ? ['tweets.id <= ?', params[:max_id]] : ''
+    query = params[:max_id] ? ['t.id <= ?', params[:max_id]] : ''
     query_loading_behavior = params[:all] === 'true' ? '' : 'read IS FALSE'
     if params[:folder_id]
-      tweets = Folder.find(params[:folder_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
+      tweets = Tweet
+               .select('f.name, f.profile_image_url, f.screen_name, t.*')
+               .from('feeds f, tweets t')
+               .where(['t.feed_id = f.id AND f.folder_id = ?', params[:folder_id]])
+               .where(query_loading_behavior)
+               .where(query)
+               .order('t.id DESC').limit(20)
+
+      # tweets = Folder.find(params[:folder_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
     elsif params[:feed_id]
-      tweets = Feed.find(params[:feed_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
+      tweets = Tweet
+               .select('f.name, f.profile_image_url, f.screen_name, t.*')
+               .from('feeds f, tweets t')
+               .where(['t.feed_id = f.id AND f.id = ?', params[:feed_id]])
+               .where(query_loading_behavior)
+               .where(query)
+               .order('t.id DESC').limit(20)
+
+      # tweets = Feed.find(params[:feed_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
     else
       head :no_content
     end
