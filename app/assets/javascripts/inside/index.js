@@ -71,6 +71,18 @@ app.directive(
 );
 
 // Tweets
+app.controller(
+    'TweetsCtrl',
+    function($scope, $element) {
+        $element.children('.tweets-list').on('scroll', function() {
+            $scope.$broadcast(
+                'listScrolling',
+                $element.children('.tweets-list').scrollTop()
+            );
+        });
+    }
+);
+
 app.directive(
     "tweet",
     function($compile) {
@@ -88,11 +100,33 @@ app.directive(
         var link = function(scope, element, attrs) {
             element.html(getTemplate(scope.tweet.retweeted_status_id_str));
             $compile(element.contents())(scope);
+            scope.$on('listScrolling', function(event, parentScrollTop){
+                if (element.position().top < -20) {
+                    scope.markRead();
+                }
+            });
+        };
+
+        var controller = function($scope, $element, $http, $attrs) {
+            $scope.marking_read = false;
+            $scope.markRead = function() {
+                if (!$scope.tweet.read && !$scope.marking_read) {
+                    $scope.marking_read = true;
+                    $scope.tweet.read = true;
+                    $http.put('/tweets/'+$scope.tweet.id, {read: true})
+                    .success(function() {
+                        $element.addClass('read');
+                        $scope.marking_read = false;
+                    });
+                }
+            };
+
         };
 
         return {
-            link: link,
-            rep1ace: true
+            controller: controller,
+            link: link
+            // scope: {}
         };
     }
 );

@@ -60,7 +60,7 @@
 </section>
 
 <!-- Tweets Content -->
-<section class="tweets">
+<section class="tweets" ng-controller="TweetsCtrl">
 	<div class="toolbox">
 		<div class="toolbox-button toolbox-button-tweets display-only-unread-wrap">
 			<%= check_box_tag :display_only_unread, 1, true, :id => 'display_only_unread' %>
@@ -75,7 +75,7 @@
 		 infinite-scroll-disabled="busy"
 		 infinite-scroll-distance="0.2">
 		<div class="tweets-list-inner">
-		 	<div class="tweet clearfix" tweet ng-repeat="tweet in tweets">
+		 	<div class="tweet clearfix" tweet ng-repeat="tweet in tweets" ng-click="markRead()">
 		 	</div>
 		</div>
 	</div>
