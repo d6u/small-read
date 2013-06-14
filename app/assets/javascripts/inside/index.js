@@ -2,7 +2,7 @@
 //= require angular.min.js
 //= require angular-sanitize.js
 //  require angular-resource.js
-//= require ng-infinite-scroll.js
+//= require modules/ng-infinite-scroll.js
 
 
 // App Init
