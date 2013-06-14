@@ -66,30 +66,11 @@
 	<!-- Tweets List -->
 	<div class="list-container tweets-list">
 		<div class="tweet clearfix"
-			 ng-repeat="tweet in loadTweets.tweets">
-			<a class="owner_profile_image" href="#">
-			    <img src="{{ tweet.profile_image_url }}">
-			</a>
-			<div class="tweet-entities">
-		        <img src="{{ tweet.entities_image }}" />
-			</div>
-			<div class="tweet-detail">
-			    <div class="owners-names">
-			        <a class="original-owner-name" href="{{ tweet.link }}" target="_blank">{{ tweet.name }}
-			            <span class="original-owner-screen_name">{{ tweet.screen_name }}</span>
-			        </a>
-			            Retweeted by
-			            <a class="owner-name" href="{{ tweet.original_tweets_link }}" target="_blank">{{ tweet.this_user_name }}
-			                <span class="owner-sreen_name">{{ tweet.this_user_screen_name }}</span>
-			            </a>
-			        <a href="{{ tweet.link }}" target="_blank" class="tweet-link"><i class="icon-link"></i></a>
-			    </div>
-			    <p class="tweet-content" ng-bind-html-unsafe="tweet.text"></p>
-			</div>
+			 tweet ng-repeat="tweet in loadTweets.tweets">
 		</div>
 	</div>
 
 </section>
 
 <!-- Template -->
-<%= render 'underscore_templates' %>
+<%= render 'templates' %>

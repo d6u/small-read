@@ -1,0 +1,52 @@
+<!-- div.feed.list-container-item -->
+<script type="text/template" id="feed-template">
+    <a href="#" class="item-face">
+        <img class="item-icon-left feed-profile-image" src="{{= profile_image_url }}">
+        <div class="feed-name">{{= name }} <span class="feed-screen-name">@{{= screen_name }}</span></div>
+        <span class="item-icon-right unread-count">{{= unread_count }}</span>
+    </a>
+    <div class="list-item-hover">
+        <a href="#" class="item-icon-left icon-star feed-option-fav"></a>
+        <a href="#" class="item-icon-right icon-angle-down feed-option-more"></a>
+    </div>
+</script>
+
+<!-- div.tweet.clearfix -->
+<script type="text/template" id="tweet-template">
+    <a class="owner_profile_image" href="#">
+        <img ng-src="{{ tweet.profile_image_url }}">
+    </a>
+    <div class="tweet-entities">
+    </div>
+    <div class="tweet-detail">
+        <div class="owners-names">
+            <a class="original-owner-name" href="{{ link }}" target="_blank">{{ tweet.name }}
+                <span class="original-owner-screen_name">{{ tweet.screen_name }}</span>
+            </a>
+            <a href="{{ link }}" target="_blank" class="tweet-link"><i class="icon-link"></i></a>
+        </div>
+        <p class="tweet-content" ng-bind-html="tweet.text | tweetTextFilter:tweet.entities"></p>
+    </div>
+</script>
+
+<!-- div.tweet.clearfix -->
+<script type="text/template" id="retweet-template">
+    <a class="owner_profile_image" href="#">
+        <img ng-src="{{ tweet.profile_image_url }}">
+    </a>
+    <div class="tweet-entities">
+    </div>
+    <div class="tweet-detail">
+        <div class="owners-names">
+            <a class="original-owner-name" href="{{ link }}" target="_blank">{{ tweet.name }}
+                <span class="original-owner-screen_name">{{ tweet.screen_name }}</span>
+            </a>
+            Retweeted by
+            <a class="owner-name" href="{{ tweet.original_tweets_link }}" target="_blank">{{ tweet.this_user_name }}
+                <span class="owner-sreen_name">{{ tweet.this_user_screen_name }}</span>
+            </a>
+            <a href="{{ tweet.link }}" target="_blank" class="tweet-link"><i class="icon-link"></i></a>
+        </div>
+        <p class="tweet-content" ng-bind-html="tweet.text | tweetTextFilter:tweet.entities"></p>
+    </div>
+</script>

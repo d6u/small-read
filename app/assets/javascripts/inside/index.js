@@ -1,5 +1,6 @@
 //= require angular.min.js
-//= require angular-resource.js
+//  require angular-sanitize.js
+//  require angular-resource.js
 
 
 // App Init
@@ -16,7 +17,9 @@ app.factory(
                 this.assembleUrl(source_type, source_id);
                 $http.get(this.source_url)
                     .success(function(data, status, headers, config) {
-                        me.tweets = data;
+                        me.tweets = angular.forEach(data, function(value, key) {
+                            value.entities = angular.fromJson(value.entities);
+                        });
                     });
             },
             assembleUrl: function(source_type, source_id) {
@@ -59,4 +62,29 @@ app.directive(
 );
 
 // Tweets
+app.directive(
+    "tweet",
+    function($compile) {
+        var non_retweet_template = document.querySelector('#tweet-template').innerHTML;
+        var retweet_template = document.querySelector('#retweet-template').innerHTML;
+
+        var getTemplate = function(retweeted_status_id_str) {
+            if (retweeted_status_id_str) {
+                return retweet_template;
+            } else {
+                return non_retweet_template;
+            }
+        };
+
+        var link = function(scope, element, attrs) {
+            element.html(getTemplate(scope.retweeted_status_id_str));
+            $compile(element.contents())(scope);
+        };
+
+        return {
+            link: link,
+            rep1ace: true
+        };
+    }
+);
 
