@@ -40,6 +40,15 @@ app.controller(
                 $scope.busy = false;
             });
         };
+
+        // functions
+        $scope.syncTwitter = function() {
+            $scope.refresh_spin = "icon-spin";
+            $http.get('/bg/refresh').success(function(data, status){
+                if (status == 200) console.log("OK");
+                $scope.refresh_spin = null;
+            });
+        };
     }
 );
 

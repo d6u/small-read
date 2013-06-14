@@ -1,10 +1,16 @@
 <!-- Feeds Content -->
 <section class="feeds">
 	<div class="toolbox">
-		<%= link_to({controller: 'background_opt', :action => "refresh"}, {:class => 'refresh-feeds toolbox-button feeds-toolbox-button', :id => 'refresh'}) do %>
-			<i class="icon-refresh"></i>
+		<%= link_to("", {
+				:class => 'refresh-feeds toolbox-button feeds-toolbox-button',
+				:id => 'refresh',
+				:'ng-click' => 'syncTwitter()'
+			}) do %>
+			<i class="icon-refresh {{ refresh_spin }}"></i>
 		<% end %>
-		<%= link_to({controller: 'settings', action: 'manage_folders'}, :class => 'toolbox-button feeds-toolbox-button', id: 'manage_folder') do %>
+		<%= link_to({controller: 'settings', action: 'manage_folders'},
+			:class => 'toolbox-button feeds-toolbox-button',
+			:id => 'manage_folder') do %>
 			<i class="icon-wrench"></i>
 		<% end %>
 	</div>
