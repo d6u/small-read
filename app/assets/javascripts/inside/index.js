@@ -1,44 +1,44 @@
+//= require jquery-2.0.0.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
 //  require angular-resource.js
+//= require ng-infinite-scroll.js
 
 
 // App Init
 // ========
-var app = angular.module('SmallRead', ['ngSanitize']);
-
-// Service
-app.factory(
-    'loadTweets',
-    function($http) {
-        var loadTweets = {
-            fetchTweets: function(source_type, source_id, controller_scope) {
-                var me = this;
-                this.assembleUrl(source_type, source_id);
-                $http.get(this.source_url)
-                    .success(function(data, status, headers, config) {
-                        me.tweets = angular.forEach(data, function(value, key) {
-                            value.entities = angular.fromJson(value.entities);
-                        });
-                    });
-            },
-            assembleUrl: function(source_type, source_id) {
-                this.source_url = '/' + source_type + '/';
-                this.source_url += source_id + '/tweets/';
-            }
-        };
-        return loadTweets;
-    }
-);
-
+var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
 
 // MainCtrl
 app.controller(
     'MainCtrl',
-    function($scope, loadTweets) {
-        $scope.loadTweets = loadTweets;
+    function($scope, $http, $attrs) {
         $scope.showTweets = function(source_type, source_id) {
-            loadTweets.fetchTweets(source_type, source_id, $scope);
+            $scope.baseurl = '/' + source_type + '/';
+            $scope.baseurl += source_id + '/tweets/';
+            $http.get($scope.baseurl).success(function(data) {
+                $scope.tweets = angular.forEach(data, function(value, key) {
+                    value.entities = angular.fromJson(value.entities);
+                });
+                $scope.max_tweet_id = data[data.length - 1].id - 1;
+                $scope.reaches_end = data.length < 20 ? true : false;
+            });
+        };
+
+        $scope.busy = false;
+        $scope.scrollToBottom = function() {
+            if ($scope.reaches_end || $scope.busy || typeof $scope.tweets === 'undefined') return;
+            $scope.busy = true;
+            var url = $scope.baseurl + "?max_id=" + $scope.max_tweet_id;
+            $http.get(url).success(function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    data[i].entities = angular.fromJson(data[i].entities);
+                    $scope.tweets.push(data[i]);
+                }
+                if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
+                if (data.length < 20) $scope.reaches_end = true;
+                $scope.busy = false;
+            });
         };
     }
 );
@@ -101,7 +101,7 @@ app.filter(
                 });
             }
             entity_array.sort(function(a,b){
-                return a.indices[0] - b.indices[0];
+                if (a.indices && b.indices) return a.indices[0] - b.indices[0];
             });
             // extract input pieces
             var input_pieces = [];

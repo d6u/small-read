@@ -64,9 +64,13 @@
 	</div>
 
 	<!-- Tweets List -->
-	<div class="list-container tweets-list">
-		<div class="tweet clearfix"
-			 tweet ng-repeat="tweet in loadTweets.tweets">
+	<div class="list-container tweets-list"
+		 infinite-scroll="scrollToBottom()"
+		 infinite-scroll-disabled="busy"
+		 infinite-scroll-distance="0.2">
+		<div class="tweets-list-inner">
+		 	<div class="tweet clearfix" tweet ng-repeat="tweet in tweets">
+		 	</div>
 		</div>
 	</div>
 
