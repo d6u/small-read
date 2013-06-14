@@ -1,4 +1,5 @@
 //= require angular.min.js
+//= require angular-resource.js
 
 
 // App Init
@@ -8,33 +9,34 @@ var app = angular.module('SmallRead', []);
 // Service
 app.factory(
     'loadTweets',
-    ['$http', function($http) {
-        console.log("in loadTweets service");
+    function($http) {
         var loadTweets = {
-            fetchTweets: function(folder_id, controller_scope) {
-                // fetch new data
-                this.assembleUrl(folder_id);
-                $http.get(this.tweetsUrl)
-                .success(function(data, status, headers, config) {
-                    controller_scope.tweets = data;
-                });
+            fetchTweets: function(source_type, source_id, controller_scope) {
+                var me = this;
+                this.assembleUrl(source_type, source_id);
+                $http.get(this.source_url)
+                    .success(function(data, status, headers, config) {
+                        me.tweets = data;
+                    });
             },
-            assembleUrl: function(folder_id) {
-                this.tweetsUrl = this.baseUrl + folder_id + "/tweets";
-            },
-            baseUrl: "/folders/",
-            tweetsUrl: "/folders/"
+            assembleUrl: function(source_type, source_id) {
+                this.source_url = '/' + source_type + '/';
+                this.source_url += source_id + '/tweets/';
+            }
         };
         return loadTweets;
-    }]
+    }
 );
+
 
 // MainCtrl
 app.controller(
     'MainCtrl',
     function($scope, loadTweets) {
-        $scope.tweets = [];
-        $scope.methods = loadTweets;
+        $scope.loadTweets = loadTweets;
+        $scope.showTweets = function(source_type, source_id) {
+            loadTweets.fetchTweets(source_type, source_id, $scope);
+        };
     }
 );
 
@@ -42,10 +44,16 @@ app.controller(
 app.directive(
     "folder",
     function() {
-        return function(scope, element, attrs) {
-            element.bind('click', function() {
-                scope.methods.fetchTweets(attrs.folder, scope);
-            });
+        return {
+            controller: function($scope) {
+                $scope.show = 'no-show';
+                $scope.showFeeds = function() {
+                    $scope.show = $scope.show === 'no-show'?'show':'no-show';
+                };
+            },
+            scope: {
+                showTweets: '&'
+            }
         };
     }
 );

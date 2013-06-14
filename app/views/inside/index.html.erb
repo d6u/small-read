@@ -15,22 +15,23 @@
 		<!-- Folders -->
 		<% @user.folders.order("position ASC").each do |folder| %>
 		<div class="folder list-container-item"
-			 folder="<%= folder.id %>">
-			<a href="#" class="item-face folder-face">
+			 folder show-tweets="showTweets(source_type, source_id)">
+			<a href="" class="item-face folder-face" ng-click="showTweets({source_type:'folders', source_id:<%= folder.id %>})">
 			    <div class="folder-name">
 			    	<%= folder.name %>
 			    </div>
 			    <span class="item-icon-right unread-count"><%= folder.unread_count %></span>
 			</a>
 			<div class="list-item-hover list-item-hover-folder">
-			    <a href="#" class="item-icon-right icon-expand-alt folder-option-expand"></a>
+			    <a href="" class="item-icon-right icon-expand-alt folder-option-expand" ng-click="showFeeds()"></a>
 			</div>
-			<div class="folder-feeds-list">
+			<div class="folder-feeds-list {{show}}">
 
 				<!-- Feeds -->
 				<% folder.feeds.order("unread_count DESC").each do |feed| %>
-				<div class="feed list-container-item" <%= output_attributes_as_dataset(feed) %>>
-					<a href="#" class="item-face">
+				<div class="feed list-container-item">
+					<a href="" class="item-face"
+					   ng-click="showTweets({source_type:'feeds', source_id:<%= feed.id %>})">
 					    <img class="item-icon-left feed-profile-image" src="<%= feed.profile_image_url %>">
 					    <div class="feed-name"><%= feed.name %> <span class="feed-screen-name">@<%= feed.screen_name %></span></div>
 					    <span class="item-icon-right unread-count"><%= feed.unread_count %></span>
@@ -64,8 +65,27 @@
 
 	<!-- Tweets List -->
 	<div class="list-container tweets-list">
-		<div class="tweet clearfix" ng-repeat="tweet in tweets">
-			<div class="tweet-content" ng-bind-html-unsafe="tweet.text"></div>
+		<div class="tweet clearfix"
+			 ng-repeat="tweet in loadTweets.tweets">
+			<a class="owner_profile_image" href="#">
+			    <img src="{{ tweet.profile_image_url }}">
+			</a>
+			<div class="tweet-entities">
+		        <img src="{{ tweet.entities_image }}" />
+			</div>
+			<div class="tweet-detail">
+			    <div class="owners-names">
+			        <a class="original-owner-name" href="{{ tweet.link }}" target="_blank">{{ tweet.name }}
+			            <span class="original-owner-screen_name">{{ tweet.screen_name }}</span>
+			        </a>
+			            Retweeted by
+			            <a class="owner-name" href="{{ tweet.original_tweets_link }}" target="_blank">{{ tweet.this_user_name }}
+			                <span class="owner-sreen_name">{{ tweet.this_user_screen_name }}</span>
+			            </a>
+			        <a href="{{ tweet.link }}" target="_blank" class="tweet-link"><i class="icon-link"></i></a>
+			    </div>
+			    <p class="tweet-content" ng-bind-html-unsafe="tweet.text"></p>
+			</div>
 		</div>
 	</div>
 
