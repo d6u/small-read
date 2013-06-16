@@ -3,6 +3,7 @@
 //= require angular-sanitize.js
 //  require angular-resource.js
 //= require modules/ng-infinite-scroll.js
+//= require jquery.icheck.min.js
 
 
 // App Init
@@ -34,23 +35,36 @@ app.controller(
         // tweets
         $scope.tweets = [];
         $scope.loadTweets = function(type, id) {
-            $scope.baseUrl = '/'+type+'s/'+id+'/tweets';
-            $http.get($scope.baseUrl)
-            .success(function(data){
-                for (var i = 0; i < data.length; i++) {
-                    data[i].entities = angular.fromJson(data[i].entities);
+            if (type) $scope.souce_type = type;
+            if (id) $scope.souce_id = id;
+            if ((type && id) || ($scope.souce_type && $scope.souce_id)) {
+                if ( $scope.load_only_unread === true ) {
+                    $scope.baseUrl = '/'+$scope.souce_type+'s/'+$scope.souce_id+'/tweets';
+                } else {
+                    $scope.baseUrl = '/'+$scope.souce_type+'s/'+$scope.souce_id+'/tweets?all=true';
                 }
-                if (data.length < 20) $scope.reaches_end = true;
-                $scope.max_tweet_id = data[data.length - 1].id - 1;
-                $scope.tweets = data;
-            });
+                $http.get($scope.baseUrl)
+                .success(function(data){
+                    for (var i = 0; i < data.length; i++) {
+                        data[i].entities = angular.fromJson(data[i].entities);
+                    }
+                    if (data.length < 20) $scope.reaches_end = true;
+                    $scope.max_tweet_id = data[data.length - 1].id - 1;
+                    $('.tweets-list').scrollTop(0);
+                    $scope.tweets = data;
+                });
+            }
         };
         // laod more tweets
         $scope.busy = false;
         $scope.listScrolling = function() {
             if ($scope.reaches_end || $scope.busy || $scope.tweets.length === 0) return;
             $scope.busy = true;
-            var url = $scope.baseUrl + "?max_id=" + $scope.max_tweet_id;
+            if ( $scope.load_only_unread === true ) {
+                var url = $scope.baseUrl + "?max_id=" + $scope.max_tweet_id;
+            } else {
+                var url = $scope.baseUrl + "&max_id=" + $scope.max_tweet_id;
+            }
             $http.get(url).success(function(data) {
                 for (var i = 0; i < data.length; i++) {
                     data[i].entities = angular.fromJson(data[i].entities);
@@ -65,6 +79,21 @@ app.controller(
         $scope.countUnread = function(feed_id) {
             $scope.$broadcast('tweetMarkedRead', feed_id);
         };
+        // load only unread
+        $scope.load_only_unread = true;
+        $('#display_only_unread').iCheck({
+            checkboxClass: 'icheckbox_square-blue display-only-unread-icheck',
+            increaseArea: '20%'
+        })
+        .on('ifChecked', function(event) {
+            $scope.load_only_unread = true;
+            $scope.loadTweets();
+
+        })
+        .on('ifUnchecked', function(event) {
+            $scope.load_only_unread = false;
+            $scope.loadTweets();
+        });
     }
 );
 
@@ -138,6 +167,7 @@ app.directive(
 
         return {
             controller: function($scope, $element, $http) {
+
                 $scope.$on('listScrolling', function(event, parentScrollTop){
                     if ($element.position().top < -20) {
                         $scope.markRead();
@@ -204,6 +234,15 @@ app.filter(
             input_pieces.push(input.slice(beginning_point));
             // return input
             return input_pieces.join("");
+        };
+    }
+);
+
+app.filter(
+    'tweetReadFilter',
+    function() {
+        return function(input) {
+            return input ? 'read' : '';
         };
     }
 );

@@ -3,9 +3,9 @@ class TweetsController < ApplicationController
   # ======
   before_filter :redirect_if_not_logged_in
 
-  # GET   /folders/:folder_id/tweets
-  # GET   /feeds/:feed_id/tweets
-  # GET   /tweets
+  # GET /folders/:folder_id/tweets
+  # GET /feeds/:feed_id/tweets
+  # GET /tweets
   # -----------
   def index
     query = params[:max_id] ? ['t.id <= ?', params[:max_id]] : ''
