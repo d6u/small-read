@@ -34,6 +34,7 @@ SmallRead::Application.routes.draw do
   post '/bg/manage_feeds'             => 'background_opt#manage_feeds'
 
   # => Resources
+  get  '/tweets/:id/mark_read' => 'tweets#mark_read'
   resources :tweets
 
   resources :folders do

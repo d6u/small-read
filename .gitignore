@@ -23,3 +23,6 @@ logfile
 
 # Resque crash files
 dump.rdb
+
+# sublime text project file
+*.sublime-*

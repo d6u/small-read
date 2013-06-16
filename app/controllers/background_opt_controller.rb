@@ -17,11 +17,7 @@ class BackgroundOptController < ApplicationController
   # load_folders_and_feeds
   # ----------------------
   def load_folders_and_feeds
-    json = @user.folders.order("position DESC").inject([]) do |inject, folder|
-      inject << folder
-      inject + folder.feeds.order("unread_count DESC")
-    end
-    render json: json
+    render 'load_folders_and_feeds.json', :formats => [:json]
   end
 
   # feedback
