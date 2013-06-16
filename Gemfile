@@ -6,7 +6,6 @@ gem 'rails', '3.2.13'
 gem 'pg'
 gem 'unicorn'
 gem 'asset_sync'
-# gem 'clockwork'
 gem 'oauth_twitter'
 # gem 'oauth_twitter', :path => '../oauth_twitter'
 gem "resque", "~> 1.24.1"
@@ -15,14 +14,18 @@ gem 'resque-scheduler', :require => 'resque_scheduler'
 
 # Core plugin
 gem 'oj', '~> 2.0'
+gem 'jbuilder'
 gem 'gravatar-ultimate'
-gem 'newrelic_rpm'
 
 
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print'
+end
+
+
+group :test do
   gem 'system-metrics'
 end
 
@@ -30,6 +33,7 @@ end
 group :production do
   # Monitor
   gem 'garelic'
+  gem 'newrelic_rpm'
 end
 
 
@@ -38,9 +42,6 @@ group :assets do
   gem 'jquery-rails'
   gem 'uglifier', '>= 1.0.3'
 end
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
 
 # Deploy with Capistrano
 # gem 'capistrano'

@@ -51,6 +51,9 @@
     overflow: hidden;
     height: 0;
 }
+.folder-feeds-list.show {
+    height: auto;
+}
 .feed-sortable-placeholder {
     height: 30px;
     border-width: 1px;

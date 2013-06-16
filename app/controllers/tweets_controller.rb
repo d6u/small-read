@@ -1,62 +1,68 @@
 class TweetsController < ApplicationController
   # Filter
+  # ======
   before_filter :redirect_if_not_logged_in
 
+  # GET /folders/:folder_id/tweets
+  # GET /feeds/:feed_id/tweets
   # GET /tweets
+  # -----------
   def index
-    query = params[:max_id] ? ['tweets.id <= ?', params[:max_id]] : ''
+    query = params[:max_id] ? ['t.id <= ?', params[:max_id]] : ''
     query_loading_behavior = params[:all] === 'true' ? '' : 'read IS FALSE'
     if params[:folder_id]
-      tweets = Folder.find(params[:folder_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
+      tweets = Tweet
+               .select('f.name, f.profile_image_url, f.screen_name, t.*')
+               .from('feeds f, tweets t')
+               .where(['t.feed_id = f.id AND f.folder_id = ?', params[:folder_id]])
+               .where(query_loading_behavior)
+               .where(query)
+               .order('t.id DESC').limit(20)
+
+      # tweets = Folder.find(params[:folder_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
     elsif params[:feed_id]
-      tweets = Feed.find(params[:feed_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
+      tweets = Tweet
+               .select('f.name, f.profile_image_url, f.screen_name, t.*')
+               .from('feeds f, tweets t')
+               .where(['t.feed_id = f.id AND f.id = ?', params[:feed_id]])
+               .where(query_loading_behavior)
+               .where(query)
+               .order('t.id DESC').limit(20)
+
+      # tweets = Feed.find(params[:feed_id]).tweets.where(query_loading_behavior).where(query).order('id DESC').limit(20)
     else
       head :no_content
     end
 
-    # if params[:folder_id]
-    #   unless params[:max_id]
-    #     tweets = Folder.find(params[:folder_id]).tweets.where('read IS FALSE').order('id DESC').limit(20)
+    # render json: (tweets.map do |t|
+    #   if t.retweeted_status_id_str
+    #     content = {
+    #         is_status_a_retweet: true,
+    #           profile_image_url: t.retweeted_status_user_profile_image_url,
+    #                        name: t.retweeted_status_user_name,
+    #                 screen_name: "@" + t.retweeted_status_user_screen_name,
+    #              this_user_name: t.feed.name,
+    #       this_user_screen_name: "@" + t.feed.screen_name,
+    #        original_tweets_link: "https://twitter.com/#{t.retweeted_status_user_screen_name}/status/#{t.retweeted_status_id_str}"
+    #     }
     #   else
-    #     tweets = Folder.find(params[:folder_id]).tweets.where(['read IS FALSE AND tweets.id <= ?', params[:max_id]]).order('id DESC').limit(20)
+    #     content = {
+    #         is_status_a_retweet: false,
+    #           profile_image_url: t.feed.profile_image_url,
+    #                        name: t.feed.name,
+    #                 screen_name: "@" + t.feed.screen_name
+    #     }
     #   end
-    # elsif params[:feed_id]
-    #   unless params[:max_id]
-    #     tweets = Feed.find(params[:feed_id]).tweets.where('read IS FALSE').order('id DESC').limit(20)
-    #   else
-    #     tweets = Feed.find(params[:feed_id]).tweets.where(['read IS FALSE AND tweets.id <= ?', params[:max_id]]).order('id DESC').limit(20)
-    #   end
-    # else
-    #   head :no_content
-    # end
+    #   content[:id]       = t.id
+    #   content[:entities] = t.entities
+    #   content[:text]     = parse_text(t.text, t.entities)
+    #   content[:read]     = t.read
+    #   content[:feed_id]  = t.feed_id
+    #   content[:link]     = "https://twitter.com/#{t.feed.screen_name}/status/#{t.id_str}"
+    #   content
+    # end)
 
-    render json: (tweets.map do |t|
-      if t.retweeted_status_id_str
-        content = {
-            is_status_a_retweet: true,
-              profile_image_url: t.retweeted_status_user_profile_image_url,
-                           name: t.retweeted_status_user_name,
-                    screen_name: "@" + t.retweeted_status_user_screen_name,
-                 this_user_name: t.feed.name,
-          this_user_screen_name: "@" + t.feed.screen_name,
-           original_tweets_link: "https://twitter.com/#{t.retweeted_status_user_screen_name}/status/#{t.retweeted_status_id_str}"
-        }
-      else
-        content = {
-            is_status_a_retweet: false,
-              profile_image_url: t.feed.profile_image_url,
-                           name: t.feed.name,
-                    screen_name: "@" + t.feed.screen_name
-        }
-      end
-      content[:id]       = t.id
-      content[:entities] = t.entities
-      content[:text]     = parse_text(t.text, t.entities)
-      content[:read]     = t.read
-      content[:feed_id]  = t.feed_id
-      content[:link]     = "https://twitter.com/#{t.feed.screen_name}/status/#{t.id_str}"
-      content
-    end)
+    render :json => tweets
   end
 
   # GET /tweets/1
@@ -94,6 +100,19 @@ class TweetsController < ApplicationController
     @tweet = Tweet.find(params[:id])
 
     if @tweet.update_attributes(params[:tweet])
+      @tweet.feed.count_unread.folder.count_unread
+      head :no_content
+    else
+      render json: @tweet.errors, status: :unprocessable_entity
+    end
+  end
+
+  # GET /tweets/:id/mark_read
+  # -------------------------
+  def mark_read
+    @tweet = Tweet.find(params[:id])
+
+    if @tweet.update_attributes(:read => true)
       @tweet.feed.count_unread.folder.count_unread
       head :no_content
     else

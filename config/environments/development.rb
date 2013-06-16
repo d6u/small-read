@@ -37,7 +37,4 @@ SmallRead::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
   config.sass.line_comments = false
-
-  # System Metrics
-  config.system_metrics.path_exclude_patterns << /^\/resque/
 end
