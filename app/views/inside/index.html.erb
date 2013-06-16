@@ -19,7 +19,8 @@
 		<!-- Folders -->
 		<div folder class="folder list-container-item"
 			 ng-repeat="folder in folders">
-			<a href="" class="item-face folder-face">
+			<a href="" class="item-face folder-face"
+			   ng-click="loadTweets('folder', folder.id)">
 			    <div class="folder-name">
 			    	{{ folder.name }}
 			    </div>
@@ -35,7 +36,8 @@
 				<!-- Feeds -->
 				<div feed class="feed list-container-item"
 					 ng-repeat="feed in folder.feeds">
-					<a href="" class="item-face">
+					<a href="" class="item-face"
+					   ng-click="loadTweets('feed', feed.id)">
 					    <img class="item-icon-left feed-profile-image"
 					    	 ng-src="{{ feed.profile_image_url }}">
 					    <div class="feed-name">
@@ -74,7 +76,8 @@
 	<!-- Tweets List -->
 	<div class="list-container tweets-list">
 		<div class="tweets-list-inner">
-		 	<div class="tweet clearfix">
+		 	<div tweet class="tweet clearfix"
+		 	     ng-repeat="tweet in tweets">
 		 	</div>
 		</div>
 	</div>
