@@ -18,7 +18,7 @@ var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
 // --------
 app.controller(
     'AppCtrl',
-    function($scope, $http) {
+    ['$scope', '$http', function($scope, $http) {
         // init
         $scope.loadFoldersAndFeeds = function() {
             $http.get('/bg/load_folders_and_feeds.json')
@@ -142,7 +142,7 @@ app.controller(
                 });
             }
         };
-    }
+    }]
 );
 
 // Folder
@@ -150,7 +150,7 @@ app.directive(
     'folder',
     function() {
         return {
-            controller: function($scope) {
+            controller: ['$scope', function($scope) {
                 $scope.showList = {
                     list: ""
                 };
@@ -167,7 +167,7 @@ app.directive(
                 $scope.$on('feedMarkedAllRead', function(event, feed_unread_count) {
                     $scope.folder.unread_count -= feed_unread_count;
                 });
-            },
+            }],
             link: function(scope, element, attrs) {
             }
         };
@@ -179,7 +179,7 @@ app.directive(
     'feed',
     function() {
         return {
-            controller: function($scope) {
+            controller: ['$scope', function($scope) {
                 $scope.$on('tweetMarkedRead', function(event, feed_id) {
                     if ( feed_id == $scope.feed.id ) {
                         $scope.feed.unread_count--;
@@ -196,7 +196,7 @@ app.directive(
                 $scope.$on('folderMarkedAllRead', function(event) {
                     $scope.feed.unread_count = 0;
                 });
-            },
+            }],
             link: function(scope, element, attrs) {
             }
         };
@@ -206,16 +206,16 @@ app.directive(
 // Tweets
 app.controller(
     'TweetsCtrl',
-    function($scope, $element) {
+    ['$scope', '$element', function($scope, $element) {
         $element.children('.tweets-list').on('scroll', function() {
             $scope.$broadcast( 'listScrolling', $element.children('.tweets-list').scrollTop() );
         });
-    }
+    }]
 );
 
 app.directive(
     'tweet',
-    function($compile) {
+    ['$compile', function($compile) {
         var non_retweet_template = document.querySelector('#tweet-template').innerHTML;
         var retweet_template = document.querySelector('#retweet-template').innerHTML;
 
@@ -263,7 +263,7 @@ app.directive(
             },
             link: link
         };
-    }
+    }]
 );
 
 app.directive('magnificPopup', function() {
