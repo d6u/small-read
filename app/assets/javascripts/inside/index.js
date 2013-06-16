@@ -5,6 +5,8 @@
 //= require modules/ng-infinite-scroll.js
 //= require jquery.icheck.min.js
 //= require bootstrap.tooltips.min.js
+//= require jquery.simplemodal.1.4.4.min.js
+//= require modules/feedback_modal.js
 
 
 // App Init
@@ -68,6 +70,7 @@ app.controller(
             if (type) $scope.souce_type = type;
             if (id) $scope.souce_id = id;
             if ((type && id) || ($scope.souce_type && $scope.souce_id)) {
+                $('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
                 if ( $scope.load_only_unread === true ) {
                     $scope.baseUrl = '/'+$scope.souce_type+'s/'+$scope.souce_id+'/tweets';
                 } else {
@@ -78,7 +81,8 @@ app.controller(
                     for (var i = 0; i < data.length; i++) {
                         data[i].entities = angular.fromJson(data[i].entities);
                     }
-                    if (data.length < 20) $scope.reaches_end = true;
+                    $('.progress.progress-striped.active').remove();
+                    $scope.reaches_end = data.length < 20 ? true : false;
                     if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
                     $('.tweets-list').scrollTop(0);
                     $scope.tweets = data;
@@ -89,6 +93,7 @@ app.controller(
         $scope.busy = false;
         $scope.listScrolling = function() {
             if ($scope.reaches_end || $scope.busy || $scope.tweets.length === 0) return;
+            $('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
             $scope.busy = true;
             if ( $scope.load_only_unread === true ) {
                 var url = $scope.baseUrl + "?max_id=" + $scope.max_tweet_id;
@@ -99,9 +104,10 @@ app.controller(
                 for (var i = 0; i < data.length; i++) {
                     data[i].entities = angular.fromJson(data[i].entities);
                 }
+                $('.progress.progress-striped.active').remove();
                 $scope.tweets = $scope.tweets.concat(data);
                 if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
-                if (data.length < 20) $scope.reaches_end = true;
+                $scope.reaches_end = data.length < 20 ? true : false;
                 $scope.busy = false;
             });
         };
