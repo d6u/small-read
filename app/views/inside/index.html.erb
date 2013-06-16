@@ -1,13 +1,10 @@
 <!-- Feeds Content -->
 <section class="feeds">
 	<div class="toolbox">
-		<%= link_to("", {
-				:class => 'refresh-feeds toolbox-button feeds-toolbox-button',
-				:id => 'refresh',
-				:'ng-click' => 'syncTwitter()'
-			}) do %>
-			<i class="icon-refresh {{ refresh_spin }}"></i>
-		<% end %>
+		<a href="" class="refresh-feeds toolbox-button feeds-toolbox-button"
+		   id="refresh">
+			<i class="icon-refresh"></i>
+		</a>
 		<%= link_to({controller: 'settings', action: 'manage_folders'},
 			:class => 'toolbox-button feeds-toolbox-button',
 			:id => 'manage_folder') do %>
@@ -19,40 +16,42 @@
 	<div class="list-container feeds-list">
 
 		<!-- Folders -->
-		<% @user.folders.order("position ASC").each do |folder| %>
-		<div class="folder list-container-item"
-			 folder show-tweets="showTweets(source_type, source_id)">
-			<a href="" class="item-face folder-face" ng-click="showTweets({source_type:'folders', source_id:<%= folder.id %>})">
+		<div folder class="folder list-container-item"
+			 ng-repeat="folder in folders">
+			<a href="" class="item-face folder-face">
 			    <div class="folder-name">
-			    	<%= folder.name %>
+			    	{{ folder.name }}
 			    </div>
-			    <span class="item-icon-right unread-count"><%= folder.unread_count %></span>
+			    <span class="item-icon-right unread-count">{{ folder.unread_count }}</span>
 			</a>
 			<div class="list-item-hover list-item-hover-folder">
-			    <a href="" class="item-icon-right icon-expand-alt folder-option-expand" ng-click="showFeeds()"></a>
+			    <a href="" class="item-icon-right icon-expand-alt folder-option-expand"></a>
 			</div>
-			<div class="folder-feeds-list {{show}}">
+			<div class="folder-feeds-list">
 
 				<!-- Feeds -->
-				<% folder.feeds.order("unread_count DESC").each do |feed| %>
-				<div class="feed list-container-item">
-					<a href="" class="item-face"
-					   ng-click="showTweets({source_type:'feeds', source_id:<%= feed.id %>})">
-					    <img class="item-icon-left feed-profile-image" src="<%= feed.profile_image_url %>">
-					    <div class="feed-name"><%= feed.name %> <span class="feed-screen-name">@<%= feed.screen_name %></span></div>
-					    <span class="item-icon-right unread-count"><%= feed.unread_count %></span>
+				<div feed class="feed list-container-item"
+					 ng-repeat="feed in folder.feeds">
+					<a href="" class="item-face">
+					    <img class="item-icon-left feed-profile-image"
+					    	 ng-src="{{ feed.profile_image_url }}">
+					    <div class="feed-name">
+					    	{{ feed.name }}
+					    	<span class="feed-screen-name">
+					    		@{{ feed.screen_name }}
+					    	</span>
+					    </div>
+					    <span class="item-icon-right unread-count">{{ feed.unread_count }}</span>
 					</a>
 					<div class="list-item-hover">
-					    <a href="#" class="item-icon-left icon-star feed-option-fav"></a>
-					    <a href="#" class="item-icon-right icon-angle-down feed-option-more"></a>
+					    <a href="" class="item-icon-left icon-star feed-option-fav"></a>
+					    <a href="" class="item-icon-right icon-angle-down feed-option-more"></a>
 					</div>
 				</div>
-				<% end %>
 				<!-- END of Feeds -->
 
 			</div>
 		</div>
-		<% end %>
 		<!-- END of Folders -->
 
 	</div>
@@ -60,7 +59,7 @@
 </section>
 
 <!-- Tweets Content -->
-<section class="tweets" ng-controller="TweetsCtrl">
+<section class="tweets">
 	<div class="toolbox">
 		<div class="toolbox-button toolbox-button-tweets display-only-unread-wrap">
 			<%= check_box_tag :display_only_unread, 1, true, :id => 'display_only_unread' %>
@@ -70,12 +69,9 @@
 	</div>
 
 	<!-- Tweets List -->
-	<div class="list-container tweets-list"
-		 infinite-scroll="scrollToBottom()"
-		 infinite-scroll-disabled="busy"
-		 infinite-scroll-distance="0.2">
+	<div class="list-container tweets-list">
 		<div class="tweets-list-inner">
-		 	<div class="tweet clearfix" tweet ng-repeat="tweet in tweets" ng-click="markRead()">
+		 	<div class="tweet clearfix">
 		 	</div>
 		</div>
 	</div>
