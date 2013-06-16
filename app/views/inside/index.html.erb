@@ -70,7 +70,8 @@
 			<%= check_box_tag :display_only_unread, 1, true, :id => 'display_only_unread' %>
 			<%= label_tag :display_only_unread, "Display Only Unread" %>
 		</div>
-		<%= link_to 'Mark All Read', '#', {:class => 'toolbox-button toolbox-button-tweets', id: 'mark_all_read'} %>
+		<a href="" class="toolbox-button toolbox-button-tweets"
+		   id="mark_all_read" ng-click="markAllRead()">Mark All Read</a>
 	</div>
 
 	<!-- Tweets List -->

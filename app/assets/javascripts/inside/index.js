@@ -49,7 +49,7 @@ app.controller(
                         data[i].entities = angular.fromJson(data[i].entities);
                     }
                     if (data.length < 20) $scope.reaches_end = true;
-                    $scope.max_tweet_id = data[data.length - 1].id - 1;
+                    if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
                     $('.tweets-list').scrollTop(0);
                     $scope.tweets = data;
                 });
@@ -94,6 +94,17 @@ app.controller(
             $scope.load_only_unread = false;
             $scope.loadTweets();
         });
+        // mark all read
+        $scope.markAllRead = function() {
+            if ( $scope.souce_type && $scope.souce_id && confirm("Sure want to mark everything as read?") ) {
+                var sending_data = {};
+                sending_data[$scope.souce_type+'_id'] = $scope.souce_id;
+                $http.post( '/mark_all_read', sending_data)
+                .success(function() {
+                    $scope.$broadcast('markedAllRead', $scope.souce_type, $scope.souce_id);
+                });
+            }
+        };
     }
 );
 
@@ -108,6 +119,16 @@ app.directive(
                 };
                 $scope.$on('feedReduceUnreadCount', function(event) {
                     $scope.folder.unread_count--;
+                });
+                // mark all read
+                $scope.$on('markedAllRead', function(event, type, id) {
+                    if ( type === 'folder' && $scope.folder.id === id ) {
+                        $scope.folder.unread_count = 0;
+                        $scope.$broadcast('folderMarkedAllRead');
+                    }
+                });
+                $scope.$on('feedMarkedAllRead', function(event, feed_unread_count) {
+                    $scope.folder.unread_count -= feed_unread_count;
                 });
             },
             link: function(scope, element, attrs) {
@@ -127,6 +148,16 @@ app.directive(
                         $scope.feed.unread_count--;
                         $scope.$emit('feedReduceUnreadCount');
                     }
+                });
+                // mark all read
+                $scope.$on('markedAllRead', function(event, type, id) {
+                    if ( type === 'feed' && $scope.folder.id === id ) {
+                        $scope.$emit('feedMarkedAllRead', $scope.feed.unread_count);
+                        $scope.feed.unread_count = 0;
+                    }
+                });
+                $scope.$on('folderMarkedAllRead', function(event) {
+                    $scope.feed.unread_count = 0;
                 });
             },
             link: function(scope, element, attrs) {
@@ -188,6 +219,10 @@ app.directive(
                         $scope.countUnread($scope.tweet.feed_id);
                     });
                 };
+                // mark all read
+                $scope.$on('markedAllRead', function(event) {
+                    $scope.tweet.read = true;
+                });
             },
             link: link
         };
