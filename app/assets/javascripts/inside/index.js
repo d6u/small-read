@@ -45,7 +45,7 @@ app.controller(
                 $scope.tweets = data;
             });
         };
-
+        // laod more tweets
         $scope.busy = false;
         $scope.listScrolling = function() {
             if ($scope.reaches_end || $scope.busy || $scope.tweets.length === 0) return;
@@ -61,6 +61,10 @@ app.controller(
                 $scope.busy = false;
             });
         };
+        // unread count
+        $scope.countUnread = function(feed_id) {
+            $scope.$broadcast('tweetMarkedRead', feed_id);
+        };
     }
 );
 
@@ -73,6 +77,9 @@ app.directive(
                 $scope.showList = {
                     list: ""
                 };
+                $scope.$on('feedReduceUnreadCount', function(event) {
+                    $scope.folder.unread_count--;
+                });
             },
             link: function(scope, element, attrs) {
             }
@@ -85,6 +92,14 @@ app.directive(
     'feed',
     function() {
         return {
+            controller: function($scope) {
+                $scope.$on('tweetMarkedRead', function(event, feed_id) {
+                    if ( feed_id == $scope.feed.id ) {
+                        $scope.feed.unread_count--;
+                        $scope.$emit('feedReduceUnreadCount');
+                    }
+                });
+            },
             link: function(scope, element, attrs) {
             }
         };
@@ -92,6 +107,15 @@ app.directive(
 );
 
 // Tweets
+app.controller(
+    'TweetsCtrl',
+    function($scope, $element) {
+        $element.children('.tweets-list').on('scroll', function() {
+            $scope.$broadcast( 'listScrolling', $element.children('.tweets-list').scrollTop() );
+        });
+    }
+);
+
 app.directive(
     'tweet',
     function($compile) {
@@ -113,6 +137,28 @@ app.directive(
         };
 
         return {
+            controller: function($scope, $element, $http) {
+                $scope.$on('listScrolling', function(event, parentScrollTop){
+                    if ($element.position().top < -20) {
+                        $scope.markRead();
+                    }
+                });
+
+                $scope.marking_read = false;
+                $scope.markRead = function() {
+                    if ($scope.tweet.read || $scope.marking_read) return;
+                    $scope.marking_read = true;
+                    $scope.tweet.read = true;
+                    // TODO: wait for angular.js fix
+                    // use get function to avoid angular.js repid put error
+                    $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
+                    .success(function() {
+                        $element.addClass('read');
+                        $scope.marking_read = false;
+                        $scope.countUnread($scope.tweet.feed_id);
+                    });
+                };
+            },
             link: link
         };
     }

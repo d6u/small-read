@@ -64,7 +64,7 @@
 </section>
 
 <!-- Tweets Content -->
-<section class="tweets">
+<section class="tweets" ng-controller="TweetsCtrl">
 	<div class="toolbox">
 		<div class="toolbox-button toolbox-button-tweets display-only-unread-wrap">
 			<%= check_box_tag :display_only_unread, 1, true, :id => 'display_only_unread' %>

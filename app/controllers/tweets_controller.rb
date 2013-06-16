@@ -107,6 +107,19 @@ class TweetsController < ApplicationController
     end
   end
 
+  # GET /tweets/:id/mark_read
+  # -------------------------
+  def mark_read
+    @tweet = Tweet.find(params[:id])
+
+    if @tweet.update_attributes(:read => true)
+      @tweet.feed.count_unread.folder.count_unread
+      head :no_content
+    else
+      render json: @tweet.errors, status: :unprocessable_entity
+    end
+  end
+
   # DELETE /tweets/1
   def destroy
     @tweet = Feed.find(params[:feed_id]).tweets.find(params[:id])
