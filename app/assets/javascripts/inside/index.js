@@ -4,6 +4,7 @@
 //  require angular-resource.js
 //= require modules/ng-infinite-scroll.js
 //= require jquery.icheck.min.js
+//= require bootstrap.tooltips.min.js
 
 
 // App Init
@@ -15,6 +16,7 @@ var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
 app.controller(
     'AppCtrl',
     function($scope, $http) {
+        // init
         $scope.loadFoldersAndFeeds = function() {
             $http.get('/bg/load_folders_and_feeds.json')
             .success(function(data) {
@@ -22,14 +24,42 @@ app.controller(
             });
         };
         $scope.loadFoldersAndFeeds();
+        // init API limit
+        $scope.updateTwitterAPILimit = function() {
+            $http.get('/bg/twitter_api_counts')
+            .success(function(data){
+                $('#twitter_api_counts').html(data.limits);
+                if (data.limits <= 3) {
+                    $('#twitter_api_counts').removeClass('badge-info').addClass('badge-important');
+                } else {
+                    $('#twitter_api_counts').removeClass('badge-important').addClass('badge-info');
+                }
+            });
+        };
+        $scope.updateTwitterAPILimit();
+        // tooltips
+        $('.gravatar-image-element').tooltip({
+            title: 'Change your profile image at Gravatar.com',
+            placement: 'right',
+            container: 'body'
+        });
+        $('#twitter_api_counts').tooltip({
+            title: '<p class="lead">What is this?</p><p>Twitter limits how many times each user can fetch contents from its sever within 15 minutes. The number indicates remaining counts untill next reset time (within 15 minutes).</p>',
+            html: true,
+            placement: 'right',
+            container: 'body'
+        });
         // folder & feed
         $scope.showFeedsList = function(showList) {
             showList.list = showList.list === "show" ? "" : "show";
         };
         $scope.fetchWithTwitter = function() {
+            $scope.refresh_spin = "icon-spin";
             $http.get('/bg/refresh')
-            .success(function(data) {
+            .success(function(data, status) {
                 $scope.loadFoldersAndFeeds();
+                $scope.updateTwitterAPILimit();
+                $scope.refresh_spin = null;
             });
         };
         // tweets

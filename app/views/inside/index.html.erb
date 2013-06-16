@@ -4,7 +4,7 @@
 		<a class="refresh-feeds toolbox-button feeds-toolbox-button"
 		   id="refresh" href=""
 		   ng-click="fetchWithTwitter()">
-			<i class="icon-refresh"></i>
+			<i class="icon-refresh" ng-class="refresh_spin"></i>
 		</a>
 		<%= link_to({controller: 'settings', action: 'manage_folders'},
 			:class => 'toolbox-button feeds-toolbox-button',
