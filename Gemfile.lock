@@ -60,6 +60,9 @@ GEM
     gravatar-ultimate (1.0.3)
     hike (1.2.3)
     i18n (0.6.1)
+    jbuilder (1.4.2)
+      activesupport (>= 3.0.0)
+      multi_json (>= 1.2.0)
     journey (1.0.4)
     jquery-rails (3.0.1)
       railties (>= 3.0, < 5.0)
@@ -71,7 +74,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.23)
     mono_logger (1.1.0)
-    multi_json (1.7.6)
+    multi_json (1.7.7)
     net-scp (1.1.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.6.7)
@@ -169,6 +172,7 @@ DEPENDENCIES
   binding_of_caller
   garelic
   gravatar-ultimate
+  jbuilder
   jquery-rails
   newrelic_rpm
   oauth_twitter

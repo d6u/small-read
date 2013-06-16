@@ -14,6 +14,7 @@ gem 'resque-scheduler', :require => 'resque_scheduler'
 
 # Core plugin
 gem 'oj', '~> 2.0'
+gem 'jbuilder'
 gem 'gravatar-ultimate'
 
 
@@ -41,9 +42,6 @@ group :assets do
   gem 'jquery-rails'
   gem 'uglifier', '>= 1.0.3'
 end
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
 
 # Deploy with Capistrano
 # gem 'capistrano'
