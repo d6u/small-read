@@ -7,6 +7,7 @@
 //= require bootstrap.tooltips.min.js
 //= require jquery.simplemodal.1.4.4.min.js
 //= require modules/feedback_modal.js
+//= require jquery.magnific-popup.min.js
 
 
 // App Init
@@ -265,6 +266,15 @@ app.directive(
     }
 );
 
+app.directive('magnificPopup', function() {
+    return {
+        template: '<img ng-src="{{ media.media_url }}:thumb" />',
+        link: function(scope, element, attrs) {
+            $(element[0]).magnificPopup({type:'image'});
+        }
+    };
+});
+
 // Filters
 app.filter(
     'tweetTextFilter',
@@ -296,7 +306,7 @@ app.filter(
                     case "user_mentions":
                         input_pieces.push('<a href="http://twitter.com/'+value.screen_name+'" target="_blank>@'+value.screen_name+'</a>');
                         break;
-                    case "medias":
+                    case "media":
                         input_pieces.push('<a href="'+value.media_url+'" target="_blank>'+value.display_url+'</a>');
                         break;
                 }

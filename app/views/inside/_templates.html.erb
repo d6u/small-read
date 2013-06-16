@@ -17,6 +17,7 @@
         <img ng-src="{{ tweet.profile_image_url }}">
     </a>
     <div class="tweet-entities">
+        <a magnific-popup ng-repeat="media in tweet.entities.media" class="twitter-entity-image" ng-href="{{ media.media_url }}"></a>
     </div>
     <div class="tweet-detail">
         <div class="owners-names">
@@ -35,6 +36,7 @@
         <img ng-src="{{ tweet.retweeted_status_user_profile_image_url }}">
     </a>
     <div class="tweet-entities">
+        <a magnific-popup ng-repeat="media in tweet.entities.media" class="twitter-entity-image" ng-href="{{ media.media_url }}"></a>
     </div>
     <div class="tweet-detail">
         <div class="owners-names">
