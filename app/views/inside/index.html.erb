@@ -1,8 +1,9 @@
 <!-- Feeds Content -->
 <section class="feeds">
 	<div class="toolbox">
-		<a href="" class="refresh-feeds toolbox-button feeds-toolbox-button"
-		   id="refresh">
+		<a class="refresh-feeds toolbox-button feeds-toolbox-button"
+		   id="refresh" href=""
+		   ng-click="fetchWithTwitter()">
 			<i class="icon-refresh"></i>
 		</a>
 		<%= link_to({controller: 'settings', action: 'manage_folders'},
@@ -25,9 +26,11 @@
 			    <span class="item-icon-right unread-count">{{ folder.unread_count }}</span>
 			</a>
 			<div class="list-item-hover list-item-hover-folder">
-			    <a href="" class="item-icon-right icon-expand-alt folder-option-expand"></a>
+			    <a href="" class="item-icon-right icon-expand-alt folder-option-expand"
+			       ng-click="showFeedsList(showList)"></a>
 			</div>
-			<div class="folder-feeds-list">
+			<div class="folder-feeds-list"
+				 ng-class="showList.list">
 
 				<!-- Feeds -->
 				<div feed class="feed list-container-item"

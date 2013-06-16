@@ -14,10 +14,23 @@ var app = angular.module('SmallRead', ['ngSanitize']);
 app.controller(
     'AppCtrl',
     function($scope, $http) {
-        $http.get('/bg/load_folders_and_feeds.json')
-        .success(function(data) {
-            $scope.folders = data;
-        });
+        $scope.loadFoldersAndFeeds = function() {
+            $http.get('/bg/load_folders_and_feeds.json')
+            .success(function(data) {
+                $scope.folders = data;
+            });
+        };
+        $scope.loadFoldersAndFeeds();
+
+        $scope.showFeedsList = function(showList) {
+            showList.list = showList.list === "show" ? "" : "show";
+        };
+        $scope.fetchWithTwitter = function() {
+            $http.get('/bg/refresh')
+            .success(function(data) {
+                $scope.loadFoldersAndFeeds();
+            });
+        };
     }
 );
 
@@ -26,6 +39,11 @@ app.directive(
     'folder',
     function() {
         return {
+            controller: function($scope) {
+                $scope.showList = {
+                    list: ""
+                };
+            },
             link: function(scope, element, attrs) {
             }
         };
