@@ -234,7 +234,7 @@ app.directive(
         };
 
         return {
-            controller: function($scope, $element, $http) {
+            controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
 
                 $scope.$on('listScrolling', function(event, parentScrollTop){
                     if ($element.position().top < -20) {
@@ -260,7 +260,7 @@ app.directive(
                 $scope.$on('markedAllRead', function(event) {
                     $scope.tweet.read = true;
                 });
-            },
+            }],
             link: link
         };
     }]
