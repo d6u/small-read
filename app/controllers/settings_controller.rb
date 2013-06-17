@@ -1,6 +1,7 @@
 class SettingsController < ApplicationController
   # Filter
   before_filter :redirect_if_not_logged_in
+  before_filter :redirect_if_mobile
   before_filter :redirect_to_welcome_if_no_email
   layout "settings_layout"
 

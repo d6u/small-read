@@ -82,4 +82,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # redirect_if_mobile
+  # ------------------
+  def redirect_if_mobile
+    if cookies[:force_desktop] != 'true' && /iPhone/.match(request.env['HTTP_USER_AGENT'])
+      redirect_to :controller => "mobile", :action => "index"
+    end
+  end
+
 end
