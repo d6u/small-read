@@ -6,10 +6,12 @@
 </header>
 
 
-<div class="content">
+<div class="content"
+     infinite-scroll="listScrolling()"
+     infinite-scroll-disabled="busy"
+     infinite-scroll-distance="0.1">
     <ul class="list">
         <li class="tweet-list-item" ng-repeat="tweet in tweets">
-
 
             <img class="tweet-user-avatar" ng-src="{{ tweet.profile_image_url }}">
             <div class="tweet-content">

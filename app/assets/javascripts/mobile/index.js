@@ -3,13 +3,15 @@
 //= require modules/ratchet/segmented-controllers.js
 //= require modules/ratchet/sliders.js
 //= require modules/ratchet/toggles.js
+//= require jquery-2.0.0.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
+//= require modules/ng-infinite-scroll.js
 
 
 // App Init
 // ========
-var app = angular.module('SmallRead', ['ngSanitize']);
+var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
 
 app.config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
@@ -27,7 +29,6 @@ app.config(['$routeProvider', '$locationProvider',
     }
 ]);
 
-var needle;
 // MainCtrl
 // --------
 app.controller(
@@ -59,6 +60,7 @@ app.controller(
     ['$scope', '$http', '$routeParams',
     function($scope, $http, $routeParams) {
         // load tweets
+        $scope.tweets = [];
         $scope.load_only_unread = true;
         $scope.loadTweets = function() {
             if ( $scope.load_only_unread === true ) {
@@ -77,6 +79,29 @@ app.controller(
             });
         };
         $scope.loadTweets();
+        // laod more tweets
+        $scope.busy = false;
+        $scope.listScrolling = function() {
+            if ($scope.reaches_end || $scope.busy || $scope.tweets.length === 0) return;
+            $('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
+            $scope.busy = true;
+            if ( $scope.load_only_unread === true ) {
+                var url = $scope.baseUrl + "?max_id=" + $scope.max_tweet_id;
+            } else {
+                var url = $scope.baseUrl + "&max_id=" + $scope.max_tweet_id;
+            }
+            $http.get(url).success(function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    data[i].entities = angular.fromJson(data[i].entities);
+                }
+                $('.progress.progress-striped.active').remove();
+                $scope.tweets = $scope.tweets.concat(data);
+                if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
+                $scope.reaches_end = data.length < 20 ? true : false;
+                $scope.busy = false;
+            });
+        };
+        // end of Ctrl
     }]
 );
 
