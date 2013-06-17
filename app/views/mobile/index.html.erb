@@ -1,39 +1,50 @@
 <!-- Make sure all your bars are the first things in your <body> -->
 <header class="bar-title">
-    <h1 class="title">Ratchet</h1>
+    <a class="button" href="#setting_modal">
+        Settings
+    </a>
+    <h1 class="title">Following</h1>
+    <a class="button-next" href="#">
+        All News
+    </a>
 </header>
 
 <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
 <div class="content">
-    <div class="content-padded">
-        <p class="welcome">Thanks for downloading Ratchet. This is an example HTML page that's linked up to compiled Ratchet CSS and JS, has the proper meta tags and the HTML structure. Need some more help before you start filling this with your own content? Check out some Ratchet resorces:</p>
-    </div>
-
-    <ul class="list inset">
+    <ul class="list">
         <li>
-            <a href="http://maker.github.com/ratchet/">
-                <strong>Ratchet documentation</strong>
+            <a href="#">
+                List item 1
                 <span class="chevron"></span>
+                <span class="count">4</span>
             </a>
         </li>
         <li>
-            <a href="http://www.github.com/maker/ratchet/">
-                <strong>Ratchet on Github</strong>
+            <a href="#">
+                List item 2
                 <span class="chevron"></span>
+                <span class="count">1</span>
             </a>
         </li>
         <li>
-            <a href="https://groups.google.com/forum/#!forum/goratchet">
-                <strong>Ratchet Google group</strong>
+            <a href="#">
+                List item 3
                 <span class="chevron"></span>
-            </a>
-        </li>
-        <li>
-            <a href="http://www.twitter.com/GoRatchet">
-                <strong>Ratchet on Twitter</strong>
-                <span class="chevron"></span>
+                <span class="count">5</span>
             </a>
         </li>
     </ul>
+</div>
 
+<div id="setting_modal" class="modal">
+    <header class="bar-title">
+        <h1 class="title">Modal</h1>
+        <a class="button" href="#setting_modal">
+            Close
+        </a>
+    </header>
+
+    <div class="content content-padded">
+        <p>The contents of my modal.</p>
+    </div>
 </div>

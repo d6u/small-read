@@ -1,7 +1,6 @@
 //= require jquery-2.0.0.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
-//  require angular-resource.js
 //= require modules/ng-infinite-scroll.js
 //= require jquery.icheck.min.js
 //= require bootstrap.tooltips.min.js

@@ -129,8 +129,8 @@ a {
   background: #fff;
   -webkit-transition-property: top, bottom;
           transition-property: top, bottom;
-  -webkit-transition-duration: .2s, .2s;  
-          transition-duration: .2s, .2s;  
+  -webkit-transition-duration: .2s, .2s;
+          transition-duration: .2s, .2s;
   -webkit-transition-timing-function: linear, linear;
           transition-timing-function: linear, linear;
   -webkit-overflow-scrolling: touch;
@@ -1157,7 +1157,7 @@ select {
 .slider > ul > li {
   display: inline-block;
   vertical-align: top; /* Ensure that li always aligns to top */
-  width: 100%; 
+  width: 100%;
   height: 100%;
 }
 
@@ -1257,4 +1257,30 @@ select {
 .content.slide.right {
   -webkit-transform: translate3d(100%, 0, 0);
           transform: translate3d(100%, 0, 0);
+}/* Modals
+-------------------------------------------------- */
+.modal {
+  position: fixed;
+  top: 0;
+  opacity: 0;
+  z-index: 11;
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background-color: #fff;
+  -webkit-transform: translate3d(0, 100%, 0);
+          transform: translate3d(0, 100%, 0);
+  -webkit-transition: -webkit-transform .25s ease-in-out, opacity 1ms .25s;
+          transition:         transform .25s ease-in-out, opacity 1ms .25s;
+}
+
+/* Modal - When active
+-------------------------------------------------- */
+.modal.active {
+  opacity: 1;
+  height: 100%;
+  -webkit-transition: -webkit-transform .25s ease-in-out;
+          transition:         transform .25 ease-in-out;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
 }
