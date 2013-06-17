@@ -1,0 +1,35 @@
+<header class="bar-title">
+    <a class="button" href="#">
+        Settings
+    </a>
+    <ul class="segmented-controller">
+        <li class="{{load_only_unread | loadOnlyUnreadActiveFilter}}">
+            <a href="" ng-click="loadOnlyUnread(true)">Unread</a>
+        </li>
+        <li class="{{!load_only_unread | loadOnlyUnreadActiveFilter}}">
+            <a href="" ng-click="loadOnlyUnread(false)">All</a>
+        </li>
+    </ul>
+</header>
+
+
+<div class="content">
+    <ul ng-repeat="folder in folders" class="list">
+        <li class="list-divider">{{ folder.name }}</li>
+        <li>
+            <a ng-href="#/folder/{{ folder.id }}/tweets">
+                {{ folder.name }}
+                <span class="chevron"></span>
+                <span class="count">{{ folder.unread_count }}</span>
+            </a>
+        </li>
+        <li class="feed-item" ng-repeat="feed in folder.feeds">
+            <a ng-href="#/feed/{{ feed.id }}/tweets">
+                <img class="feed-item-image"
+                     ng-src="{{ feed.profile_image_url }}" />{{ feed.name }}
+                <span class="chevron"></span>
+                <span class="count">{{ feed.unread_count }}</span>
+            </a>
+        </li>
+    </ul>
+</div>

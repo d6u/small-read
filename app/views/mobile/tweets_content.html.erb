@@ -1,0 +1,35 @@
+<header class="bar-title">
+    <a class="button-prev" href="#/">
+        Back
+    </a>
+    <h1 class="title">Tweets</h1>
+    <a href="" class="button" ng-click="markAllRead()">
+        Mark All Read
+    </a>
+</header>
+
+
+<div class="content tweets-list"
+     ng-controller="TweetListCtrl"
+     infinite-scroll="listScrolling()"
+     infinite-scroll-disabled="busy"
+     infinite-scroll-distance="0.1">
+    <ul class="list">
+        <li tweet class="tweet-list-item {{tweet.read | tweetReadFilter}}" ng-repeat="tweet in tweets">
+
+            <img class="tweet-user-avatar" ng-src="{{ tweet.profile_image_url }}">
+            <div class="tweet-content">
+                <div class="tweet-user-name">
+                    <span class="full-name">{{ tweet.name }}</span>
+                    <span class="screen-name">@{{ tweet.screen_name }}</span>
+                </div>
+                <div class="tweet-text">
+                    <div class="dir-ltr" ng-bind-html="tweet.text | tweetTextFilter:tweet.entities">
+                    </div>
+                </div>
+            </div>
+
+
+        </li>
+    </ul>
+</div>
