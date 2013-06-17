@@ -24,6 +24,10 @@ SmallRead::Application.routes.draw do
   match 'manage_email'           => 'settings#manage_email'
   match 'manage_password'        => 'settings#manage_password'
 
+  # => Mobile
+  get "mobile/index"
+  get "mobile/settings"
+
   # => Background
   match 'bg/refresh'                  => 'background_opt#refresh'
   match 'bg/load_folders_and_feeds'   => 'background_opt#load_folders_and_feeds'
