@@ -105,6 +105,52 @@ app.controller(
     }]
 );
 
+app.controller(
+    'TweetListCtrl',
+    ['$scope', '$element', function($scope, $element) {
+        // marking read
+        $element.on('scroll', function() {
+            $scope.$broadcast( 'listScrolling', $($element[0]).children('.tweets-list').scrollTop() );
+        });
+    }]
+);
+
+app.directive(
+    'tweet',
+    [function() {
+        return {
+            controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
+
+                $scope.$on('listScrolling', function(event, parentScrollTop){
+                    if ($element.position().top < -20) {
+                        $scope.markRead();
+                    }
+                });
+
+                $scope.marking_read = false;
+                $scope.markRead = function() {
+                    if ($scope.tweet.read || $scope.marking_read) return;
+                    $scope.marking_read = true;
+                    $scope.tweet.read = true;
+                    // TODO: wait for angular.js fix
+                    // use get function to avoid angular.js repid put error
+                    $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
+                    .success(function() {
+                        $element.addClass('read');
+                        $scope.marking_read = false;
+                    });
+                };
+                // mark all read
+                $scope.$on('markedAllRead', function(event) {
+                    $scope.tweet.read = true;
+                });
+            }],
+            link: function(scope, element, attrs) {
+            }
+        };
+    }]
+);
+
 // Filters
 app.filter(
     'tweetTextFilter',
@@ -145,6 +191,15 @@ app.filter(
             input_pieces.push(input.slice(beginning_point));
             // return input
             return input_pieces.join("");
+        };
+    }
+);
+
+app.filter(
+    'tweetReadFilter',
+    function() {
+        return function(input) {
+            return input ? 'read' : '';
         };
     }
 );

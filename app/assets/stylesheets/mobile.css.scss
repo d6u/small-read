@@ -17,8 +17,18 @@
 
 // Tweets
 // ------
+.tweets-list {
+    &:after {
+        display: block;
+        content: "";
+        height: 100%;
+    }
+}
 .tweet-list-item {
     padding: 10px 10px 10px 14px !important;
+}
+.tweet-list-item.read {
+    opacity: 0.4;
 }
 .tweet-user-avatar {
     height: 37px;
