@@ -47,7 +47,7 @@ SmallRead::Application.configure do
   config.assets.prefix = "/staging/assets"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-  config.assets.precompile += %w(.svg .eot .woff .ttf .otf inside.css outside.css settings.css font-awesome-ie7.css inside/*.js outside/*.js settings/*.js)
+  config.assets.precompile += %w(.svg .eot .woff .ttf .otf inside.css outside.css settings.css mobile.css font-awesome-ie7.css inside/*.js outside/*.js settings/*.js mobile/*.js)
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
