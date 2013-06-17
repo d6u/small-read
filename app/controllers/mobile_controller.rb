@@ -12,6 +12,18 @@ class MobileController < ApplicationController
   def index
   end
 
+  # folders_and_feeds
+  # -----------------
+  def folders_and_feeds
+    render :layout => false
+  end
+
+  # tweets_content
+  # --------------
+  def tweets_content
+    render :layout => false
+  end
+
   # settings
   # --------
   def settings

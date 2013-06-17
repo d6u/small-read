@@ -26,6 +26,8 @@ SmallRead::Application.routes.draw do
 
   # => Mobile
   get "mobile/index"
+  get "mobile/folders_and_feeds"
+  get "mobile/tweets_content"
   get "mobile/settings"
 
   # => Background
