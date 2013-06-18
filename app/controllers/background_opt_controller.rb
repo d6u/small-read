@@ -1,7 +1,6 @@
 class BackgroundOptController < ApplicationController
-  # Filter
-  # ======
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
 
 
   # Actions

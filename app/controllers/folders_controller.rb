@@ -1,7 +1,10 @@
 class FoldersController < ApplicationController
-  # Filter
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
 
+
+  # Actions
+  # =======
   # GET /folders
   def index
     @folders = @user.folders.all.order('position ASC')

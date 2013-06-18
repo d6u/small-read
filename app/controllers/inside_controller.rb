@@ -1,10 +1,13 @@
 class InsideController < ApplicationController
-  # Filter
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
   before_filter :redirect_if_mobile
-  before_filter :redirect_to_welcome_if_no_email, except: [:welcome, :logout]
+
   layout "inside_layout"
 
+
+  # Actions
+  # =======
   # index
   # =====
   def index

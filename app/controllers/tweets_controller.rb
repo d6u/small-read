@@ -1,8 +1,10 @@
 class TweetsController < ApplicationController
-  # Filter
-  # ======
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
 
+
+  # Actions
+  # =======
   # GET /folders/:folder_id/tweets
   # GET /feeds/:feed_id/tweets
   # GET /tweets

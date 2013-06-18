@@ -1,7 +1,10 @@
 class FeedsController < ApplicationController
-  # Filter
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
 
+
+  # Actions
+  # =======
   # GET /feeds
   def index
     if params[:folder_id]

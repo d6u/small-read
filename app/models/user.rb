@@ -3,10 +3,11 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   # Relationships
-  has_many :remember_logins
-  has_many :forget_passwords
-  has_many :twitters, foreign_key: "local_user_id"
-  has_many :folders
+  has_many :remember_logins,  :dependent => :destroy
+  has_many :forget_passwords, :dependent => :destroy
+  has_many :twitters,         :dependent => :destroy,
+           :foreign_key => "local_user_id"
+  has_many :folders,          :dependent => :destroy
 
   # Atrributes
   attr_accessor   :password, :password_confirmation, :current_password,

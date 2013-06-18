@@ -1,8 +1,12 @@
 class OutsideController < ApplicationController
   # Filters
   # =======
+  skip_before_filter :redirect_if_not_logged_in
+
   before_filter :redirect_if_logged_in, :except => [:contact, :agreement]
+
   layout "outside_layout"
+
 
   # Actions
   # =======
