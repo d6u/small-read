@@ -26,9 +26,9 @@ class ApplicationController < ActionController::Base
   def validate_cookies_and_session
     # user_id and user_token must match
     if session[:user_id] && cookies.signed[:user_token]
-      if @user = User.find_by_id session[:user_id]
-        && rm = RememberLogin.find_by_matching_code cookies.signed[:user_token]
-        && @user === rm.user
+      if @user = User.find_by_id(session[:user_id]) &&
+        rm= RememberLogin.find_by_matching_code(cookies.signed[:user_token]) &&
+        @user === rm.user
         # PERFERCT EVERYTHING IS GOOD
       elsif @user != rm.user
         session[:user_id] = nil
@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
         cookies.delete :user_token
         @user.remember_logins.destroy_all
         @user = nil
-      elsif rm= RememberLogin.find_by_matching_code cookies.signed[:user_token]
+      elsif rm=RememberLogin.find_by_matching_code(cookies.signed[:user_token])
         session[:user_id] = nil
         cookies.delete :user_token
         rm.user.remember_logins.destroy_all
@@ -50,14 +50,15 @@ class ApplicationController < ActionController::Base
       end
     # validate user_token
     elsif cookies.signed[:user_token]
-      unless rm = RememberLogin.find_by_matching_code cookies.signed[:user_token]
+      unless rm = RememberLogin.find_by_matching_code(cookies.signed[:user_token])
         cookies.delete :user_token
       else
         @user = rm.user
+        session[:user_id] = @user.id
       end
     # validate user_id
     elsif session[:user_id]
-      session[:user_id] = nil unless @user = User.find_by_id session[:user_id]
+      session[:user_id] = nil unless @user = User.find_by_id(session[:user_id])
     end
   end
 
@@ -68,16 +69,19 @@ class ApplicationController < ActionController::Base
   # remember_user_login
   #
   # ------------------------------------------
-  def remember_user_login(args={}, user=@user)
+  def remember_user_login(args={})
     # cookies
-    if args[:cookies]
-      remember_login = RememberLogin.new
-      user.remember_logins << remember_login
-      cookies.signed[:code] = {value: remember_login.matching_code, expires: 1.month.from_now}
-      cookies.signed[:user_id] = {value: user.id, expires: 1.month.from_now}
+    if args[:cookies] === true
+      rm = RememberLogin.new
+      @user.remember_logins << rm
+      cookies.signed[:user_token] = {
+        :value   => rm.matching_code,
+        :domain  => '.' + request.domain,
+        :expires => 1.month.from_now
+      }
     end
     # session
-    session[:user_id] = user.id
+    session[:user_id] = @user.id
   end
 
   # Used after signed in
