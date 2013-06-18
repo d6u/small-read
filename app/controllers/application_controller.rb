@@ -1,15 +1,73 @@
 class ApplicationController < ActionController::Base
-
+  # Filters
+  # =======
   protect_from_forgery
-  before_filter :redirect_if_in_production_if_not_www
-  before_filter :check_cookies_and_session
+  before_filter :redirect_if_not_getsmallread if Rails.env.production?
+  before_filter :validate_cookies_and_session
 
-  protected
-  def redirect_if_in_production_if_not_www
-    redirect_to 'http://www.getsmallread.com' if Rails.env.production? && request.host != 'www.getsmallread.com'
+  # Private Filters
+  # ===============
+  private
+  ##
+  # redirect_if_not_getsmallread
+  #
+  # avoid small-read.herokuapp.com domain
+  # ------------------------------
+  def redirect_if_not_getsmallread
+    redirect_to 'http://www.getsmallread.com' if request.domain != "getsmallread.com"
   end
 
+  ##
+  # validate_cookies_and_session
+  #
+  # session        => :user_id
+  # cookies.signed => :user_token
+  # ------------------------------
+  def validate_cookies_and_session
+    # user_id and user_token must match
+    if session[:user_id] && cookies.signed[:user_token]
+      if @user = User.find_by_id session[:user_id]
+        && rm = RememberLogin.find_by_matching_code cookies.signed[:user_token]
+        && @user === rm.user
+        # PERFERCT EVERYTHING IS GOOD
+      elsif @user != rm.user
+        session[:user_id] = nil
+        cookies.delete :user_token
+        @user.remember_logins.destroy_all
+        rm.user.remember_logins.destroy_all
+        @user = nil
+        rm = nil
+      elsif @user && !rm
+        session[:user_id] = nil
+        cookies.delete :user_token
+        @user.remember_logins.destroy_all
+        @user = nil
+      elsif rm= RememberLogin.find_by_matching_code cookies.signed[:user_token]
+        session[:user_id] = nil
+        cookies.delete :user_token
+        rm.user.remember_logins.destroy_all
+        rm = nil
+      end
+    # validate user_token
+    elsif cookies.signed[:user_token]
+      unless rm = RememberLogin.find_by_matching_code cookies.signed[:user_token]
+        cookies.delete :user_token
+      else
+        @user = rm.user
+      end
+    # validate user_id
+    elsif session[:user_id]
+      session[:user_id] = nil unless @user = User.find_by_id session[:user_id]
+    end
+  end
+
+  # Protected methods
+  # =================
+  protected
+  ##
   # remember_user_login
+  #
+  # ------------------------------------------
   def remember_user_login(args={}, user=@user)
     # cookies
     if args[:cookies]
@@ -20,45 +78,6 @@ class ApplicationController < ActionController::Base
     end
     # session
     session[:user_id] = user.id
-  end
-
-  def check_cookies_and_session
-    # Integrity test
-    unless session[:user_id] && @user = User.find_by_id(session[:user_id])
-      session[:user_id], session[:user_name] = nil, nil
-    end
-
-    if ( cookies.signed[:user_id] && !cookies.signed[:code] ) || ( !cookies.signed[:user_id] && cookies.signed[:code] )
-      cookies.delete(:user_id)
-      cookies.delete(:code)
-    end
-
-    # Relationship between session and cookies test
-    if session[:user_id] && session[:user_id] != cookies.signed[:user_id].to_i
-      cookies.delete(:user_id)
-      cookies.delete(:code)
-    end
-
-    # Issue session if cookies valid
-    if !session[:user_id] && cookies.signed[:user_id]
-      rm = RememberLogin.find_by_matching_code(cookies.signed[:code])
-      if rm && rm.user.id == cookies.signed[:user_id].to_i
-        @user = rm.user
-        session[:user_id] = @user.id
-
-        rm.destroy
-        cookies.delete(:user_id)
-        cookies.delete(:code)
-
-        rm = RememberLogin.new
-        @user.remember_logins << rm
-        cookies.signed[:user_id] = @user.id
-        cookies.signed[:code] = rm.matching_code
-      else
-        cookies.delete(:user_id)
-        cookies.delete(:code)
-      end
-    end
   end
 
   # Used after signed in
