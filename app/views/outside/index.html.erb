@@ -42,7 +42,7 @@
                 <h3>We are still in BETA</h3>
                 <p class="">Small Read is still beta testing. you can try it now. We will let you know when it's ready.</p>
                 <div class="login-register-form">
-                    <%= form_for :future_user do |f| %>
+                    <%= form_for :future_user, :html => {:'data-form-name' => 'signup_for_newsletter_form'} do |f| %>
                         <% if @future_user && !@future_user.errors[:email].empty? %>
                             <% @future_user.errors[:email].each do |m| %>
                                 <span class="help-block alert alert-error"><%= m %></span>

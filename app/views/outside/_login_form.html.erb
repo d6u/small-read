@@ -1,6 +1,6 @@
 <div class="login-form">
     <div class="block-button login-with-twitter">
-        <%= link_to({action: 'twitter_login'}, {class: 'btn btn-primary'}) do %>
+        <%= link_to({action: 'twitter_login'}, {class: 'btn btn-primary', :id => "twitter_login_button"}) do %>
             <div class="block-button-title">Login with Twitter</div>
         <% end %>
     </div>
@@ -12,7 +12,7 @@
         <% if flash[:reset_password] %>
             <div class="alert alert-success"><%= flash[:reset_password] %></div>
         <% end %>
-        <%= form_for :user, url: {action: 'login'} do |f| %>
+        <%= form_for :user, url: {action: 'login'}, :html => {:'data-form-name' => 'login_form'} do |f| %>
             <div class="input-prepend input-block-level">
                 <span class="add-on"><i class="icon-envelope-alt"></i></span>
                 <%= f.text_field :email, placeholder: 'Email', class: 'input-block-level' %>
