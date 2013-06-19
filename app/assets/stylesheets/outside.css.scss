@@ -5,16 +5,16 @@
 // Custom Variables and Mixins
 @import "variables_and_mixins/variables";
 @import "variables_and_mixins/mixins";
-@import "variables";
+@import "variables_and_mixins/custom_variables";
 
 // Layout
 @import "layout/outside_common";
 
 // Module
-@import "module/homepage_sections";
+@import "module/outside/homepage_sections";
 @import "module/navs";
 @import "module/navbar";
-@import "module/outside_footer";
+@import "module/outside/outside_footer";
 @import "module/user_forms";
 
 // State
