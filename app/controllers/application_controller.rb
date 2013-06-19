@@ -29,27 +29,19 @@ class ApplicationController < ActionController::Base
   def validate_cookies_and_session
     # user_id and user_token must match
     if session[:user_id] && cookies.signed[:user_token]
-      if @user = User.find_by_id(session[:user_id]) &&
-        rm= RememberLogin.find_by_matching_code(cookies.signed[:user_token]) &&
-        @user === rm.user
-        # PERFERCT EVERYTHING IS GOOD
-      elsif @user != rm.user
+      @user = User.find_by_id(session[:user_id])
+      rm = RememberLogin.find_by_matching_code(cookies.signed[:user_token])
+      unless @user && rm && @user === rm.user
         session[:user_id] = nil
         cookies.delete :user_token
-        @user.remember_logins.destroy_all
-        rm.user.remember_logins.destroy_all
-        @user = nil
-        rm = nil
-      elsif @user && !rm
-        session[:user_id] = nil
-        cookies.delete :user_token
-        @user.remember_logins.destroy_all
-        @user = nil
-      elsif rm=RememberLogin.find_by_matching_code(cookies.signed[:user_token])
-        session[:user_id] = nil
-        cookies.delete :user_token
-        rm.user.remember_logins.destroy_all
-        rm = nil
+        if @user
+          @user.remember_logins.destroy_all
+          @user = nil
+        end
+        if rm
+          rm.user.remember_logins.destroy_all
+          rm = nil
+        end
       end
     # validate user_token
     elsif cookies.signed[:user_token]
