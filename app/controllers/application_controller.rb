@@ -96,15 +96,14 @@ class ApplicationController < ActionController::Base
   # forget_user
   #
   # ----------------------------------
-  def forget_user(args={}, user=@user)
+  def forget_user(args={})
     session[:user_id] = nil
-    if cookies.signed[:code]
-      RememberLogin.delete_all(:matching_code => cookies.signed[:code])
-      cookies.delete(:user_id)
-      cookies.delete(:code)
+    if cookies.signed[:user_token]
+      RememberLogin.delete_all(:matching_code => cookies.signed[:user_token])
+      cookies.delete(:user_token)
     end
-    if args[:all]
-      user.remember_logins.each {|r| r.delete}
+    if args[:all] === true
+      @user.remember_logins.destroy_all
     end
   end
 
