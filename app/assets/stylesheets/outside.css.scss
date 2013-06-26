@@ -1,17 +1,24 @@
 // Variables and Mixins
 @import "variables";
 
+
 // Base
-@import "base/bootstrap.css";
-@import "base/skeleton";
+@import "base/base";
+@import "base/skeleton.css";
 
 
 // Component
 @import "component/font-awesome";
+@import "component/buttons";
+@import "component/buttons_skin";
+
+
+// Module
+@import "module/navbar_fixed";
 
 
 // Layout
-@import "layout/outside";
+// @import "layout/outside";
 
 // Module
 
