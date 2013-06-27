@@ -42,7 +42,18 @@
         </div>
         <div class="columns six">
             <div class="form-block">
-
+                <form action="" class="form">
+                    <div class="form-title">Sign Up</div>
+                    <div class="form-body">
+                        <input type="text" placeholder="Email@dot.com">
+                        <input type="text" placeholder="Password">
+                        <input type="text" placeholder="Confirm password">
+                        <p class="form-input-help"><%= link_to('Already have an account? Sign in.', {:action => 'login'}) %></p>
+                    </div>
+                    <div class="form-action">
+                        <button type="submit" class="button button-green button-push3D">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
