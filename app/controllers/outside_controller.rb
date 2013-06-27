@@ -2,7 +2,6 @@ class OutsideController < ApplicationController
   # Filters
   # =======
   skip_before_filter :redirect_if_not_logged_in
-
   before_filter :redirect_if_logged_in, :except => [:contact, :agreement]
 
   layout "outside_layout"
@@ -14,9 +13,12 @@ class OutsideController < ApplicationController
   # -----
   def index
     @user = User.new
-    if params[:future_user]
+    if params[:future_user] && params[:future_user][:email]
       @future_user = FutureUser.new(params[:future_user])
-      redirect_to :action => 'index' if @future_user.save
+      if @future_user.save
+        flash[:newsletter_form_success] = "Thank you for leaving your email, we will let you know as soon as possible."
+        redirect_to "#newsletter_form"
+      end
     else
       @future_user = FutureUser.new
     end

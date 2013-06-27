@@ -60,17 +60,23 @@
 </section>
 
 
-<section class="section section-black section-short section-newsletter">
+<section id="newsletter_form" class="section section-black section-short section-newsletter">
     <div class="container">
         <div class="columns ten center">
             <h3 class="intro-title">Want to know when it's ready?</h3>
-            <p class="intro-lead">We will send you an email when we are ready. We promise no spams.</p>
-            <form action="" class="newsletter-form">
+            <% if flash[:newsletter_form_success] %>
+                <p class="message message-success"><%= flash[:newsletter_form_success] %></p>
+            <% elsif !@future_user.errors[:email].empty? %>
+                <p class="message message-error"><%= @future_user.errors[:email].join(" ") %></p>
+            <% else %>
+                <p class="intro-lead">We will send you an email when we are ready. We promise no spams.</p>
+            <% end %>
+            <%= form_for :future_user, :url => "#newsletter_form", :html => {:class => "newsletter-form"} do |form| %>
                 <div class="input-append">
-                    <input type="text" class="input-box">
+                    <%= form.email_field :email, :class => "input-box" %>
                     <button type="submit" class="button button-green">OK</button>
                 </div>
-            </form>
+            <% end %>
         </div>
     </div>
 </section>
