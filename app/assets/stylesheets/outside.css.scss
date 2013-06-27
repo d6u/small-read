@@ -11,16 +11,18 @@
 @import "component/font-awesome";
 @import "component/buttons";
 @import "component/buttons_skin";
+@import "component/inputs";
+
+
+// Layout
+@import "layout/outside";
 
 
 // Module
 @import "module/navbar_fixed";
-
-
-// Layout
-// @import "layout/outside";
-
-// Module
+@import "module/sections";
+@import "module/forms";
+@import "module/footer";
 
 
 // State

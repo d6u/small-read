@@ -1,46 +1,65 @@
 <!-- Intro -->
-<section class="section">
+<section class="section section-black">
     <div class="container">
-        <h1 class="super">Messed Up Timeline?</h1>
+        <h1 class="columns sixteen center intro-title">Control Timeline, Read Different</h1>
+        <p class="columns nine center intro-lead">By change the visual appearance of your timelines, Small Read can help you read more effecient, never miss any news.</p>
+        <div class="columns six center intro-action">
+            <a href="#one_friend_one_feed" class="button button-green button-push3D">How could?</a>
+            <a href="#sign_in_or_up" class="button button-green button-push3D">Ok, I'm in!</a>
+        </div>
     </div>
 </section>
 
-<section class="section section-blue">
 
+<section id="one_friend_one_feed" class="section section-blue">
+    <div class="container">
+        <h2 class="columns eight intro-title intro-left">One Friend, One Feed</h2>
+        <div class="clear"></div>
+        <p class="columns eight intro-lead intro-left">Put news/status from the same source under one feed. So you know where were, how many is new.</p>
+    </div>
 </section>
+
 
 <section class="section section-green">
     <div class="container">
-        <div class="eight columns">
-            <div class="intro-description">
-                <h3>Pay attention to your favorite</h3>
-                <p class="">You decide what is important and what should be muted. Manage all your "feeds" as your wish them to.</p>
+        <h2 class="columns nine intro-title intro-left">Take Control, Organize Lists</h2>
+        <div class="clear"></div>
+        <p class="columns seven intro-lead intro-left">Group different source into different lists, seperates businesses with entertainments.</p>
+    </div>
+</section>
+
+
+<section id="sign_in_or_up" class="section section-gray section-short">
+    <div class="container form-container">
+        <div class="columns six offset-by-one">
+            <a class="form-block login-with-twitter">
+                <p>Login with Twitter</p>
+                <i class="icon-twitter"></i>
+            </a>
+        </div>
+        <div class="columns two">
+            <div class="or-seperator">OR</div>
+        </div>
+        <div class="columns six">
+            <div class="form-block">
+
             </div>
         </div>
     </div>
 </section>
 
-<section class="intro-section intro-about-beta">
+
+<section class="section section-black section-short section-newsletter">
     <div class="container">
-        <div class="eight columns center">
-            <div class="intro-description">
-                <h3>We are still in BETA</h3>
-                <p class="">Small Read is still beta testing. you can try it now. We will let you know when it's ready.</p>
-                <div class="login-register-form">
-                    <%= form_for :future_user, :html => {:'data-form-name' => 'signup_for_newsletter_form'} do |f| %>
-                        <% if @future_user && !@future_user.errors[:email].empty? %>
-                            <% @future_user.errors[:email].each do |m| %>
-                                <span class="help-block alert alert-error"><%= m %></span>
-                            <% end %>
-                        <% end %>
-                        <div class="input-prepend input-block-level">
-                            <span class="add-on"><i class="icon-envelope-alt"></i></span>
-                            <%= f.text_field :email, placeholder: 'Email', class: 'input-block-level' %>
-                        </div>
-                        <%= f.button "Let me know when it's ready.", :class => 'btn btn-block btn-primary' %>
-                    <% end %>
+        <div class="columns ten center">
+            <h3 class="intro-title">Want to know when it's ready?</h3>
+            <p class="intro-lead">We will send you an email when we are ready. We promise no spams.</p>
+            <form action="" class="newsletter-form">
+                <div class="input-append">
+                    <input type="text" class="input-box">
+                    <button type="submit" class="button button-green">OK</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </section>

@@ -1,6 +1,56 @@
 .button
+    // Button with Colors
     &.button-blue
         background: $blue
         color: white
         &:hover
             background: $blue_dark
+
+    &.button-green
+        background: $green
+        color: white
+        &:hover
+            background: $green_dark
+
+    // 3D push button
+    &.button-push3D
+        position: relative
+        text-decoration: none
+        border-radius: 5px
+        text-align: center
+        -webkit-transition: all 0.1s
+        -moz-transition: all 0.1s
+        transition: all 0.1s
+        &:hover
+            top: 4px
+        &:active
+            top: 8px
+
+        // 3D blue
+        &.button-blue
+            -webkit-box-shadow: 0px 9px 0px $blue
+            -moz-box-shadow: 0px 9px 0px $blue
+            box-shadow: 0px 9px 0px $blue
+            &:hover
+                -webkit-box-shadow: 0px 5px 0px darken($blue, 10%)
+                -moz-box-shadow: 0px 5px 0px darken($blue, 10%)
+                box-shadow: 0px 5px 0px darken($blue, 10%)
+            &:active
+                -webkit-box-shadow: 0px 1px 0px darken($blue, 10%)
+                -moz-box-shadow: 0px 1px 0px darken($blue, 10%)
+                box-shadow: 0px 1px 0px darken($blue, 10%)
+
+        // 3D green
+        &.button-green
+            -webkit-box-shadow: 0px 9px 0px $green_dark
+            -moz-box-shadow: 0px 9px 0px $green_dark
+            box-shadow: 0px 9px 0px $green_dark
+            &:hover
+                -webkit-box-shadow: 0px 5px 0px darken($green_dark, 10%)
+                -moz-box-shadow: 0px 5px 0px darken($green_dark, 10%)
+                box-shadow: 0px 5px 0px darken($green_dark, 10%)
+            &:active
+                -webkit-box-shadow: 0px 1px 0px darken($green_dark, 10%)
+                -moz-box-shadow: 0px 1px 0px darken($green_dark, 10%)
+                box-shadow: 0px 1px 0px darken($green_dark, 10%)
+
