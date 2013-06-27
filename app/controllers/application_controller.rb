@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
       rm = RememberLogin.find_by_matching_code(cookies.signed[:user_token])
       unless @user && rm && @user === rm.user
         session[:user_id] = nil
-        cookies.delete :user_token
+        cookies.delete :user_token, :domain => :all
         if @user
           @user.remember_logins.destroy_all
           @user = nil
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
     # validate user_token
     elsif cookies.signed[:user_token]
       unless rm = RememberLogin.find_by_matching_code(cookies.signed[:user_token])
-        cookies.delete :user_token
+        cookies.delete :user_token, :domain => :all
       else
         @user = rm.user
         session[:user_id] = @user.id
