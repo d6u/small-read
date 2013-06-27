@@ -58,6 +58,41 @@ class OutsideController < ApplicationController
     end
   end
 
+  # forget_password
+  # ---------------
+  def forget_password
+    if params[:forget_password_email]
+      if user = User.find_by_email(params[:forget_password_email])
+        user.send_reset_password_email
+        flash[:forget_password_success] = 'Reset password email sent, please check your inbox.'
+        redirect_to :action => 'forget_password'
+      else
+        flash.now[:forget_password_error] = 'Email does not exist.'
+      end
+    end
+  end
+
+  # reset_password
+  # --------------
+  def reset_password
+    if @forget_password = ForgetPassword.find_by_verification_string(params[:verification_string])
+      if 2.hours > Time.now - @forget_password.created_at
+        @user = @forget_password.user
+        @user.verification_string = params[:verification_string]
+        if params[:user] && @user.update_attributes(params[:user])
+          @forget_password.destroy
+          flash[:reset_password_success] = "Password has reset, please login."
+          redirect_to :action => 'login'
+        end
+      else
+        # @forget_password.destroy
+        flash.now[:reset_password_error] = "Verification code has expired, please request a now one."
+      end
+    else
+      redirect_to :action => 'login'
+    end
+  end
+
   # twitter_login
   # -------------
   def twitter_login
@@ -103,41 +138,6 @@ class OutsideController < ApplicationController
           redirect_to controller: 'inside', action: 'index'
         end
       end
-    end
-  end
-
-  # forget_password
-  # ---------------
-  def forget_password
-    if params[:email]
-      if user = User.find_by_email(params[:email])
-        user.send_reset_password_email
-        flash[:form_success] = 'Reset password email sent, please check your inbox.'
-        redirect_to :action => 'forget_password'
-      else
-        @form_error = 'Email does not exist.'
-      end
-    end
-  end
-
-  # reset_password
-  # --------------
-  def reset_password
-    if @forget_password = ForgetPassword.find_by_verification_string(params[:verification_string])
-      if 2.hours > Time.now - @forget_password.created_at
-        @user = @forget_password.user
-        @user.verification_string = params[:verification_string]
-        if params[:user] && @user.update_attributes(params[:user])
-          @forget_password.delete
-          flash[:reset_password] = "Password has reset, please login."
-          redirect_to :action => 'login'
-        end
-      else
-        @forget_password.delete
-        @code_expired = true
-      end
-    else
-      redirect_to :action => 'login'
     end
   end
 

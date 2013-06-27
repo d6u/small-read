@@ -1,10 +1,15 @@
-<section id="sign_in_or_up" class="section section-gray<%= params[:action] === "index" ? " section-short" : " section-flexheight"  %>">
+<section id="sign_in_or_up" class="section section-gray section-flexheight">
     <div class="container form-container">
         <% if flash.now[:login_error] %>
             <div class="columns eight center message message-error form-messages">
                 <%= flash.now[:login_error] %>
             </div>
+        <% elsif flash[:reset_password_success] %>
+            <div class="columns eight center message message-success form-messages">
+                <%= flash[:reset_password_success] %>
+            </div>
         <% end %>
+
         <div class="columns six offset-by-one">
             <%= link_to({:action => "twitter_login"}, {:class => "form-block login-with-twitter"}) do %>
                 <p>Login with Twitter</p>
