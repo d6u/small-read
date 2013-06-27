@@ -1,4 +1,97 @@
+// Regrular forms
+.form
+    border-radius: 6px
+    height: 100%
+    position: relative
+    overflow: hidden
+
+.form-title
+    height: 56px
+    background: white
+    color: $gray6
+    font-size: 28px
+    font-weight: bold
+    line-height: 56px
+    padding-left: 15px
+
+.form-body
+    background: $gray2
+    height: 100%
+    padding-top: 30px
+    padding-left: 15px
+    padding-right: 15px
+    input
+        &[type="text"],
+        &[type="email"],
+        &[type="password"]
+            box-sizing: border-box
+            display: inline-block
+            width: 100%
+
+            border: 2px solid #bdc3c7
+            text-indent: 6px
+            -webkit-appearance: none
+            -webkit-border-radius: 4px
+            -moz-border-radius: 4px
+            border-radius: 4px
+            -webkit-box-shadow: none
+            -moz-box-shadow: none
+            box-shadow: none
+            -webkit-transition: border .1s linear, color .1s linear
+            -moz-transition: border .1s linear, color .1s linear
+            -o-transition: border .1s linear, color .1s linear
+            transition: border .1s linear, color .1s linear
+            -webkit-backface-visibility: hidden
+
+            &:focus
+                border: 2px solid #1abc9c
+                -webkit-box-shadow: none
+                -moz-box-shadow: none
+                box-shadow: none
+
+    .input-checkbox
+        margin-bottom: 10px
+        color: $gray6
+
+.form-input-help
+    padding-left: 3px
+
+.form-action
+    height: 56px
+    background: white
+    color: $gray6
+    position: absolute
+    bottom: 0
+    width: 100%
+    padding-top: 8px
+    padding-left: 15px
+    button
+        font-size: 16px
+        padding-left: 20px
+        padding-right: 20px
+
+.form-messages
+    margin-bottom: 20px
+    ul
+        margin-bottom: 0
+    li:last-of-type
+        margin-bottom: 0
+
+// Rails build in form helper
+.field_with_errors
+    input
+        &[type="text"],
+        &[type="email"],
+        &[type="password"]
+            border-color: $red
+            color: $red_dark
+            &:focus
+                border-color: $red
+                color: $red_dark
+
+
 // Homepage Form
+// =============================================
 .form-block
     height: 340px
     background: $silver
@@ -21,7 +114,7 @@
     font-style: italic
 
 // Login with Twitter
-.login-with-twitter
+a.login-with-twitter
     overflow: hidden
     height: 331px
     position: relative
@@ -63,5 +156,26 @@
     display: table
     margin: 0 auto
     button
+        padding-left: 20px
+        padding-right: 20px
+
+// Forget password
+.forget-password-form
+    display: table
+    margin: 20px auto
+    button
+        padding-left: 20px
+        padding-right: 20px
+
+// Reset password
+.reset-password-form
+    display: table
+    margin: 20px auto
+    padding: 20px
+    background: white
+    border-radius: 4px
+    button
+        display: block
+        margin: 0 auto
         padding-left: 20px
         padding-right: 20px

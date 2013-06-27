@@ -1,18 +1,17 @@
-<section id="sign_in_or_up" class="section section-gray section-flexheight">
+<section id="sign_in_or_up" class="section section-gray<%= params[:action] === "index" ? " section-short" : " section-flexheight"  %>">
     <div class="container form-container">
-        <% if flash.now[:login_error] %>
+        <% if !@user.errors.empty? %>
             <div class="columns eight center message message-error form-messages">
-                <%= flash.now[:login_error] %>
-            </div>
-        <% elsif flash[:reset_password_success] %>
-            <div class="columns eight center message message-success form-messages">
-                <%= flash[:reset_password_success] %>
+                <ul>
+                    <% @user.errors.each do |error_name, error_contents| %>
+                        <li><%= error_contents %></li>
+                    <% end %>
+                </ul>
             </div>
         <% end %>
-
         <div class="columns six offset-by-one">
             <%= link_to({:action => "twitter_login"}, {:class => "form-block login-with-twitter"}) do %>
-                <p>Login with Twitter</p>
+                <p>Sign Up Using Twitter</p>
                 <i class="icon-twitter"></i>
             <% end %>
         </div>
@@ -21,15 +20,13 @@
         </div>
         <div class="columns six">
             <div class="form-block">
-                <%= form_for :user, :url => {:action => "login"}, :html => {:class => "form"} do |form| %>
-                    <div class="form-title">Login with Email</div>
+                <%= form_for :user, :url => {:action => "register"}, :html => {:class => "form"} do |form| %>
+                    <div class="form-title">Sign Up</div>
                     <div class="form-body">
                         <%= form.email_field :email, :placeholder => "Email@dot.com" %>
                         <%= form.password_field :password, :placeholder => "Password" %>
-                        <%= label_tag :remember_login, :class => "input-checkbox" do %>
-                            <%= check_box_tag :remember_login, 'yes' %> Remember Me
-                        <% end %>
-                        <p class="form-input-help"><%= link_to('Forget password? Click here.', {:action => 'forget_password'}) %></p>
+                        <%= form.password_field :password_confirmation, :placeholder => "Confirm password" %>
+                        <p class="form-input-help"><%= link_to('Already have an account? Sign in.', {:action => 'login'}) %></p>
                     </div>
                     <div class="form-action">
                         <button type="submit" class="button button-green button-push3D">Submit</button>

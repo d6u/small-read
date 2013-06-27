@@ -2,7 +2,6 @@ class OutsideController < ApplicationController
   # Filters
   # =======
   skip_before_filter :redirect_if_not_logged_in
-
   before_filter :redirect_if_logged_in, :except => [:contact, :agreement]
 
   layout "outside_layout"
@@ -14,11 +13,83 @@ class OutsideController < ApplicationController
   # -----
   def index
     @user = User.new
-    if params[:future_user]
+    if params[:future_user] && params[:future_user][:email]
       @future_user = FutureUser.new(params[:future_user])
-      redirect_to :action => 'index' if @future_user.save
+      if @future_user.save
+        flash[:newsletter_form_success] = "Thank you for leaving your email, we will let you know as soon as possible."
+        redirect_to "#newsletter_form"
+      end
     else
       @future_user = FutureUser.new
+    end
+  end
+
+  # register
+  # --------
+  def register
+    if params[:user]
+      @user = User.new(params[:user])
+      if @user.save
+        UserMailer.welcome_email(@user).deliver
+        remember_user_login(:cookies => true)
+        flash[:mixpanel_first_time] = "yes"
+        redirect_to(controller: 'settings', action: 'manage_twitter_account')
+      end
+    else
+      @user = User.new
+    end
+  end
+
+  # login
+  # -----
+  def login
+    if params[:user]
+      user = User.authorize_user(params[:user][:email], params[:user][:password])
+      unless user
+        @user = User.new(params[:user])
+        flash.now[:login_error] = "Email does not match password."
+      else
+        @user = user
+        remember_user_login(:cookies => true) if params[:remember_login] === 'yes'
+        redirect_to controller: 'inside', action: 'index'
+      end
+    else
+      @user = User.new
+    end
+  end
+
+  # forget_password
+  # ---------------
+  def forget_password
+    if params[:forget_password_email]
+      if user = User.find_by_email(params[:forget_password_email])
+        user.send_reset_password_email
+        flash[:forget_password_success] = 'Reset password email sent, please check your inbox.'
+        redirect_to :action => 'forget_password'
+      else
+        flash.now[:forget_password_error] = 'Email does not exist.'
+      end
+    end
+  end
+
+  # reset_password
+  # --------------
+  def reset_password
+    if @forget_password = ForgetPassword.find_by_verification_string(params[:verification_string])
+      if 2.hours > Time.now - @forget_password.created_at
+        @user = @forget_password.user
+        @user.verification_string = params[:verification_string]
+        if params[:user] && @user.update_attributes(params[:user])
+          @forget_password.destroy
+          flash[:reset_password_success] = "Password has reset, please login."
+          redirect_to :action => 'login'
+        end
+      else
+        # @forget_password.destroy
+        flash.now[:reset_password_error] = "Verification code has expired, please request a now one."
+      end
+    else
+      redirect_to :action => 'login'
     end
   end
 
@@ -67,73 +138,6 @@ class OutsideController < ApplicationController
           redirect_to controller: 'inside', action: 'index'
         end
       end
-    end
-  end
-
-  # login
-  # -----
-  def login
-    if params[:user]
-      user = User.authorize_user(params[:user][:email], params[:user][:password])
-      if !user
-        @user = User.new(params[:user])
-        flash.now[:login_warning] = "Email does not match password."
-      else
-        @user = user
-        remember_user_login(:cookies => true) if params[:remember_login] === 'yes'
-        redirect_to controller: 'inside', action: 'index'
-      end
-    end
-  end
-
-  # forget_password
-  # ---------------
-  def forget_password
-    if params[:email]
-      if user = User.find_by_email(params[:email])
-        user.send_reset_password_email
-        flash[:form_success] = 'Reset password email sent, please check your inbox.'
-        redirect_to :action => 'forget_password'
-      else
-        @form_error = 'Email does not exist.'
-      end
-    end
-  end
-
-  # reset_password
-  # --------------
-  def reset_password
-    if @forget_password = ForgetPassword.find_by_verification_string(params[:verification_string])
-      if 2.hours > Time.now - @forget_password.created_at
-        @user = @forget_password.user
-        @user.verification_string = params[:verification_string]
-        if params[:user] && @user.update_attributes(params[:user])
-          @forget_password.delete
-          flash[:reset_password] = "Password has reset, please login."
-          redirect_to :action => 'login'
-        end
-      else
-        @forget_password.delete
-        @code_expired = true
-      end
-    else
-      redirect_to :action => 'login'
-    end
-  end
-
-  # register
-  # --------
-  def register
-    if params[:user]
-      @user = User.new(params[:user])
-      if @user.save
-        UserMailer.welcome_email(@user).deliver
-        remember_user_login(:cookies => true)
-        flash[:mixpanel_first_time] = "yes";
-        redirect_to(controller: 'settings', action: 'manage_twitter_account')
-      end
-    else
-      @user = User.new
     end
   end
 
