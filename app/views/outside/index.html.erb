@@ -29,35 +29,7 @@
 </section>
 
 
-<section id="sign_in_or_up" class="section section-gray section-short">
-    <div class="container form-container">
-        <div class="columns six offset-by-one">
-            <a class="form-block login-with-twitter">
-                <p>Login with Twitter</p>
-                <i class="icon-twitter"></i>
-            </a>
-        </div>
-        <div class="columns two">
-            <div class="or-seperator">OR</div>
-        </div>
-        <div class="columns six">
-            <div class="form-block">
-                <form action="" class="form">
-                    <div class="form-title">Sign Up</div>
-                    <div class="form-body">
-                        <input type="text" placeholder="Email@dot.com">
-                        <input type="text" placeholder="Password">
-                        <input type="text" placeholder="Confirm password">
-                        <p class="form-input-help"><%= link_to('Already have an account? Sign in.', {:action => 'login'}) %></p>
-                    </div>
-                    <div class="form-action">
-                        <button type="submit" class="button button-green button-push3D">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
+<%= render "modules/signup_form" %>
 
 
 <section id="newsletter_form" class="section section-black section-short section-newsletter">

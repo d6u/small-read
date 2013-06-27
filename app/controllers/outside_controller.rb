@@ -24,6 +24,40 @@ class OutsideController < ApplicationController
     end
   end
 
+  # register
+  # --------
+  def register
+    if params[:user]
+      @user = User.new(params[:user])
+      if @user.save
+        UserMailer.welcome_email(@user).deliver
+        remember_user_login(:cookies => true)
+        flash[:mixpanel_first_time] = "yes"
+        redirect_to(controller: 'settings', action: 'manage_twitter_account')
+      end
+    else
+      @user = User.new
+    end
+  end
+
+  # login
+  # -----
+  def login
+    if params[:user]
+      user = User.authorize_user(params[:user][:email], params[:user][:password])
+      unless user
+        @user = User.new(params[:user])
+        flash.now[:login_error] = "Email does not match password."
+      else
+        @user = user
+        remember_user_login(:cookies => true) if params[:remember_login] === 'yes'
+        redirect_to controller: 'inside', action: 'index'
+      end
+    else
+      @user = User.new
+    end
+  end
+
   # twitter_login
   # -------------
   def twitter_login
@@ -72,22 +106,6 @@ class OutsideController < ApplicationController
     end
   end
 
-  # login
-  # -----
-  def login
-    if params[:user]
-      user = User.authorize_user(params[:user][:email], params[:user][:password])
-      if !user
-        @user = User.new(params[:user])
-        flash.now[:login_warning] = "Email does not match password."
-      else
-        @user = user
-        remember_user_login(:cookies => true) if params[:remember_login] === 'yes'
-        redirect_to controller: 'inside', action: 'index'
-      end
-    end
-  end
-
   # forget_password
   # ---------------
   def forget_password
@@ -120,22 +138,6 @@ class OutsideController < ApplicationController
       end
     else
       redirect_to :action => 'login'
-    end
-  end
-
-  # register
-  # --------
-  def register
-    if params[:user]
-      @user = User.new(params[:user])
-      if @user.save
-        UserMailer.welcome_email(@user).deliver
-        remember_user_login(:cookies => true)
-        flash[:mixpanel_first_time] = "yes";
-        redirect_to(controller: 'settings', action: 'manage_twitter_account')
-      end
-    else
-      @user = User.new
     end
   end
 
