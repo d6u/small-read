@@ -18,6 +18,9 @@ gem 'oj', '~> 2.0'
 gem 'jbuilder'
 gem 'gravatar-ultimate'
 
+# Monitor
+gem 'garelic'
+
 
 group :development do
   gem 'better_errors'
@@ -33,7 +36,6 @@ end
 
 group :production do
   # Monitor
-  gem 'garelic'
   gem 'newrelic_rpm'
 end
 

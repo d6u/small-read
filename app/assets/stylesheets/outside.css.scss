@@ -1,23 +1,29 @@
-// Variables and Mixins, Base, Component
-//= require framework
-
-
-// Custom Variables and Mixins
-@import "variables_and_mixins/variables";
-@import "variables_and_mixins/mixins";
+// Variables and Mixins
 @import "variables";
 
+
+// Base
+@import "base/base";
+@import "base/skeleton.css";
+
+
+// Component
+@import "component/font-awesome";
+@import "component/buttons";
+@import "component/buttons_skin";
+@import "component/inputs";
+
+
 // Layout
-@import "layout/outside_common";
+@import "layout/outside";
+
 
 // Module
-@import "module/homepage_sections";
-@import "module/navs";
-@import "module/navbar";
-@import "module/outside_footer";
-@import "module/user_forms";
+@import "module/navbar_fixed";
+@import "module/sections";
+@import "module/forms";
+@import "module/footer";
+
 
 // State
 
-// Utility
-@import "utility/utilities"; // Has to be last to override when necessary

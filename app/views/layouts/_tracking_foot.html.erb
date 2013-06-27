@@ -1,0 +1,36 @@
+<script type="text/javascript">
+mixpanel.track("Landed", {
+    "domain" :    window.location.origin,
+    "page_title": document.title,
+    "page_url":   window.location.pathname
+});
+mixpanel.track_forms("form", "Form submitted",
+    function(form) { return {
+        form_name: $(form).attr('data-form-name'),
+        form_location: window.location.pathname
+    }; }
+);
+mixpanel.track_links(".navbar-fixed-top a", "Link on homepage navbar clicked",
+    function(link) { return {
+        href: $(link).attr('href'),
+        link_location: window.location.pathname
+    }; }
+);
+mixpanel.track_links("#twitter_login_button", "Twitter login button clicked",
+    { button_location: window.location.pathname }
+);
+
+// user identification
+<% if flash[:mixpanel_first_time] && flash[:mixpanel_first_time] == "yes" %>
+    mixpanel.alias("<%= @user.id %>");
+    mixpanel.track("User registered");
+<% elsif @user && @user.id %>
+    mixpanel.identify("<%= @user.id %>");
+<% end %>
+<% if @user && @user.id %>
+    mixpanel.people.set_once({
+        user_id: <%= @user.id %>
+        <%= ",user_email: \"#{@user.email}\"".html_safe if @user.email %>
+    });
+<% end %>
+</script>

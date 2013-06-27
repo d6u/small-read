@@ -1,0 +1,18 @@
+<div class="navbar navbar-fixed-top">
+    <div class="container">
+        <%= link_to(SiteInformation::NAME, {:action => 'index'}, {:class => 'brand'}) %>
+        <div class="navbar-inner-right">
+            <ul>
+                <li>
+                    <%= link_to('Contact', {:action => 'contact'}) %>
+                </li>
+                <li>
+                    <%= link_to('Register', {:action => 'register'}) %>
+                </li>
+                <li>
+                    <%= link_to('Login', {:action => 'login'}, {:class => 'button button-blue'}) %>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

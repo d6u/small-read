@@ -1,10 +1,17 @@
 class OutsideController < ApplicationController
   # Filters
+  # =======
+  skip_before_filter :redirect_if_not_logged_in
+
   before_filter :redirect_if_logged_in, :except => [:contact, :agreement]
+
   layout "outside_layout"
 
+
   # Actions
-  # ========================= index ===========================================
+  # =======
+  # index
+  # -----
   def index
     @user = User.new
     if params[:future_user]
@@ -15,7 +22,8 @@ class OutsideController < ApplicationController
     end
   end
 
-  # ========================= twitter_login ===================================
+  # twitter_login
+  # -------------
   def twitter_login
     # TODO: if false logic
     response = Twitter.new.oauth_request_token(:oauth_callback => "#{request.protocol}#{request.host_with_port}/twitter_login_successful")
@@ -28,7 +36,8 @@ class OutsideController < ApplicationController
     end
   end
 
-  # ========================= twitter_login_successful ========================
+  # twitter_login_successful
+  # ------------------------
   def twitter_login_successful
     if params[:oauth_token] && params[:oauth_verifier]
       if params[:oauth_token] == session[:twitter_request_token]
@@ -49,6 +58,7 @@ class OutsideController < ApplicationController
           @user.save
           Resque.enqueue(FetchTweets, @user.id, false)
           remember_user_login(:cookies => true)
+          flash[:mixpanel_first_time] = "yes"
           redirect_to controller: 'inside', action: 'welcome'
         # Re-login
         else
@@ -60,7 +70,8 @@ class OutsideController < ApplicationController
     end
   end
 
-  # ========================= login ===========================================
+  # login
+  # -----
   def login
     if params[:user]
       user = User.authorize_user(params[:user][:email], params[:user][:password])
@@ -69,13 +80,14 @@ class OutsideController < ApplicationController
         flash.now[:login_warning] = "Email does not match password."
       else
         @user = user
-        remember_login = params[:remember_login] == 'yes' ? true : false
-        remember_user_login(:cookies => remember_login)
+        remember_user_login(:cookies => true) if params[:remember_login] === 'yes'
         redirect_to controller: 'inside', action: 'index'
       end
     end
   end
 
+  # forget_password
+  # ---------------
   def forget_password
     if params[:email]
       if user = User.find_by_email(params[:email])
@@ -88,6 +100,8 @@ class OutsideController < ApplicationController
     end
   end
 
+  # reset_password
+  # --------------
   def reset_password
     if @forget_password = ForgetPassword.find_by_verification_string(params[:verification_string])
       if 2.hours > Time.now - @forget_password.created_at
@@ -107,13 +121,15 @@ class OutsideController < ApplicationController
     end
   end
 
-  # ========================= register ========================================
+  # register
+  # --------
   def register
     if params[:user]
       @user = User.new(params[:user])
       if @user.save
         UserMailer.welcome_email(@user).deliver
         remember_user_login(:cookies => true)
+        flash[:mixpanel_first_time] = "yes";
         redirect_to(controller: 'settings', action: 'manage_twitter_account')
       end
     else
@@ -121,15 +137,22 @@ class OutsideController < ApplicationController
     end
   end
 
-  # ========================= contact =========================================
+  # contact
+  # -------
   def contact
   end
 
-  # ========================= contact =========================================
+  # agreement
+  # ---------
   def agreement
   end
 
+  # Private methods
+  # ===============
   private
+  # redirect_if_logged_in
+  #
+  # -----------------------
   def redirect_if_logged_in
     redirect_to(controller: 'inside', action: 'index') if session[:user_id]
   end

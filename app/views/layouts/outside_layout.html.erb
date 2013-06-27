@@ -1,7 +1,7 @@
 <%= render :layout => 'layouts/htmldoc' do %>
-    <%= render 'outside_nav' %>
-    <div class="full-height-wrapper">
-        <%= yield %>
-        <%= render 'footer' %>
-    </div>
+    <%= render 'modules/navbar_fixed' %>
+
+    <%= yield %>
+
+    <%= render 'modules/footer' %>
 <% end %>

@@ -1,9 +1,8 @@
 class MobileController < ApplicationController
-
-  # Filter
-  # ======
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
   layout "mobile_layout"
+
 
   # Actions
   # =======
