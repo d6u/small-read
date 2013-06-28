@@ -14,7 +14,7 @@ class Twitter < ActiveRecord::Base
   # def refresh_account
   def refresh_account(options={})
     # Load id: 15/15min
-    remote_ids     = self.friends_ids(:user_id => self.user_id)['ids']
+    remote_ids     = self.friends_ids(:user_id => self.user_id)[:data]['ids']
     remote_id_strs = remote_ids.map {|id| id.to_s}
     local_id_strs  = Feed.friends_id_strs(self.id)
 
@@ -25,7 +25,7 @@ class Twitter < ActiveRecord::Base
     # Add new friends: 180/15min
     affected_feeds = []
     if !new_ids.empty?
-      new_friends    = self.users_lookup(:user_id => new_ids)
+      new_friends    = self.users_lookup(:user_id => new_ids)[:data]
       general_folder = self.user.folders.where("lower(name) = 'general'").first
       new_feeds      = new_friends.map {|f| Feed.create_from_raw(f)}
       self.feeds     << new_feeds
@@ -37,11 +37,11 @@ class Twitter < ActiveRecord::Base
     self.feeds.where(:id_str => deleting_ids).destroy_all if !deleting_ids.empty?
 
     # Retrive tweets from Twitter
-    page_num = options[:as_much_as_possible] == true ? 9 : nil
+    page_num = options[:as_much_as_possible] === false ? nil : 9
     if self.newest_tweet_id
-      raw_tweets = self.home_timeline({:since_id => self.newest_tweet_id, :count => 200}, {:pages => page_num})
+      raw_tweets = self.home_timeline({:since_id => self.newest_tweet_id, :count => 200}, {:pages => page_num})[:data]
     else
-      raw_tweets = self.home_timeline({:count => 200}, {:pages => page_num})
+      raw_tweets = self.home_timeline({:count => 200}, {:pages => page_num})[:data]
     end
 
     # Insert tweets into db

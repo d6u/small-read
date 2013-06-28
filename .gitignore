@@ -26,3 +26,6 @@ dump.rdb
 
 # sublime text project file
 *.sublime-*
+
+# twitter api response sample
+sample

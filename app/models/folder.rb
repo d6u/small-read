@@ -1,7 +1,7 @@
 class Folder < ActiveRecord::Base
   # Relationships
   belongs_to :user
-  has_many   :feeds,       :dependent => :destroy
+  has_many   :feeds,       :dependent => :destroy # TODO: remove dependecy
   has_many   :tweets,      :through => :feeds
   has_many   :read_tweets, :through => :feeds
 

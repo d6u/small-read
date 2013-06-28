@@ -1,3 +1,10 @@
+PATH
+  remote: ../oauth_twitter
+  specs:
+    oauth_twitter (0.2.2)
+      multi_json (~> 1.7)
+      rack (>= 1.4.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -80,9 +87,6 @@ GEM
     net-ssh (2.6.7)
     newrelic_rpm (3.6.3.111)
     nokogiri (1.5.10)
-    oauth_twitter (0.2.2)
-      multi_json (~> 1.7)
-      rack (>= 1.4.5)
     oj (2.0.14)
     pg (0.15.1)
     polyglot (0.3.3)
@@ -175,7 +179,7 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   newrelic_rpm
-  oauth_twitter
+  oauth_twitter!
   oj (~> 2.0)
   pg
   rails (= 3.2.13)

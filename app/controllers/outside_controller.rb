@@ -12,6 +12,7 @@ class OutsideController < ApplicationController
   # index
   # -----
   def index
+    session[:origin_page] = 'index'
     @user = User.new
     if params[:future_user] && params[:future_user][:email]
       @future_user = FutureUser.new(params[:future_user])
@@ -27,6 +28,7 @@ class OutsideController < ApplicationController
   # register
   # --------
   def register
+    session[:origin_page] = 'register'
     if params[:user]
       @user = User.new(params[:user])
       if @user.save
@@ -43,6 +45,7 @@ class OutsideController < ApplicationController
   # login
   # -----
   def login
+    session[:origin_page] = 'login'
     if params[:user]
       user = User.authorize_user(params[:user][:email], params[:user][:password])
       unless user
@@ -96,13 +99,14 @@ class OutsideController < ApplicationController
   # twitter_login
   # -------------
   def twitter_login
-    # TODO: if false logic
-    response = Twitter.new.oauth_request_token(:oauth_callback => "#{request.protocol}#{request.host_with_port}/twitter_login_successful")
+    # TODO: timeout error
+    response = Twitter.new.oauth_request_token({:oauth_callback => "#{request.protocol}#{request.host_with_port}/twitter_login_successful"}, {:detailed => false})
     if response && response['oauth_callback_confirmed'] == 'true'
       session[:twitter_request_token] = response['oauth_token']
       session[:twitter_request_secret] = response['oauth_token_secret']
       redirect_to "https://api.twitter.com/oauth/authenticate?oauth_token=#{response['oauth_token']}"
     else
+      # TODO: custom 500 page
       render :status => 500
     end
   end
@@ -116,21 +120,23 @@ class OutsideController < ApplicationController
           :oauth_token        => params[:oauth_token],
           :oauth_token_secret => session[:twitter_request_secret]
         )
-        response = twitter_account.oauth_access_token(:oauth_verifier => params[:oauth_verifier])
+        response = twitter_account.oauth_access_token({:oauth_verifier => params[:oauth_verifier]}, {:detailed => false})
         case
         # Login failed
         when !response
-          # TODO: response false
-          render status: 500
+          # TODO: add twitter_login_error message to view
+          flash[:twitter_login_error] = "We are sorry, but Twitter sevice is not available at this time."
+          redirect_to :action => session[:origin_page]
         # First time login
         when !twitter = Twitter.find_by_user_id(response["user_id"])
           @user = User.new(:name => response['screen_name'])
-          @user.twitters << Twitter.new(response)
+          twitter = Twitter.new(response)
+          @user.twitters << twitter
           @user.save
-          Resque.enqueue(FetchTweets, @user.id, false)
+          Resque.enqueue(UpdateTwitter, twitter.id)
           remember_user_login(:cookies => true)
-          flash[:mixpanel_first_time] = "yes"
-          redirect_to controller: 'inside', action: 'welcome'
+          flash[:first_time_register] = "true"
+          redirect_to controller: 'inside', action: 'index'
         # Re-login
         else
           @user = twitter.user
