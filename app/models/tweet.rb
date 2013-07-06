@@ -1,20 +1,125 @@
 class Tweet < ActiveRecord::Base
 
   belongs_to      :feed
-  belongs_to      :twitter
+  delegate        :twitter, :to => :feed
 
-  attr_accessible :id_str, :created_at,
+  attr_accessible :created_at,
+                  :id_str,
+                  :text,
+                  :coordinates,
+                  :place,
+                  :retweet_count,
+                  :favorite_count,
+                  :entities,
+                  :favorited,
+                  :retweeted,
+                  :lang,
                   # retweeted attr
                   :retweeted_status_id_str,
                   :retweeted_status_user_id_str,
                   :retweeted_status_user_screen_name,
                   :retweeted_status_user_name,
                   :retweeted_status_user_profile_image_url,
-                  # tweet content
-                  :text, :entities, :lang,
-                  :read
+                  # custom attr
+                  :read,
+                  :feed_id,
+                  :score
 
-  # Method
+
+  ##
+  # Raw SQL mass insertion operation, values from twitter API
+  #
+  # --------------------------------------------------
+  def self.mass_insert(tweets_raw, twitter, feeds=nil)
+    return if tweets_raw.empty?
+    # retrive friends id str and id pair
+    if feeds
+      id_map = Hash[feeds.map {|feed| [feed.id_str, feed.id]}]
+    else
+      id_map = Hash[twitter.feeds.select('id, id_str').map {|feed| [feed.id_str, feed.id]}]
+    end
+
+    # clean up raw data
+    tweets_cleaned = tweets_raw.map do |tweet_raw|
+      if tweet_raw['user']['id_str'] === twitter.user_id
+        nil
+      elsif tweet_raw['retweeted_status']
+        [
+          Time.now, # updated_at
+          tweet_raw['created_at'],
+          tweet_raw['id_str'],
+          tweet_raw['text'],
+          tweet_raw['coordinates'].to_json,
+          tweet_raw['place'].to_json,
+          tweet_raw['retweet_count'],
+          tweet_raw['favorite_count'],
+          tweet_raw['entities'].to_json,
+          tweet_raw['favorited'],
+          tweet_raw['retweeted'],
+          tweet_raw['lang'],
+          id_map[tweet_raw['user']['id_str']], # feed_id
+          tweet_raw['retweeted_status']['id_str'],
+          tweet_raw['retweeted_status']['user']['id_str'],
+          tweet_raw['retweeted_status']['user']['screen_name'],
+          tweet_raw['retweeted_status']['user']['name'],
+          tweet_raw['retweeted_status']['user']['profile_image_url']
+        ]
+      else
+        [
+          Time.now, # updated_at
+          tweet_raw['created_at'],
+          tweet_raw['id_str'],
+          tweet_raw['text'],
+          tweet_raw['coordinates'].to_json,
+          tweet_raw['place'].to_json,
+          tweet_raw['retweet_count'],
+          tweet_raw['favorite_count'],
+          tweet_raw['entities'].to_json,
+          tweet_raw['favorited'],
+          tweet_raw['retweeted'],
+          tweet_raw['lang'],
+          id_map[tweet_raw['user']['id_str']], # feed_id
+          "null",
+          "null",
+          "null",
+          "null",
+          "null"
+        ]
+      end
+    end
+
+    # generate sql statements
+    insert_statements = tweets_cleaned.compact.map do |tweet_cleaned|
+      "(#{(tweet_cleaned.map do |field|
+        if field.class == String
+          "'#{field.gsub("'", "''")}'"
+        elsif field.class == Time # TODO: make sure time zone is right
+          "'#{field.to_s}'"
+        else
+          field
+        end
+      end).join(',')})"
+    end
+
+    # insertion
+    sql_insert = "INSERT INTO tweets (updated_at, created_at, id_str, text, coordinates, place, retweet_count, favorite_count, entities, favorited, retweeted, lang, feed_id, retweeted_status_id_str, retweeted_status_user_id_str, retweeted_status_user_screen_name, retweeted_status_user_name, retweeted_status_user_profile_image_url) VALUES #{insert_statements.join(',')};"
+
+    return ActiveRecord::Base.connection.execute(sql_insert)
+  end
+
+
+  ##
+  # Generate score for tweet, which is used to display top tweets
+  #
+  # --------------------------------------------------
+  def calculate_score
+    self.score = self.retweet_count * 10 + self.favorite_count * 10
+    self.score += 10 if !MultiJson.load(self.entities)['media'].empty?
+    self.save
+  end
+
+
+  # TODO: benchmark and clean up old methods
   def self.new_from_raw(tw)
     if tw['retweeted_status']
       content = {
