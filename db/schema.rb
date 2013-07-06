@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130608184844) do
+ActiveRecord::Schema.define(:version => 20130703182918) do
 
   create_table "feeds", :force => true do |t|
     t.string   "id_str"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20130608184844) do
     t.integer  "twitter_id"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.string   "top_tweets"
   end
 
   add_index "feeds", ["folder_id"], :name => "index_feeds_on_folder_id"
@@ -72,10 +73,17 @@ ActiveRecord::Schema.define(:version => 20130608184844) do
     t.string   "lang"
     t.boolean  "read",                                    :default => true
     t.integer  "feed_id"
-    t.datetime "created_at",                                                :null => false
-    t.datetime "updated_at",                                                :null => false
+    t.datetime "created_at",                                                 :null => false
+    t.datetime "updated_at",                                                 :null => false
+    t.text     "coordinates"
+    t.text     "place"
+    t.integer  "retweet_count",                           :default => 0
+    t.integer  "favorite_count",                          :default => 0
+    t.boolean  "favorited",                               :default => false
+    t.boolean  "retweeted",                               :default => false
   end
 
+  add_index "read_tweets", ["feed_id", "id_str"], :name => "index_read_tweets_on_feed_id_and_id_str", :unique => true
   add_index "read_tweets", ["feed_id"], :name => "index_read_tweets_on_feed_id"
   add_index "read_tweets", ["read"], :name => "index_read_tweets_on_read"
 
@@ -116,8 +124,16 @@ ActiveRecord::Schema.define(:version => 20130608184844) do
     t.integer  "feed_id"
     t.datetime "created_at",                                                 :null => false
     t.datetime "updated_at",                                                 :null => false
+    t.text     "coordinates"
+    t.text     "place"
+    t.integer  "retweet_count",                           :default => 0
+    t.integer  "favorite_count",                          :default => 0
+    t.boolean  "favorited",                               :default => false
+    t.boolean  "retweeted",                               :default => false
+    t.integer  "score",                                   :default => 0
   end
 
+  add_index "tweets", ["feed_id", "id_str"], :name => "index_tweets_on_feed_id_and_id_str", :unique => true
   add_index "tweets", ["feed_id"], :name => "index_tweets_on_feed_id"
   add_index "tweets", ["read"], :name => "index_tweets_on_read"
 

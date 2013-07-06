@@ -114,7 +114,8 @@ class Tweet < ActiveRecord::Base
   # --------------------------------------------------
   def calculate_score
     self.score = self.retweet_count * 10 + self.favorite_count * 10
-    self.score += 10 if !MultiJson.load(self.entities)['media'].empty?
+    medias = MultiJson.load(self.entities)['media']
+    self.score += 10 if medias && medias.empty?
     self.save
   end
 

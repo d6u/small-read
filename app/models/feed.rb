@@ -60,11 +60,16 @@ class Feed < ActiveRecord::Base
   ##
   # Analyze unread tweets and marking top tweets
   #
+  # options={} - if :all => true, update score of all tweets
   # ------------------------------------------
-  def update_top_tweets
-    unread_tweets = self.unread_tweets
-    unread_tweets.each {|t| t.calculate_score}
-    unread_tweets.sort {|a, b| b.score <=> a.score}
+  def update_top_tweets(options={})
+    # calculate score
+    tweets = options[:all] ? self.tweets : self.unread_tweets
+    tweets.each {|t| t.calculate_score}
+
+    # pick out top tweets from unread tweets
+    unread_tweets = options[:all] ? self.unread_tweets : tweets
+    unread_tweets.sort! {|a, b| b.score <=> a.score}
     self.top_tweets = (unread_tweets[0..2].map {|t| t.id}).join(',')
     self.save
   end

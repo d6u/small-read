@@ -20,7 +20,7 @@ class Twitter < ActiveRecord::Base
     friends_id_local = feeds.map {|f| f.id_str}
 
     # expection for empty friends_id_remote
-    friends_id_remote = friends_id_local if friends_id_remote.emtpy?
+    friends_id_remote = friends_id_local if friends_id_remote.empty?
 
     removing_ids = friends_id_local - friends_id_remote
     Feed.destroy_all(:id_str => removing_ids, :twitter_id => self.id) if !removing_ids.empty?
@@ -75,8 +75,10 @@ class Twitter < ActiveRecord::Base
   # Analyze timeline, arrange top tweet for show
   #
   # ----------------------------------------
-  def self.analyze_timeline(twitter_id)
-    Twitter.find_by_id(twitter_id).feeds.each {|feed| feed.update_top_tweets}
+  def self.analyze_timeline(twitter_id, options={})
+    ActiveRecord::Base.transaction do
+      Twitter.find_by_id(twitter_id).feeds.each {|feed| feed.update_top_tweets(options)}
+    end
   end
 
 
