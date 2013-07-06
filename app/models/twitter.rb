@@ -18,17 +18,28 @@ class Twitter < ActiveRecord::Base
     feeds = Feed.where(:twitter_id => self.id)
     friends_id_remote = self.friends_ids(:user_id => self.user_id, :stringify_ids => true)[:data]['ids']
     friends_id_local = feeds.map {|f| f.id_str}
+
+    # expection for empty friends_id_remote
+    friends_id_remote = friends_id_local if friends_id_remote.emtpy?
+
     removing_ids = friends_id_local - friends_id_remote
     Feed.destroy_all(:id_str => removing_ids, :twitter_id => self.id) if !removing_ids.empty?
 
-    # 2. assamble user data from home_timeline
-    home_timeline = self.home_timeline({:count => 5}, {:pages => 1})[:data] # TODO: pages => 9
-    timeline_users = (home_timeline.map {|t| t['user']['id_str'] === self.user_id ? nil : t['user']}).compact.uniq
+    # home_timeline is not empty (not exceeding API limits)
+    if !home_timeline.empty?
+      # 2. assamble user data from home_timeline
+      home_timeline = self.home_timeline({:count => 200}, {:pages => 9})[:data]
+      timeline_users = (home_timeline.map {|t| t['user']['id_str'] === self.user_id ? nil : t['user']}).compact.uniq
 
-    # 3. fetch user data that is not on home_timeline
-    friends_id_timeline = timeline_users.map {|u| u['id_str']}
-    fetching_ids = friends_id_remote - friends_id_timeline
-    all_users = self.users_lookup(:user_id => fetching_ids)[:data] + timeline_users
+      # 3. fetch user data that is not on home_timeline
+      friends_id_timeline = timeline_users.map {|u| u['id_str']}
+      fetching_ids = friends_id_remote - friends_id_timeline
+      all_users = self.users_lookup(:user_id => fetching_ids)[:data] + timeline_users
+
+    # home_timeline is empty
+    else
+      all_users = self.users_lookup(:user_id => friends_id_remote)[:data]
+    end
 
     # 4. save new users
     new_friends_id = friends_id_remote - friends_id_local
@@ -38,23 +49,26 @@ class Twitter < ActiveRecord::Base
 
     # 5. update other user
     existing_users = all_users.select {|u| !new_friends_id.include? u['id_str']}
-    update_existing_users(feeds, existing_users)
+    update_existing_users(feeds, existing_users) if !existing_users.empty?
 
-    # 6. insert new tweets from home_timeline
-    if self.newest_tweet_id
-      news_tweets = home_timeline.select {|t| t['id_str'].to_i > self.newest_tweet_id.to_i}
-      # 7. update existing tweets
-      existing_tweets = home_timeline.select {|t| t['id_str'].to_i <= self.newest_tweet_id.to_i}
-      update_existing_tweets(existing_tweets)
-    else
-      news_tweets = home_timeline
+    # home_timeline is not empty (not exceeding API limits)
+    if !home_timeline.empty?
+      # 6. insert new tweets from home_timeline
+      if self.newest_tweet_id
+        news_tweets = home_timeline.select {|t| t['id_str'].to_i > self.newest_tweet_id.to_i}
+        # 7. update existing tweets
+        existing_tweets = home_timeline.select {|t| t['id_str'].to_i <= self.newest_tweet_id.to_i}
+        update_existing_tweets(existing_tweets) if !existing_tweets.empty?
+      else
+        news_tweets = home_timeline
+      end
+      Tweet.mass_insert(news_tweets, self)
+
+      # 7. update newest_tweet_id and unread_count
+      self.update_attribute(:newest_tweet_id, home_timeline.first['id_str'])
+      Feed.where(:id_str => friends_id_timeline, :twitter_id => self.id).each {|f| f.count_unread}
+      Folder.where(:user_id => self.local_user_id).each {|f| f.count_unread}
     end
-    Tweet.mass_insert(news_tweets, self)
-
-    # 7. update newest_tweet_id and unread_count
-    self.update_attribute(:newest_tweet_id, home_timeline.first['id_str'])
-    Feed.where(:id_str => friends_id_timeline, :twitter_id => self.id).each {|f| f.count_unread}
-    Folder.where(:user_id => self.local_user_id).each {|f| f.count_unread}
   end
 
   ##
