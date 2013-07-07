@@ -81,6 +81,12 @@ ActiveRecord::Schema.define(:version => 20130703182918) do
     t.integer  "favorite_count",                          :default => 0
     t.boolean  "favorited",                               :default => false
     t.boolean  "retweeted",                               :default => false
+    t.integer  "score",                                   :default => 0
+    t.boolean  "with_image",                              :default => false
+    t.boolean  "with_url",                                :default => false
+    t.boolean  "with_coordinate",                         :default => false
+    t.boolean  "with_mention",                            :default => false
+    t.boolean  "with_hashtag",                            :default => false
   end
 
   add_index "read_tweets", ["feed_id", "id_str"], :name => "index_read_tweets_on_feed_id_and_id_str", :unique => true
@@ -131,6 +137,11 @@ ActiveRecord::Schema.define(:version => 20130703182918) do
     t.boolean  "favorited",                               :default => false
     t.boolean  "retweeted",                               :default => false
     t.integer  "score",                                   :default => 0
+    t.boolean  "with_image",                              :default => false
+    t.boolean  "with_url",                                :default => false
+    t.boolean  "with_coordinate",                         :default => false
+    t.boolean  "with_mention",                            :default => false
+    t.boolean  "with_hashtag",                            :default => false
   end
 
   add_index "tweets", ["feed_id", "id_str"], :name => "index_tweets_on_feed_id_and_id_str", :unique => true

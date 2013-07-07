@@ -109,14 +109,36 @@ class Tweet < ActiveRecord::Base
 
 
   ##
+  # Detect which element this tweet has
+  #
+  # :with_image, :with_url, :with_coordinate, :with_mention, :with_hashtag
+  # --------------------------------------------------
+  def detect_tweet_type
+    begin
+      coordinates = MultiJson.load(self.coordinates)
+    rescue ArgumentError
+      coordinates = nil
+    end
+    entities    = MultiJson.load(self.entities)
+    self.with_coordinate = true if coordinates && !coordinates.empty?
+    self.with_image      = true if entities['media'] && !entities['media'].empty?
+    self.with_url        = true if entities['urls'] && !entities['urls'].empty?
+    self.with_mention    = true if entities['user_mentions'] && !entities['user_mentions'].empty?
+    self.with_hashtag    = true if entities['hashtags'] && !entities['hashtags'].empty?
+    self.save
+    return self
+  end
+
+
+  ##
   # Generate score for tweet, which is used to display top tweets
   #
   # --------------------------------------------------
   def calculate_score
     self.score = self.retweet_count * 10 + self.favorite_count * 10
-    medias = MultiJson.load(self.entities)['media']
-    self.score += 10 if medias && medias.empty?
+    self.score += 10 if self.with_image
     self.save
+    return self
   end
 
 

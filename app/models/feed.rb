@@ -65,12 +65,23 @@ class Feed < ActiveRecord::Base
   def update_top_tweets(options={})
     # calculate score
     tweets = options[:all] ? self.tweets : self.unread_tweets
-    tweets.each {|t| t.calculate_score}
+    tweets.each {|t| t.detect_tweet_type.calculate_score }
 
-    # pick out top tweets from unread tweets
+    # select unread tweets
     unread_tweets = options[:all] ? self.unread_tweets : tweets
     unread_tweets.sort! {|a, b| b.score <=> a.score}
-    self.top_tweets = (unread_tweets[0..2].map {|t| t.id}).join(',')
+
+    # pick out top image tweet
+    top_tweets = []
+    image_tweet = nil
+    unread_tweets.each {|tweet| image_tweet = tweet if tweet.with_image}
+
+    # pick out other top tweets
+    top_tweets << image_tweet if image_tweet
+    top_tweets += unread_tweets[0..2]
+
+    # save top tweets
+    self.top_tweets = (top_tweets.uniq[0..2].map {|t| t.id}).join(',')
     self.save
   end
 
