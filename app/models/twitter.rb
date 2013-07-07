@@ -11,7 +11,10 @@ class Twitter < ActiveRecord::Base
   attr_accessible :user_id, :oauth_token, :oauth_token_secret, :screen_name
 
 
-  # def refresh_account
+  ##
+  # Fetch friends and tweets data from Twitter API
+  #
+  # ----------------------------------------
   def refresh_account(options={})
     # 1. compare local friends id with remote friends id
     #    deciding which to delete on local db
@@ -28,7 +31,7 @@ class Twitter < ActiveRecord::Base
     # home_timeline is not empty (not exceeding API limits)
     if !home_timeline.empty?
       # 2. assamble user data from home_timeline
-      home_timeline = self.home_timeline({:count => 200}, {:pages => 9})[:data]
+      home_timeline = self.home_timeline({:count => 200}, {:pages => 5})[:data]
       timeline_users = (home_timeline.map {|t| t['user']['id_str'] === self.user_id ? nil : t['user']}).compact.uniq
 
       # 3. fetch user data that is not on home_timeline
@@ -62,7 +65,7 @@ class Twitter < ActiveRecord::Base
       else
         news_tweets = home_timeline
       end
-      Tweet.mass_insert(news_tweets, self)
+      Tweet.mass_insert(news_tweets.reverse, self)
 
       # 7. update newest_tweet_id and unread_count
       self.update_attribute(:newest_tweet_id, home_timeline.first['id_str'])
@@ -70,6 +73,7 @@ class Twitter < ActiveRecord::Base
       Folder.where(:user_id => self.local_user_id).each {|f| f.count_unread}
     end
   end
+
 
   ##
   # Analyze timeline, arrange top tweet for show

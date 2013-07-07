@@ -107,7 +107,8 @@ class OutsideController < ApplicationController
       redirect_to "https://api.twitter.com/oauth/authenticate?oauth_token=#{response['oauth_token']}"
     else
       # TODO: custom 500 page
-      render :status => 500
+      # render :status => 500
+      render :nothing => true
     end
   end
 
@@ -133,7 +134,7 @@ class OutsideController < ApplicationController
           twitter = Twitter.new(response)
           @user.twitters << twitter
           @user.save
-          Resque.enqueue(UpdateTwitter, twitter.id)
+          Resque.enqueue(UpdateTwitter, twitter.id) # ASYNC
           remember_user_login(:cookies => true)
           flash[:first_time_register] = "true"
           redirect_to controller: 'inside', action: 'index'
