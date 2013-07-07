@@ -1,0 +1,102 @@
+// Cell Style
+// ----------------------------------------
+.feed-image-cell {
+    height: 100%;
+    background-size: cover;
+}
+
+.feed-image-tweet-body {
+    position: absolute;
+    bottom: 0;
+    padding: 5px 5px 5px 10px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.feed-image-tweet-body-hover {
+    opacity: 0;
+    position: absolute;
+    z-index: -100;
+    bottom: 0;
+    padding: 10px 15px;
+    background: white;
+    .tweet-text {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+}
+
+.feed-top-tweet-cell {
+    padding: 5px 5px 5px 10px;
+    border-top: 1px solid #d6d6d6;
+}
+
+.tweet-text {
+    margin: 0;
+}
+
+.tweet-timestamp {
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: bold;
+    margin: 0;
+    text-align: right;
+    color: #999;
+}
+
+.feed-profile-cell {
+    height: 45px;
+    border-top: 1px solid #d6d6d6;
+
+    img {
+        width: 35px;
+        height: 35px;
+        margin: 5px;
+        float: left;
+    }
+}
+
+.profile-detail {
+    float: left;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.profile-screen-name {
+    color: #999;
+    font-size: 12px;
+}
+
+.feed-unread-count {
+    float: right;
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+    font-size: 28px;
+    height: 100%;
+    width: 45px;
+    text-align: center;
+    line-height: 45px;
+}
+
+// Hover State
+// ----------------------------------------
+.feed-image-row {
+    &:hover {
+        ~ tr {
+            opacity: 0;
+            td {
+                border-top-color: rgba(255,255,255,0);
+            }
+        }
+
+        .feed-image-tweet-body-hover {
+            opacity: 1;
+            z-index: 100;
+        }
+    }
+}
