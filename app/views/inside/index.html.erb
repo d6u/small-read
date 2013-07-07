@@ -1,34 +1,40 @@
 <div class="main clearfix">
-    <div class="feed-showcase">
+    <div ng-repeat="feed in feeds" class="feed-showcase">
         <table>
             <tr class="feed-image-row">
-                <td class="feed-image-cell" style="background: url('http://placeimg.com/320/320/any');">
+                <td class="feed-image-cell" ng-style="feed.topTweetBg" >
+                    <div class="feed-image-hover-plate"></div>
                     <div class="feed-image-tweet-body-hover">
-                        <p class="tweet-text top-image-tweet-text">This is a tweets text tweet This is a tweets text tweet This is a tweets text tweetThis is a tweets text tweetThis is a tweets text tweetaaaaaaa</p>
-                        <p class="tweet-timestamp">1h ago</p>
+                        <p class="tweet-text top-image-tweet-text" ng-bind-html="feed.topTweets[0].text | tweetTextFilter:feed.topTweets[0].entities"></p>
+                        <p class="tweet-timestamp">{{feed.topTweets[0].createdAt}}</p>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td class="feed-top-tweet-cell">
-                    <p class="tweet-text">This is a tweets text tweet This is a tweets text tweet This is a tweets text tweet</p>
-                    <p class="tweet-timestamp">1h ago</p>
+                    <p class="tweet-text" ng-bind-html="feed.topTweets[1].text | tweetTextFilter:feed.topTweets[1].entities"></p>
+                    <p class="tweet-timestamp">{{feed.topTweets[0].createdAt}}</p>
                 </td>
             </tr>
             <tr>
                 <td class="feed-top-tweet-cell">
-                    <p class="tweet-text">This is a tweets text tweet This is a tweets text tweet This is a tweets text tweet</p>
-                    <p class="tweet-timestamp">1h ago</p>
+                    <p class="tweet-text" ng-bind-html="feed.topTweets[2].text | tweetTextFilter:feed.topTweets[2].entities"></p>
+                    <p class="tweet-timestamp">{{feed.topTweets[0].createdAt}}</p>
                 </td>
             </tr>
             <tr>
                 <td class="feed-profile-cell">
-                    <img src="http://a0.twimg.com/profile_images/2182907658/heroku-logo-for-facebook_normal.png" alt="">
+                    <img ng-src="{{feed.profileImageUrl}}" alt="">
                     <div class="profile-detail">
-                        <div class="profile-name">Heroku</div>
-                        <div class="profile-screen-name">@heroku</div>
+                        <div class="profile-name">{{feed.name}}</div>
+                        <div class="profile-screen-name">
+                            <a ng-href="http://twitter.com/{{feed.screenName}}" target="_blank">
+                                @{{feed.screenName}}
+                                <span>open in Twitter.com</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="feed-unread-count">13</div>
+                    <div class="feed-unread-count">{{feed.unreadCount}}</div>
                 </td>
             </tr>
         </table>

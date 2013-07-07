@@ -5,6 +5,16 @@
     background-size: cover;
 }
 
+.feed-image-hover-plate {
+    background-color: white;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    opacity: 0;
+    display: none;
+}
+
 .feed-image-tweet-body {
     position: absolute;
     bottom: 0;
@@ -19,11 +29,18 @@
     bottom: 0;
     padding: 10px 15px;
     background: white;
+    .top-image-tweet-text {
+        margin-bottom: 10px;
+    }
     .tweet-text {
         font-size: 24px;
         font-weight: bold;
         line-height: 1.2;
     }
+}
+
+.top-image-tweet-text {
+    width: 290px;
 }
 
 .feed-top-tweet-cell {
@@ -33,6 +50,7 @@
 
 .tweet-text {
     margin: 0;
+    word-wrap: break-word;
 }
 
 .tweet-timestamp {
@@ -69,14 +87,23 @@
 .profile-screen-name {
     color: #999;
     font-size: 12px;
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    span {
+        color: $blue;
+        display: none;
+        text-decoration: underline;
+    }
 }
 
 .feed-unread-count {
     float: right;
-    background-color: blue;
+    background-color: $blue_dark;
     color: white;
     font-weight: bold;
-    font-size: 28px;
+    font-size: 24px;
     height: 100%;
     width: 45px;
     text-align: center;
@@ -94,9 +121,22 @@
             }
         }
 
+        .feed-image-hover-plate {
+            display: block;
+            z-index: 90;
+        }
+
         .feed-image-tweet-body-hover {
             opacity: 1;
             z-index: 100;
+        }
+    }
+}
+
+.feed-profile-cell {
+    &:hover {
+        .profile-screen-name span {
+            display: inline;
         }
     }
 }

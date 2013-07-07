@@ -1,11 +1,15 @@
 class FeedsController < ApplicationController
   # Filters
-  # =======
+  # ========================================
 
 
   # Actions
-  # =======
+  # ========================================
+
+  ##
   # GET /feeds
+  #
+  # ----------------------------------------
   def index
     if params[:folder_id]
       @feeds = @user.folders.find(params[:folder_id]).feeds
@@ -15,6 +19,17 @@ class FeedsController < ApplicationController
 
     render json: @feeds
   end
+
+
+  ##
+  # Add top tweets data onto feeds
+  #
+  # GET /feeds_with_top_tweets
+  # ----------------------------------------
+  def feeds_with_top_tweets
+    render 'feeds_with_top_tweets.json', :formats => [:json]
+  end
+
 
   # GET /feeds/1
   def show
