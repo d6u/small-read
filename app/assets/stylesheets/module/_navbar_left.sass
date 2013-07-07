@@ -1,0 +1,40 @@
+.navbar
+    background: $gray6
+    &.navbar-fixed-left
+        position: fixed
+        width: 200px
+        top: 0
+        bottom: 0
+        left: 0
+        padding: 10px
+
+    a
+        color: $gray3
+        text-decoration: none
+
+.navbar-inner-menu
+    .navbar-menu-item
+        display: block
+        border-bottom: 1px solid $gray4
+        padding: 5px 0
+        font-weight: bold
+        &:last-of-type
+            border-bottom: none
+        &:hover
+            color: $green
+            .unread-count
+                color: white
+
+        .unread-count
+            float: right
+            padding: 0 5px
+            background: $blue
+            color: white
+            border-radius: 2px
+
+.navbar-inner-bottom
+    position: absolute
+    bottom: 10px
+    .square-button
+        float: left
+        margin-right: 10px

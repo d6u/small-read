@@ -1,0 +1,82 @@
+.main-container
+    padding: 20px
+    background: $cloud
+
+.feed-beauty
+    float: left
+    width: 300px
+    border-radius: 4px
+    box-shadow: 0 0 3px rgba(#000, 0.4)
+    overflow: hidden
+
+.cover-image-wrapper
+    position: relative
+    img
+        float: left
+
+.fold-corner
+    position: absolute
+    right: 0
+    top: 0
+    width: 20px
+    height: 20px
+    display: block
+
+.top-tweets
+    background: white
+
+.top-tweet
+    padding: 10px 10px 10px 15px
+    border-bottom: 1px solid $gray2
+
+
+.feed-actions
+    background: white
+
+.more-tweets-count
+    $length: 50px
+    $shortLength: 15px
+
+    height: $length - $shortLength
+    width: $length
+    background: $red
+    color: white
+    position: relative
+    float: left
+    display: block
+    text-decoration: none
+    &:hover
+        background: $blue
+        .top-triangle
+            border-bottom-color: $blue
+    .count-body
+        height: $length - $shortLength * 3 / 2
+        text-indent: 3px
+        line-height: $length - $shortLength * 3 / 2
+        padding-top: $shortLength / 2
+        font-size: 15px
+        font-weight: bold
+    .top-triangle
+        width: 0
+        height: 0
+        border-left: $shortLength solid transparent
+        border-right: $shortLength solid transparent
+        border-bottom: $shortLength solid $red
+        position: absolute
+        top: -$shortLength
+        left: -$shortLength
+    .right-triangle
+        width: 0
+        height: 0
+        border-left: $length - $shortLength solid transparent
+        border-right: $length - $shortLength solid transparent
+        border-top: $length - $shortLength solid white
+        position: absolute
+        top: 0
+        right: -($length - $shortLength)
+
+.feed-actions
+    width: 300px - 50px
+    height: 35px
+    float: right
+    background: white

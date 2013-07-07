@@ -1,30 +1,30 @@
-// Variables and Mixins, Base, Component
-//= require framework
-//= require magnific-popup.css
+// Variables and Mixins
+@import "variables";
 
 
-// Custom Variables and Mixins
-@import "variables_and_mixins/variables";
-@import "variables_and_mixins/mixins";
-@import "variables_and_mixins/custom_variables";
+// Base
+@import "base/base";
+@import "base/skeleton.css";
+@import "base/center_grid";
+
+
+// Component
+@import "component/font-awesome";
+@import "component/buttons";
+@import "component/buttons_skin";
+@import "component/inputs";
+@import "component/messages";
+
 
 // Layout
-@import "layout/inside_common";
+@import "layout/inside";
+
 
 // Module
-@import "module/inside_navbar";
-@import "module/feedback_modal";
-@import "module/inside_sections";
-@import "module/user_forms";
-@import "module/inside/toolboxes";
-@import "module/inside/list_container";
-@import "module/inside/feeds";
-@import "module/inside/tweets";
-@import "module/inside/tweets_module";
-@import "module/inside/icheck-square-blue";
+@import "module/navbar_left";
+@import "module/forms";
+@import "module/main_container";
+
 
 // State
 
-
-// Utility
-@import "utility/utilities";

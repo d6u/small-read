@@ -1,0 +1,25 @@
+<nav class="navbar navbar-fixed-left">
+    <% if @user.email %>
+        <%= link_to({:controller => 'settings', :action => 'settings'}, :class => 'navbar-element gravatar-image-element') do %>
+            <div class="gravatar-image">
+                <%= image_tag Gravatar.new(@user.email).image_url, :class => '', :alt => 'Profile Image' %>
+            </div>
+        <% end %>
+    <% end %>
+
+    <div class="navbar-inner-menu">
+        <a href="" class="navbar-menu-item">All<span class="unread-count"></span></a>
+        <a href="" class="navbar-menu-item">Little Pieces<span class="unread-count"></span></a>
+        <% @user.folders.each do |folder| %>
+            <a href="" class="navbar-menu-item"><%= folder.name %><span class="unread-count"><%= folder.unread_count %></span></a>
+        <% end %>
+    </div>
+
+    <div class="navbar-inner-bottom">
+        <a href="" class="square-button"><i class="icon-cog"></i></a>
+        <a href="" class="square-button"><i class="icon-group"></i></a>
+        <%= link_to({:controller => 'inside', :action => "logout", :confirmation => 'yes'}, {:class => 'square-button'}) do %>
+            <i class="icon-off"></i>
+        <% end %>
+    </div>
+</nav>
