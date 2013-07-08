@@ -3,14 +3,20 @@
 .feed-image-row {
 
     &.has-cover-image {
-        .feed-cover-text {
+        .feed-cover-text-container {
             display: none;
         }
     }
 
-    &.no-cover-image.very-long-text {
-        .top-image-tweet-text {
-            font-size: 16px;
+    &.no-cover-image {
+        &.very-long-text {
+            .top-image-tweet-text {
+                font-size: 16px;
+            }
+        }
+
+        .feed-cover-show-more {
+            opacity: 0;
         }
     }
 }
@@ -36,10 +42,45 @@
     .top-image-tweet-text {
         font-size: 21px;
     }
+    .tweet-timestamp {
+        margin-bottom: 20px;
+    }
+}
+
+.feed-cover-show-more-container {
+    position: relative;
+    display: none;
+    width: 100%;
+    height: 100%;
+    padding-top: 50px;
+    .feed-cover-show-more {
+        color: white;
+        a {
+            color: inherit;
+            background: rgba(0,0,0,0.7);
+            &:hover {
+                color: black;
+                background: white;
+            }
+        }
+    }
+}
+
+.feed-cover-show-more {
+    text-align: center;
+    a {
+        width: 200px;
+        height: 50px;
+        display: inline-block;
+        line-height: 50px !important;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+    }
 }
 
 .feed-image-hover-plate {
-    background-color: white;
+    background-color: black;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -89,6 +130,13 @@
     margin: 0;
     text-align: right;
     color: #999;
+    a {
+        color: inherit;
+        text-decoration: none;
+        &:hover {
+            color: darken(#999, 20%);
+        }
+    }
 }
 
 .feed-profile-cell {
@@ -128,15 +176,21 @@
 }
 
 .feed-unread-count {
+    display: block;
     float: right;
     background-color: $blue_dark;
-    color: white;
+    color: white !important;
     font-weight: bold;
     font-size: 24px;
     height: 100%;
     width: 45px;
     text-align: center;
     line-height: 45px;
+    text-decoration: none;
+    &:hover {
+        background-color: $blue;
+        color: white !important;
+    }
 }
 
 // Hover State
@@ -150,14 +204,26 @@
             }
         }
 
-        .feed-image-hover-plate {
+        .feed-cover-show-more-container {
             display: block;
             z-index: 90;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .feed-image-hover-plate {
+            display: block;
+            z-index: 80;
         }
 
         .feed-image-tweet-body-hover {
             opacity: 1;
             z-index: 100;
+        }
+    }
+
+    &.no-cover-image:hover {
+        .feed-cover-show-more {
+            opacity: 1;
         }
     }
 }
