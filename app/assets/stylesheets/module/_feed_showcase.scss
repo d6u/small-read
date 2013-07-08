@@ -1,8 +1,41 @@
 // Cell Style
 // ----------------------------------------
+.feed-image-row {
+
+    &.has-cover-image {
+        .feed-cover-text {
+            display: none;
+        }
+    }
+
+    &.no-cover-image.very-long-text {
+        .top-image-tweet-text {
+            font-size: 16px;
+        }
+    }
+}
+
 .feed-image-cell {
     height: 100%;
     background-size: cover;
+}
+
+.feed-cover-text-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.feed-cover-text {
+    position: absolute;
+    top: 50%;
+    transform:         translate(0, -50%);
+    -webkit-transform: translate(0, -50%);
+
+    padding: 10px 15px;
+    .top-image-tweet-text {
+        font-size: 21px;
+    }
 }
 
 .feed-image-hover-plate {
@@ -29,18 +62,6 @@
     bottom: 0;
     padding: 10px 15px;
     background: white;
-    .top-image-tweet-text {
-        margin-bottom: 10px;
-    }
-    .tweet-text {
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 1.2;
-    }
-}
-
-.top-image-tweet-text {
-    width: 290px;
 }
 
 .feed-top-tweet-cell {
@@ -51,6 +72,14 @@
 .tweet-text {
     margin: 0;
     word-wrap: break-word;
+    margin-bottom: 5px;
+}
+
+.top-image-tweet-text {
+    width: 290px;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1.2;
 }
 
 .tweet-timestamp {
@@ -113,7 +142,7 @@
 // Hover State
 // ----------------------------------------
 .feed-image-row {
-    &:hover {
+    &.has-cover-image:hover {
         ~ tr {
             opacity: 0;
             td {

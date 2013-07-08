@@ -1,3 +1,4 @@
+//= require modules/time-parser.js
 //= require jquery-2.X.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
@@ -14,18 +15,19 @@ app.controller('AppCtrl',
             for (var i = 0; i < response.data.length; i++) {
                 // parase entities from JSON to object
                 response.data[i].coverTweet.entities = angular.fromJson(response.data[i].coverTweet.entities);
+                response.data[i].coverTweet.createdAt = parseTime(response.data[i].coverTweet.createdAt);
                 for (var j = 0; j < response.data[i].topTweets.length; j++) {
                     response.data[i].topTweets[j].entities = angular.fromJson(response.data[i].topTweets[j].entities);
+                    response.data[i].topTweets[j].createdAt = parseTime(response.data[i].topTweets[j].createdAt);
                 };
                 // inject coverBg for background image
-                if (response.data[i].coverTweet.entities.media) {
+                if (response.data[i].coverTweet.withImage) {
                     response.data[i].coverBg = {
                         backgroundImage: "url(\""+response.data[i].coverTweet.entities.media[0].media_url+":small\")"
                     };
+                    response.data[i].coverTextClass = "has-cover-image";
                 } else {
-                    response.data[i].coverBg = {
-                        backgroundColor: '#bdc3c7'
-                    };
+                    response.data[i].coverTextClass = (response.data[i].coverTweet.text.length < 100) ? "no-cover-image" : "no-cover-image very-long-text";
                 }
             };
             $scope.feeds = response.data;
@@ -76,6 +78,23 @@ app.filter(
             input_pieces.push(input.slice(beginning_point, 140));
             // return input
             return input_pieces.join("");
+        };
+    }
+);
+
+app.filter(
+    'tweetTimestampFilter',
+    function() {
+        return function(input) {
+            var currentDate = new Date();
+            var diffInTime = currentDate - input;
+            if (diffInTime / 1000 / 60 <= 60) {
+                return (diffInTime / 1000 / 60 ) + "mins";
+            } else if (diffInTime / 1000 / 60 / 60 <= 24) {
+                return (diffInTime / 1000 / 60 / 60 ) + "hours";
+            } else {
+                return input.toDateString();
+            }
         };
     }
 );

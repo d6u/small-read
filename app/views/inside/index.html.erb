@@ -2,12 +2,18 @@
     <div ng-repeat="feed in feeds" class="feed-showcase">
         <table>
 
-            <tr class="feed-image-row">
+            <tr class="feed-image-row" ng-class="feed.coverTextClass">
                 <td class="feed-image-cell" ng-style="feed.coverBg" >
+                    <div class="feed-cover-text-container">
+                        <div class="feed-cover-text">
+                            <p class="tweet-text top-image-tweet-text" ng-bind-html="feed.coverTweet.text | tweetTextFilter:feed.coverTweet.entities"></p>
+                            <p class="tweet-timestamp">{{feed.coverTweet.createdAt | tweetTimestampFilter}}</p>
+                        </div>
+                    </div>
                     <div class="feed-image-hover-plate"></div>
                     <div class="feed-image-tweet-body-hover">
                         <p class="tweet-text top-image-tweet-text" ng-bind-html="feed.coverTweet.text | tweetTextFilter:feed.coverTweet.entities"></p>
-                        <p class="tweet-timestamp">{{feed.coverTweet.createdAt}}</p>
+                        <p class="tweet-timestamp">{{feed.coverTweet.createdAt | tweetTimestampFilter}}</p>
                     </div>
                 </td>
             </tr>
@@ -15,7 +21,7 @@
             <tr ng-repeat="topTweet in feed.topTweets">
                 <td class="feed-top-tweet-cell">
                     <p class="tweet-text" ng-bind-html="topTweet.text | tweetTextFilter:topTweet.entities"></p>
-                    <p class="tweet-timestamp">{{topTweet.createdAt}}</p>
+                    <p class="tweet-timestamp">{{topTweet.createdAt | tweetTimestampFilter}}</p>
                 </td>
             </tr>
 
