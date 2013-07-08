@@ -6,11 +6,23 @@ json.array! @user.twitters.first.feeds.where('unread_count > 0').order('unread_c
   json.screenName      feed.screen_name
   json.unreadCount     feed.unread_count
 
+  # retrive data from db
+  cover_tweet   = feed.top_image_tweets.limit(1).first
+  top_tweets    = feed.top_tweets.limit(3)
+  if cover_tweet
+    top_tweets.pop
+  else
+    cover_tweet = top_tweets.shift
+  end
+  # finish
 
-  json.topTweets       feed.top_tweets.split(',') do |tweet_id|
+  json.coverTweet do
+    json.text      cover_tweet.text
+    json.createdAt cover_tweet.created_at
+    json.entities  cover_tweet.entities
+  end
 
-    tweet = Tweet.find_by_id tweet_id
-
+  json.topTweets       top_tweets do |tweet|
     json.text      tweet.text
     json.createdAt tweet.created_at
     json.entities  tweet.entities

@@ -1,27 +1,24 @@
 <div class="main clearfix">
     <div ng-repeat="feed in feeds" class="feed-showcase">
         <table>
+
             <tr class="feed-image-row">
-                <td class="feed-image-cell" ng-style="feed.topTweetBg" >
+                <td class="feed-image-cell" ng-style="feed.coverBg" >
                     <div class="feed-image-hover-plate"></div>
                     <div class="feed-image-tweet-body-hover">
-                        <p class="tweet-text top-image-tweet-text" ng-bind-html="feed.topTweets[0].text | tweetTextFilter:feed.topTweets[0].entities"></p>
-                        <p class="tweet-timestamp">{{feed.topTweets[0].createdAt}}</p>
+                        <p class="tweet-text top-image-tweet-text" ng-bind-html="feed.coverTweet.text | tweetTextFilter:feed.coverTweet.entities"></p>
+                        <p class="tweet-timestamp">{{feed.coverTweet.createdAt}}</p>
                     </div>
                 </td>
             </tr>
-            <tr>
+
+            <tr ng-repeat="topTweet in feed.topTweets">
                 <td class="feed-top-tweet-cell">
-                    <p class="tweet-text" ng-bind-html="feed.topTweets[1].text | tweetTextFilter:feed.topTweets[1].entities"></p>
-                    <p class="tweet-timestamp">{{feed.topTweets[0].createdAt}}</p>
+                    <p class="tweet-text" ng-bind-html="topTweet.text | tweetTextFilter:topTweet.entities"></p>
+                    <p class="tweet-timestamp">{{topTweet.createdAt}}</p>
                 </td>
             </tr>
-            <tr>
-                <td class="feed-top-tweet-cell">
-                    <p class="tweet-text" ng-bind-html="feed.topTweets[2].text | tweetTextFilter:feed.topTweets[2].entities"></p>
-                    <p class="tweet-timestamp">{{feed.topTweets[0].createdAt}}</p>
-                </td>
-            </tr>
+
             <tr>
                 <td class="feed-profile-cell">
                     <img ng-src="{{feed.profileImageUrl}}" alt="">
@@ -37,6 +34,7 @@
                     <div class="feed-unread-count">{{feed.unreadCount}}</div>
                 </td>
             </tr>
+
         </table>
     </div>
 </div>

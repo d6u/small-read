@@ -13,16 +13,17 @@ app.controller('AppCtrl',
         .then(function(response) {
             for (var i = 0; i < response.data.length; i++) {
                 // parase entities from JSON to object
+                response.data[i].coverTweet.entities = angular.fromJson(response.data[i].coverTweet.entities);
                 for (var j = 0; j < response.data[i].topTweets.length; j++) {
                     response.data[i].topTweets[j].entities = angular.fromJson(response.data[i].topTweets[j].entities);
                 };
-                // inject topTweetBg for background image
-                if (response.data[i].topTweets[0] && response.data[i].topTweets[0].entities.media) {
-                    response.data[i].topTweetBg = {
-                        backgroundImage: "url(\""+response.data[i].topTweets[0].entities.media[0].media_url+":small\")"
+                // inject coverBg for background image
+                if (response.data[i].coverTweet.entities.media) {
+                    response.data[i].coverBg = {
+                        backgroundImage: "url(\""+response.data[i].coverTweet.entities.media[0].media_url+":small\")"
                     };
                 } else {
-                    response.data[i].topTweetBg = {
+                    response.data[i].coverBg = {
                         backgroundColor: '#bdc3c7'
                     };
                 }
@@ -39,7 +40,6 @@ app.filter(
     'tweetTextFilter',
     function() {
         return function(input, entities) {
-            console.log(input);
             // extract and sort entities
             var entity_array = [];
             for(var entity in entities) {
@@ -72,7 +72,8 @@ app.filter(
                 }
                 beginning_point = value.indices[1];
             });
-            input_pieces.push(input.slice(beginning_point, 140)); // last piece
+            // last piece, '140' fix truncated tweet text issue
+            input_pieces.push(input.slice(beginning_point, 140));
             // return input
             return input_pieces.join("");
         };
