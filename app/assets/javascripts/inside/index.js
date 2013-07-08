@@ -89,9 +89,9 @@ app.filter(
             var currentDate = new Date();
             var diffInTime = currentDate - input;
             if (diffInTime / 1000 / 60 <= 60) {
-                return (diffInTime / 1000 / 60 ) + "mins";
+                return Math.floor(diffInTime / 1000 / 60) + " mins ago";
             } else if (diffInTime / 1000 / 60 / 60 <= 24) {
-                return (diffInTime / 1000 / 60 / 60 ) + "hours";
+                return Math.floor(diffInTime / 1000 / 60 / 60) + " hours ago";
             } else {
                 return input.toDateString();
             }
