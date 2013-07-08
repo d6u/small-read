@@ -3,11 +3,12 @@
 //= require jquery.magnific-popup.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
+//= require modules/ng-infinite-scroll.js
 
 
 // App Init
 // ========================================
-var app = angular.module('SmallRead', ['ngSanitize']);
+var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
@@ -27,7 +28,7 @@ app.config(['$routeProvider', function($routeProvider) {
 // Controllers
 // ========================================
 app.controller('AppCtrl',
-    [function() {
+    ['$scope', function($scope) {
 
     }]
 );
@@ -62,14 +63,44 @@ app.controller('FeedShowcaseCtrl',
 
 
 app.controller('TweetsCtrl',
-    ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
-        $http.get('/feeds/'+$routeParams.id+'/tweets')
+    ['$scope', '$http', '$routeParams', '$window', function($scope, $http, $routeParams, $window) {
+        // load more tweets
+        $scope.loadMoreTweets = function() {
+            if ($scope.reacheEnd || $scope.busyScrolling || $scope.tweets.length === 0) return;
+            $scope.busyScrolling = true;
+            var url = $scope.loadOnlyUnread ? $scope.baseUrl+"?max_id="+$scope.maxTweetId : $scope.baseUrl+"&max_id="+$scope.maxTweetId;
+            $http.get(url).success(function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    data[i].entities = angular.fromJson(data[i].entities);
+                    data[i].created_at = parseTime(data[i].created_at);
+                }
+                $scope.tweets = $scope.tweets.concat(data);
+                if (data.length > 0) $scope.maxTweetId = data[data.length - 1].id - 1;
+                $scope.reacheEnd = data.length < 20 ? true : false;
+                $scope.busyScrolling = false;
+            });
+        };
+
+        // init task
+        $scope.tweets = [];
+        $scope.busyScrolling = false;
+        $scope.reacheEnd = false;
+        $scope.loadOnlyUnread = true;
+        $scope.baseUrl = '/feeds/'+$routeParams.id+'/tweets';
+        $http.get($scope.baseUrl)
         .then(function(response) {
             for (var i = 0; i < response.data.length; i++) {
                 response.data[i].entities = angular.fromJson(response.data[i].entities);
                 response.data[i].created_at = parseTime(response.data[i].created_at);
             };
+            $scope.reacheEnd = response.data.length < 20 ? true : false;
+            if (response.data.length > 0) $scope.maxTweetId = response.data[response.data.length - 1].id - 1;
             $scope.tweets = response.data;
+        });
+
+        // event
+        $($window).on('scroll', function(event) {
+            $scope.$broadcast('listScrolling', $($window).scrollTop());
         });
     }]
 );
@@ -77,6 +108,34 @@ app.controller('TweetsCtrl',
 
 // Directive
 // ========================================
+app.directive('tweet', function() {
+    return {
+        controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
+            $scope.markingRead = false;
+            $scope.markRead = function() {
+                if ($scope.tweet.read || $scope.markingRead) return;
+                $scope.markingRead = true;
+                $scope.tweet.read = true;
+                $element.addClass('read');
+                // TODO: wait for angular.js fix
+                //       use get function to avoid angular.js rapid put error
+                $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
+                .success(function() {
+                    $scope.markingRead = false;
+                });
+            };
+        }],
+        link: function(scope, element, attrs) {
+            scope.$on('listScrolling', function(event, windowScrollTop) {
+                if (windowScrollTop - element.position().top > 40) {
+                    scope.markRead();
+                }
+            });
+        }
+    };
+});
+
+
 app.directive('magnificPopup', function() {
     return {
         template: '<img ng-src="{{ media.media_url }}:thumb" />',

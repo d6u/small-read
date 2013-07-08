@@ -1,5 +1,11 @@
 body {
     background-color: $cloud;
+
+    &:after {
+        content: "";
+        display: block;
+        height: 100%;
+    }
 }
 
 .navbar-edge, .navbar-inner,

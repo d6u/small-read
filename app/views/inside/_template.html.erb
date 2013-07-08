@@ -53,7 +53,11 @@
 
 
 <script type="text/ng-template" id="feeds_more_tweets_template.html">
-    <div class="tweets-inner">
+    <div infinite-scroll='loadMoreTweets()'
+         infinite-scroll-immediate-check='false'
+         infinite-scroll-distance='1'
+         infinite-scroll-disabled='busyScrolling'
+         class="tweets-inner">
         <a href="#/" class="back-button">x</a>
         <div tweet ng-repeat="tweet in tweets" class="tweet">
             <div class="tweet-content">
