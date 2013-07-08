@@ -1,0 +1,103 @@
+.tweets-inner {
+    width: 522px;
+    margin: 0 auto;
+    .back-button {
+        position: fixed;
+        top: 0;
+        right: 0;
+        font-size: 38px;
+        font-weight: bolder;
+        height: 56px;
+        width: 56px;
+        line-height: 56px;
+        text-align: center;
+        text-decoration: none;
+        color: black;
+        &:hover {
+            color: $orange;
+        }
+    }
+}
+
+.tweet {
+    background-color: white;
+    overflow: hidden;
+
+    border-right: 5px solid $blue;
+    &.read {
+        border-right-color: transparent;
+    }
+
+    .tweet-timestamp {
+        float: right;
+        color: $gray4;
+        line-height: 23px;
+        text-decoration: none;
+        &:hover {
+            color: $red;
+            text-decoration: underline;
+        }
+    }
+
+    .tweet-text {
+        margin-bottom: 0;
+        a {
+            color: $red_dark;
+            text-decoration: none;
+            &:hover {
+                color: $red;
+            }
+        }
+    }
+
+    &:hover {
+        background-color: $gray1;
+    }
+}
+
+.tweet-content {
+    margin-left: 68px;
+    margin-bottom: 20px;
+    padding-right: 20px;
+}
+
+.tweet-user-profile {
+    position: relative;
+    margin-top: 10px;
+}
+
+.user-profile-image {
+    position: absolute;
+    left: -58px;
+    img {
+        height: 48px;
+        width: 48px;
+        border-radius: 4px;
+    }
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: black !important;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+        color: $red !important;
+        .user-screen-name {
+            color: $gray5 !important;
+        }
+    }
+}
+
+.user-screen-name {
+    color: $gray3 !important;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.tweet-entities {
+    margin-top: 10px;
+}

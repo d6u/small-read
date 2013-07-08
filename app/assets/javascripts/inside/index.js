@@ -1,5 +1,6 @@
 //= require modules/time-parser.js
 //= require jquery-2.X.min.js
+//= require jquery.magnific-popup.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
 
@@ -8,7 +9,31 @@
 // ========================================
 var app = angular.module('SmallRead', ['ngSanitize']);
 
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.when('/', {
+        templateUrl: 'feeds_show_case_template.html',
+        controller: 'FeedShowcaseCtrl'
+    })
+    .when('/feed/:id', {
+        templateUrl: 'feeds_more_tweets_template.html',
+        controller: 'TweetsCtrl'
+    })
+    .otherwise({
+        redirectTo: '/'
+    });
+}]);
+
+
+// Controllers
+// ========================================
 app.controller('AppCtrl',
+    [function() {
+
+    }]
+);
+
+
+app.controller('FeedShowcaseCtrl',
     ['$scope', '$http', function($scope, $http) {
         $http.get('/feeds_with_top_tweets')
         .then(function(response) {
@@ -34,6 +59,32 @@ app.controller('AppCtrl',
         });
     }]
 );
+
+
+app.controller('TweetsCtrl',
+    ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
+        $http.get('/feeds/'+$routeParams.id+'/tweets')
+        .then(function(response) {
+            for (var i = 0; i < response.data.length; i++) {
+                response.data[i].entities = angular.fromJson(response.data[i].entities);
+                response.data[i].created_at = parseTime(response.data[i].created_at);
+            };
+            $scope.tweets = response.data;
+        });
+    }]
+);
+
+
+// Directive
+// ========================================
+app.directive('magnificPopup', function() {
+    return {
+        template: '<img ng-src="{{ media.media_url }}:thumb" />',
+        link: function(scope, element, attrs) {
+            $(element[0]).magnificPopup({type:'image'});
+        }
+    };
+});
 
 
 // Filters
