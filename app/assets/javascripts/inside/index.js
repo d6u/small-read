@@ -12,7 +12,7 @@ var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: 'feeds_show_case_template.html',
+        templateUrl: 'feed_cards.html',
         controller: 'FeedShowcaseCtrl'
     })
     .when('/feed/:id', {
@@ -41,22 +41,21 @@ app.controller('FeedShowcaseCtrl',
             for (var i = 0; i < response.data.length; i++) {
                 // parase entities from JSON to object
                 response.data[i].coverTweet.entities = angular.fromJson(response.data[i].coverTweet.entities);
-                response.data[i].coverTweet.createdAt = parseTime(response.data[i].coverTweet.createdAt);
                 for (var j = 0; j < response.data[i].topTweets.length; j++) {
                     response.data[i].topTweets[j].entities = angular.fromJson(response.data[i].topTweets[j].entities);
-                    response.data[i].topTweets[j].createdAt = parseTime(response.data[i].topTweets[j].createdAt);
                 };
-                // inject coverBg for background image
+                // cover image
                 if (response.data[i].coverTweet.withImage) {
                     response.data[i].coverBg = {
                         backgroundImage: "url(\""+response.data[i].coverTweet.entities.media[0].media_url+":small\")"
                     };
-                    response.data[i].coverTextClass = "has-cover-image";
-                } else {
-                    response.data[i].coverTextClass = (response.data[i].coverTweet.text.length < 100) ? "no-cover-image" : "no-cover-image very-long-text";
                 }
+                // styles
+                response.data[i].styles = (response.data[i].coverTweet.entities.media) ? "with-image" : "without-image";
+                response.data[i].styles += " with-top-tweets-"+response.data[i].topTweets.length;
+                if (response.data[i].coverTweet.lang === 'zh' && response.data[i].coverTweet.text.length > 100) response.data[i].styles += " very-long-zh-text"; // fix chinese long text overflow
             };
-            $scope.feeds = response.data;
+            $scope.feedCards = response.data;
         });
     }]
 );
@@ -151,7 +150,12 @@ app.directive('magnificPopup', function() {
 app.filter(
     'tweetTextFilter',
     function() {
-        return function(input, entities) {
+        return function(input, params) {
+            if (params instanceof Array) {
+                var entities = params[0], includeImage = params[1];
+            } else {
+                var entities = params;
+            }
             // extract and sort entities
             var entity_array = [];
             for(var entity in entities) {
@@ -164,8 +168,7 @@ app.filter(
                 return a.indices[0] - b.indices[0];
             });
             // extract input pieces
-            var input_pieces = [];
-            var beginning_point = 0;
+            var imageTag = null, input_pieces = [], beginning_point = 0;
             angular.forEach(entity_array, function(value, key) {
                 input_pieces.push(input.slice(beginning_point, value.indices[0]));
                 switch (value.type) {
@@ -180,30 +183,38 @@ app.filter(
                         break;
                     case "media":
                         input_pieces.push('<a href="'+value.media_url+'" target="_blank>'+value.display_url+'</a>');
+                        if (imageTag === null) imageTag = '<a href="'+value.media_url+'" target="_blank"><img src="'+value.media_url+':thumb" /></a>';
                         break;
                 }
                 beginning_point = value.indices[1];
             });
             // last piece, '140' fix truncated tweet text issue
             input_pieces.push(input.slice(beginning_point, 140));
-            // return input
-            return input_pieces.join("");
+            // top tweets
+            if (includeImage) {
+                var output = imageTag ? imageTag+"<p>"+input_pieces.join("")+"</p>" : "<p>"+input_pieces.join("")+"</p>";
+            } else {
+                var output = input_pieces.join("");
+            }
+            // return
+            return output;
         };
     }
 );
+
 
 app.filter(
     'tweetTimestampFilter',
     function() {
         return function(input) {
-            var currentDate = new Date();
-            var diffInTime = currentDate - input;
+            var inputDate = parseTime(input), currentDate = new Date();
+            var diffInTime = currentDate - inputDate;
             if (diffInTime / 1000 / 60 <= 60) {
                 return Math.floor(diffInTime / 1000 / 60) + " mins ago";
             } else if (diffInTime / 1000 / 60 / 60 <= 24) {
                 return Math.floor(diffInTime / 1000 / 60 / 60) + " hours ago";
             } else {
-                return input.toDateString();
+                return inputDate.toDateString();
             }
         };
     }

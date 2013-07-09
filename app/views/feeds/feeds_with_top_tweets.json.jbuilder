@@ -8,7 +8,7 @@ json.array! @user.twitters.first.feeds.where('unread_count > 0').order('unread_c
 
   # retrive data from db
   cover_tweet   = feed.top_image_tweets.limit(1).first
-  top_tweets    = feed.top_tweets.limit(2)
+  top_tweets    = feed.top_tweets.limit(3)
   if cover_tweet
     top_tweets.pop
   else
@@ -22,6 +22,7 @@ json.array! @user.twitters.first.feeds.where('unread_count > 0').order('unread_c
     json.createdAt  cover_tweet.created_at
     json.entities   cover_tweet.entities
     json.withImage  cover_tweet.with_image
+    json.lang       cover_tweet.lang
   end
 
   json.topTweets    top_tweets do |tweet|
