@@ -11,6 +11,7 @@ class InsideController < ApplicationController
   # index
   # -----
   def index
+    @folders = @user.folders.order('position ASC')
   end
 
   # logout

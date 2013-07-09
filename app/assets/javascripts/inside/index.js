@@ -29,7 +29,38 @@ app.config(['$routeProvider', function($routeProvider) {
 // ========================================
 app.controller('AppCtrl',
     ['$scope', function($scope) {
-
+        $scope.navbar = {
+            pined: false,
+            cardFormat: true,
+            styles: {
+                autoHide:      'navbar-autohide-true',
+                pin:           'icon-pushpin',
+                displayFormat: 'icon-list'
+            },
+            displayFormatButtonText: 'Reader Style',
+            pinNavbar: function() {
+                if (this.pined) {
+                    this.styles.autoHide = 'navbar-autohide-true';
+                    this.styles.pin      = 'icon-pushpin';
+                    this.pined = false;
+                } else {
+                    this.styles.autoHide = 'navbar-autohide-false';
+                    this.styles.pin      = 'icon-remove';
+                    this.pined = true;
+                }
+            },
+            changeDisplayFormat: function() {
+                if (this.cardFormat) {
+                    this.styles.displayFormat = 'icon-th';
+                    this.displayFormatButtonText = 'Card Style';
+                    this.cardFormat = false;
+                } else {
+                    this.styles.displayFormat = 'icon-list';
+                    this.displayFormatButtonText = 'Reader Style';
+                    this.cardFormat = true;
+                }
+            }
+        };
     }]
 );
 

@@ -1,13 +1,16 @@
+$navbarEdgeColor: $cyan;
+$navbarInnerColor: $cyan;
+$maxColumns: 18;
+$itemWidth: 320px;
+
+
 .navbar-edge, .navbar-inner,
 .main, .main-inner
 {
-    transition: all 0.3s;
+    transition: all 0.2s;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
 }
-
-$navbarEdgeColor: $blue;
-$navbarInnerColor: $blue_dark;
 
 .navbar-edge {
     background: $navbarEdgeColor;
@@ -35,9 +38,6 @@ $navbarInnerColor: $blue_dark;
     bottom: 0;
 }
 
-$maxColumns: 4;
-$itemWidth: 320px;
-
 .main {
     margin-left: 20px;
 }
@@ -62,6 +62,20 @@ $itemWidth: 320px;
     table {
         height: 100%;
         position: relative;
+    }
+}
+
+.navbar-edge {
+    &.navbar-autohide-false {
+        width: 200px;
+        background-color: $navbarInnerColor;
+        + .main {
+            margin-left: 200px;
+        }
+
+        .navbar-inner {
+            right: 0;
+        }
     }
 }
 
@@ -98,6 +112,14 @@ $itemWidth: 320px;
 
         .navbar-edge {
             &:hover {
+                + .main {
+                    .main-inner {
+                        width: $columns * ($itemWidth + 20px);
+                    }
+                }
+            }
+
+            &.navbar-autohide-false {
                 + .main {
                     .main-inner {
                         width: $columns * ($itemWidth + 20px);

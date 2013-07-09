@@ -5,3 +5,7 @@ html, body {
 body {
     background-color: $cloud;
 }
+
+ng-view {
+    display: block;
+}

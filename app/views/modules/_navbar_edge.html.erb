@@ -1,0 +1,53 @@
+<div class="navbar-edge" ng-class="navbar.styles.autoHide">
+    <div class="hover-area"></div>
+
+    <!-- Inner Navbar -->
+    <div class="navbar-inner">
+
+        <div class="navbar-inner-toolbar">
+            <a class="toolbar-button pin-navbar" href="" ng-click="navbar.pinNavbar()">
+                <i ng-class="navbar.styles.pin"></i>
+            </a>
+            <a class="toolbar-button display-style" href="" ng-click="navbar.changeDisplayFormat()">
+                <i ng-class="navbar.styles.displayFormat"></i> {{navbar.displayFormatButtonText}}
+            </a>
+        </div>
+
+        <div class="navbar-inner-container">
+
+            <div class="navbar-user-profile">
+                <div class="user-gravatar">
+                    <img src="http://placeimg.com/45/45/any" alt="">
+                </div>
+                <div class="user-profile-detail">
+                    <div class="user-profile-email"><%= @user.email || link_to("Please set up your email") %></div>
+                    <div class="user-profile-update-timer">
+                        Last update: <span>12 mins ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navbar-folder-group">
+                <div class="navbar-groups-title">Groups</div>
+                <ul>
+                    <li class="navbar-group-item">
+                        <%= link_to() do %>
+                            All
+                            <span class="navbar-unread-count"><%= @folders.inject(0) {|i, f| i + f.unread_count} %></span>
+                        <% end %>
+                    </li>
+                    <% @folders.each do |folder| %>
+                        <li class="navbar-group-item">
+                            <%= link_to() do %>
+                                <%= folder.name %>
+                                <span class="navbar-unread-count"><%= folder.unread_count %></span>
+                            <% end %>
+                        </li>
+                    <% end %>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</div>

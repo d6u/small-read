@@ -1,0 +1,124 @@
+.navbar-inner {
+    a {
+        color: white;
+        &:hover {
+        }
+    }
+}
+
+// Toolbar
+// ----------------------------------------
+$toolbarHeight: 32px;
+
+.navbar-inner-toolbar {
+    background-color: $blue;
+    height: $toolbarHeight;
+}
+
+.toolbar-button {
+    display: block;
+    text-align: center;
+    line-height: $toolbarHeight;
+    i {
+        float: left;
+        display: inline-block;
+        width: $toolbarHeight;
+        height: $toolbarHeight;
+        font-size: 21px;
+        line-height: inherit;
+    }
+    &:hover {
+        background-color: white;
+        color: $gray6;
+    }
+}
+
+.pin-navbar {
+    float: left;
+}
+
+.display-style {
+    float: right;
+    padding-right: 10px;
+}
+
+// Navbar Content
+// ----------------------------------------
+.navbar-inner-container {
+
+}
+
+.navbar-user-profile {
+    padding: 5px;
+}
+
+.user-gravatar {
+    float: left;
+    img {
+        height: 40px;
+        width: 40px;
+    }
+}
+
+.user-profile-detail {
+    margin-left: 40px + 5px;
+    font-size: 12px;
+}
+
+.user-profile-email {
+    font-weight: bold;
+    a {
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// Folders
+// ----------------------------------------
+.navbar-folder-group {
+    margin-top: 25px;
+    ul {
+        margin-top: 10px;
+    }
+    li {
+        padding-left: 5px;
+        margin-bottom: 0;
+        line-height: 35px;
+        font-size: 16px;
+    }
+}
+
+.navbar-groups-title {
+    font-size: 28px;
+    text-indent: 5px;
+}
+
+.navbar-group-item {
+    a {
+        display: block;
+        color: white;
+        font-weight: bold;
+    }
+    &.active {
+        background-color: lighten($cyan, 10%);
+    }
+    &:hover {
+        background-color: $blue;
+        .navbar-unread-count {
+            background-color: white;
+            color: $gray6;
+        }
+    }
+}
+
+.navbar-unread-count {
+    float: right;
+    padding: 3px 5px;
+    margin-top: 8px;
+    margin-right: 5px;
+    font-size: 14px;
+    line-height: 1;
+    border-radius: 2px;
+    background-color: $blue;
+}

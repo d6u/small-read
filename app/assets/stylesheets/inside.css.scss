@@ -11,6 +11,7 @@
 
 // Components
 // ----------------------------------------
+@import "components/font-awesome";
 @import "components/buttons";
 @import "components/forms";
 
@@ -22,6 +23,7 @@
 // Modules
 // ----------------------------------------
 @import "modules/navbar_edge";
+@import "modules/navbar_edge_inner";
 @import "modules/feed_card";
 
 // Utilities
