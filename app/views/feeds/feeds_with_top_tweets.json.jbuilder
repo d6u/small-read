@@ -19,7 +19,7 @@ json.array! @user.twitters.first.feeds.where('unread_count > 0').order('unread_c
   json.coverTweet do
     json.idStr      cover_tweet.id_str
     json.text       cover_tweet.text
-    json.createdAt  cover_tweet.created_at
+    json.created_at  cover_tweet.created_at
     json.entities   cover_tweet.entities
     json.withImage  cover_tweet.with_image
     json.lang       cover_tweet.lang
@@ -28,7 +28,7 @@ json.array! @user.twitters.first.feeds.where('unread_count > 0').order('unread_c
   json.topTweets    top_tweets do |tweet|
     json.idStr      tweet.id_str
     json.text       tweet.text
-    json.createdAt  tweet.created_at
+    json.created_at  tweet.created_at
     json.entities   tweet.entities
   end
 

@@ -8,8 +8,9 @@ $itemWidth: 320px;
 .main, .main-inner
 {
     transition: all 0.2s;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
+    // Fixed postion of chidren element won't work if translateZ is enabled
+    // transform: translateZ(0);
+    // -webkit-transform: translateZ(0);
 }
 
 .navbar-edge {

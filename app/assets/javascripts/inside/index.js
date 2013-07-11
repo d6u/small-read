@@ -1,23 +1,42 @@
-//= require modules/time-parser.js
 //= require jquery-2.X.min.js
 //= require jquery.magnific-popup.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
 //= require modules/ng-infinite-scroll.js
+//= require modules/sr-feeds.js
+//= require modules/sr-filters.js
 
 
 // App Init
 // ========================================
-var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
+var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll', 'small-read:feeds', 'small-read:filters']);
+
+
+app.value('feedCardsStyle', function(data) {
+    for (var i = 0; i < data.length; i++) {
+        // cover image
+        if (data[i].coverTweet.withImage) {
+            data[i].coverBg = {
+                backgroundImage: "url(\""+data[i].coverTweet.entities.media[0].media_url+":small\")"
+            };
+        }
+        // styles
+        data[i].styles = (data[i].coverTweet.entities.media) ? "with-image" : "without-image";
+        data[i].styles += " with-top-tweets-"+data[i].topTweets.length;
+        if (data[i].coverTweet.lang === 'zh' && data[i].coverTweet.text.length > 100) data[i].styles += " very-long-zh-text"; // fix chinese long text overflow
+    }
+    return data;
+});
+
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: 'feed_cards.html',
+        templateUrl: 'cards_view.html',
         controller: 'FeedShowcaseCtrl'
     })
-    .when('/feed/:id', {
-        templateUrl: 'feeds_more_tweets_template.html',
-        controller: 'TweetsCtrl'
+    .when('/feeds/:id', {
+        templateUrl: 'reader_view.html',
+        controller: 'ReaderCtrl'
     })
     .otherwise({
         redirectTo: '/'
@@ -25,10 +44,17 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 
+app.run(['$rootScope', 'Feeds', 'feedCardsStyle', function($rootScope, Feeds, feedCardsStyle) {
+    Feeds.getFeedCards().then(function(response) {
+        $rootScope.feedCards = feedCardsStyle(response.data);
+    });
+}]);
+
+
 // Controllers
 // ========================================
 app.controller('AppCtrl',
-    ['$scope', function($scope) {
+    ['$scope', '$location', function($scope, $location) {
         $scope.navbar = {
             pined: false,
             cardFormat: true,
@@ -37,27 +63,43 @@ app.controller('AppCtrl',
                 pin:           'icon-pushpin',
                 displayFormat: 'icon-list'
             },
+            target: {
+                displayFormat: '#/feeds/all'
+            },
             displayFormatButtonText: 'Reader Style',
             pinNavbar: function() {
+                this.styles.autoHide = 'navbar-autohide-false';
+                this.styles.pin      = 'icon-remove';
+                this.pined           = true;
+            },
+            unpinNavbar: function() {
+                this.styles.autoHide = 'navbar-autohide-true';
+                this.styles.pin      = 'icon-pushpin';
+                this.pined           = false;
+            },
+            switchNavbar: function() {
                 if (this.pined) {
-                    this.styles.autoHide = 'navbar-autohide-true';
-                    this.styles.pin      = 'icon-pushpin';
-                    this.pined = false;
+                    this.unpinNavbar();
                 } else {
-                    this.styles.autoHide = 'navbar-autohide-false';
-                    this.styles.pin      = 'icon-remove';
-                    this.pined = true;
+                    this.pinNavbar();
                 }
             },
             changeDisplayFormat: function() {
-                if (this.cardFormat) {
+                if (this.cardFormat) { // switch to reader
                     this.styles.displayFormat = 'icon-th';
                     this.displayFormatButtonText = 'Card Style';
                     this.cardFormat = false;
-                } else {
+                    // Disable auto hide navbar
+                    this.pinNavbar();
+                    this.styles.pin = 'hide';
+                    $location.path('/feeds/all');
+                } else { // switch to cards
                     this.styles.displayFormat = 'icon-list';
                     this.displayFormatButtonText = 'Reader Style';
                     this.cardFormat = true;
+                    // Enable auto hide navbar
+                    this.unpinNavbar();
+                    $location.path('/');
                 }
             }
         };
@@ -66,34 +108,21 @@ app.controller('AppCtrl',
 
 
 app.controller('FeedShowcaseCtrl',
-    ['$scope', '$http', function($scope, $http) {
-        $http.get('/feeds_with_top_tweets')
-        .then(function(response) {
-            for (var i = 0; i < response.data.length; i++) {
-                // parase entities from JSON to object
-                response.data[i].coverTweet.entities = angular.fromJson(response.data[i].coverTweet.entities);
-                for (var j = 0; j < response.data[i].topTweets.length; j++) {
-                    response.data[i].topTweets[j].entities = angular.fromJson(response.data[i].topTweets[j].entities);
-                };
-                // cover image
-                if (response.data[i].coverTweet.withImage) {
-                    response.data[i].coverBg = {
-                        backgroundImage: "url(\""+response.data[i].coverTweet.entities.media[0].media_url+":small\")"
-                    };
-                }
-                // styles
-                response.data[i].styles = (response.data[i].coverTweet.entities.media) ? "with-image" : "without-image";
-                response.data[i].styles += " with-top-tweets-"+response.data[i].topTweets.length;
-                if (response.data[i].coverTweet.lang === 'zh' && response.data[i].coverTweet.text.length > 100) response.data[i].styles += " very-long-zh-text"; // fix chinese long text overflow
-            };
-            $scope.feedCards = response.data;
-        });
+    ['$scope', 'Feeds', function($scope, Feeds) {
+
     }]
 );
 
 
-app.controller('TweetsCtrl',
-    ['$scope', '$http', '$routeParams', '$window', function($scope, $http, $routeParams, $window) {
+app.controller('ReaderCtrl',
+    ['$scope', '$http', '$routeParams', '$window', 'Feeds', function($scope, $http, $routeParams, $window, Feeds) {
+
+
+
+
+
+
+
         // load more tweets
         $scope.loadMoreTweets = function() {
             if ($scope.reacheEnd || $scope.busyScrolling || $scope.tweets.length === 0) return;
@@ -102,7 +131,6 @@ app.controller('TweetsCtrl',
             $http.get(url).success(function(data) {
                 for (var i = 0; i < data.length; i++) {
                     data[i].entities = angular.fromJson(data[i].entities);
-                    data[i].created_at = parseTime(data[i].created_at);
                 }
                 $scope.tweets = $scope.tweets.concat(data);
                 if (data.length > 0) $scope.maxTweetId = data[data.length - 1].id - 1;
@@ -116,16 +144,14 @@ app.controller('TweetsCtrl',
         $scope.busyScrolling = false;
         $scope.reacheEnd = false;
         $scope.loadOnlyUnread = true;
-        $scope.baseUrl = '/feeds/'+$routeParams.id+'/tweets';
-        $http.get($scope.baseUrl)
-        .then(function(response) {
-            for (var i = 0; i < response.data.length; i++) {
-                response.data[i].entities = angular.fromJson(response.data[i].entities);
-                response.data[i].created_at = parseTime(response.data[i].created_at);
-            };
+        Feeds.getFeeds().then(function(response) {
+            $scope.feeds = response.data;
+        });
+        var tweetsId = $routeParams.id === 'all' ? null : $routeParams.id;
+        Feeds.getTweets(tweetsId).then(function(response) {
+            $scope.tweets = response.data;
             $scope.reacheEnd = response.data.length < 20 ? true : false;
             if (response.data.length > 0) $scope.maxTweetId = response.data[response.data.length - 1].id - 1;
-            $scope.tweets = response.data;
         });
 
         // event
@@ -157,7 +183,7 @@ app.directive('tweet', function() {
         }],
         link: function(scope, element, attrs) {
             scope.$on('listScrolling', function(event, windowScrollTop) {
-                if (windowScrollTop - element.position().top > 40) {
+                if (element.position().top - windowScrollTop - 56 < -30) {
                     scope.markRead();
                 }
             });
@@ -174,79 +200,3 @@ app.directive('magnificPopup', function() {
         }
     };
 });
-
-
-// Filters
-// ========================================
-app.filter(
-    'tweetTextFilter',
-    function() {
-        return function(input, params) {
-            if (params instanceof Array) {
-                var entities = params[0], includeImage = params[1];
-            } else {
-                var entities = params;
-            }
-            // extract and sort entities
-            var entity_array = [];
-            for(var entity in entities) {
-                angular.forEach(entities[entity], function(value, key){
-                    value.type = entity;
-                    entity_array.push(value);
-                });
-            }
-            entity_array.sort(function(a,b){
-                return a.indices[0] - b.indices[0];
-            });
-            // extract input pieces
-            var imageTag = null, input_pieces = [], beginning_point = 0;
-            angular.forEach(entity_array, function(value, key) {
-                input_pieces.push(input.slice(beginning_point, value.indices[0]));
-                switch (value.type) {
-                    case "urls":
-                        input_pieces.push('<a href="'+value.expanded_url+'" target="_blank">'+value.display_url+'</a>');
-                        break;
-                    case "hashtags":
-                        input_pieces.push('<a href="https://twitter.com/search?q=%23'+value.text+'&src=hash" target="_blank>#'+value.text+'</a>');
-                        break;
-                    case "user_mentions":
-                        input_pieces.push('<a href="http://twitter.com/'+value.screen_name+'" target="_blank>@'+value.screen_name+'</a>');
-                        break;
-                    case "media":
-                        input_pieces.push('<a href="'+value.media_url+'" target="_blank>'+value.display_url+'</a>');
-                        if (imageTag === null) imageTag = '<a href="'+value.media_url+'" target="_blank"><img src="'+value.media_url+':thumb" /></a>';
-                        break;
-                }
-                beginning_point = value.indices[1];
-            });
-            // last piece, '140' fix truncated tweet text issue
-            input_pieces.push(input.slice(beginning_point, 140));
-            // top tweets
-            if (includeImage) {
-                var output = imageTag ? imageTag+"<p>"+input_pieces.join("")+"</p>" : "<p>"+input_pieces.join("")+"</p>";
-            } else {
-                var output = input_pieces.join("");
-            }
-            // return
-            return output;
-        };
-    }
-);
-
-
-app.filter(
-    'tweetTimestampFilter',
-    function() {
-        return function(input) {
-            var inputDate = parseTime(input), currentDate = new Date();
-            var diffInTime = currentDate - inputDate;
-            if (diffInTime / 1000 / 60 <= 60) {
-                return Math.floor(diffInTime / 1000 / 60) + " mins ago";
-            } else if (diffInTime / 1000 / 60 / 60 <= 24) {
-                return Math.floor(diffInTime / 1000 / 60 / 60) + " hours ago";
-            } else {
-                return inputDate.toDateString();
-            }
-        };
-    }
-);
