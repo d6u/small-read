@@ -2,7 +2,7 @@
 // ----------------------------------------
 .tweets-list {
     margin-left: 300px;
-    padding-top: 46px;
+    padding-top: 61px;
 }
 
 
@@ -14,7 +14,7 @@
     top: 0;
     left: 501px;
     right: 0;
-    height: 45px;
+    height: 60px;
     background-color: white;
     border-bottom: 1px solid $gray3;
 }
@@ -34,64 +34,16 @@
 }
 
 
-// Old
+// Tweets List
 // ----------------------------------------
-.tweets-container-toolbar {
-    transition: all 0.2s;
-}
-
-
-.tweets-container-toolbar {
-    position: fixed;
-    z-index: 100;
-    top: 0;
-    width: 542px;
-    height: 56px;
-    left: 50%;
-    margin-left: -261px;
-    background-color: white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-    border-radius: 0 0 2px 2px;
-
-    .back-button {
-        float: right;
-        width: 56px;
-        padding: 0;
-    }
-}
-
-.navbar-edge {
-    &:hover {
-        + .main {
-            .tweets-container-toolbar {
-                margin-left: -261px + 90px;
-            }
-        }
-    }
-}
-
-
-.tweets-container {
-    width: 522px;
-    margin: 0 auto;
-    padding-top: 56px;
-    bottom: 0;
-}
-
 .tweets-toolbar-button {
-    font-size: 32px;
-    line-height: 56px;
-    padding: 0 10px;
-    text-align: center;
-    &:hover {
-        background-color: $gray1;
-    }
+
 }
 
+// Tweet
 .tweets-list-item {
     background-color: white;
     overflow: hidden;
-
     border-right: 5px solid $blue;
     &.read {
         border-right-color: transparent;
@@ -123,8 +75,6 @@
         background-color: $gray1;
     }
 }
-
-
 
 .tweet-user-profile {
     position: relative;

@@ -30,6 +30,9 @@
     &:hover, &.active {
         background-color: $cloud;
     }
+    &.return-to-card-view {
+        height: 60px;
+    }
 }
 
 // Menu
@@ -39,7 +42,7 @@
 
 .feeds-list-item-button {
     text-align: center;
-    line-height: 45px;
+    line-height: 60px;
     font-size: 21px;
 }
 

@@ -1,7 +1,8 @@
 <script type="text/ng-template" id="cards_view.html">
     <div class="main-inner clearfix">
         <div class="feed-showcase"
-             ng-repeat="feed in feeds | filter:{group_id: groupId}" ng-class="feed.styles">
+             ng-repeat="feed in feeds | filter:{group_id: groupId}"
+             ng-class="feed.styles">
 
             <!-- Cover Tweet -->
             <div class="feed-cover-image" ng-style="feed.coverBg"></div>
@@ -61,12 +62,14 @@
     <div class="feeds-list">
 
         <!-- Return Button -->
-        <div class="feeds-list-item return-to-card-view" ng-class="feedsToolbar.styles">
+        <div class="feeds-list-item return-to-card-view"
+             ng-class="feedsToolbar.styles">
             <a href="#/" class="feeds-list-item-button">Back to Card View</a>
         </div>
 
         <!-- Feed -->
-        <div class="feeds-list-item feed-profile" ng-repeat="feed in feeds | filter:{folder_id: groupId}" feed>
+        <div class="feeds-list-item feed-profile"
+             feed ng-repeat="feed in feeds | filter:{folder_id: groupId}">
             <a ng-href="#/group/{{feed.folder_id}}/feeds/{{feed.id}}">
                 <img ng-src="{{feed.profile_image_url}}" alt="">
                 <div class="profile-detail">
