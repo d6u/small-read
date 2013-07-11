@@ -1,5 +1,6 @@
 do_assign_updates:
   every: 15m
   class: AssignUpdates
+  queue: fetch_twitter_queue
   args:
   description: "This job assign works for updating twitters"

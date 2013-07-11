@@ -116,8 +116,13 @@ class Twitter < ActiveRecord::Base
   def update_existing_tweets(existing_tweets)
     existing_tweets.each do |t|
       tweet = self.tweets.where(:id_str => t['id_str']).first
-      tweet.attributes = {:retweet_count => t['retweet_count'], :favorite_count => t['favorite_count']}
-      tweet.save if tweet.changed?
+      # TODO: NoMethodError: undefined method `attributes=' for nil:NilClass
+      begin
+        tweet.attributes = {:retweet_count => t['retweet_count'], :favorite_count => t['favorite_count']}
+        tweet.save if tweet.changed?
+      rescue NoMethodError
+        puts "--> Skipping tweet with: 'id_str' => #{t['id_str']}"
+      end
     end
   end
 
