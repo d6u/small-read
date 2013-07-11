@@ -3,7 +3,6 @@
 //= require modules/perfect-scrollbar-0.4.1.with-mousewheel.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
-//= require modules/ng-infinite-scroll.js
 //= require modules/sr-feeds.js
 //= require modules/sr-filters.js
 
@@ -14,8 +13,7 @@ var app = angular.module('SmallRead',
     [
         'ngSanitize',
         'small-read:feeds',
-        'small-read:filters',
-        'infinite-scroll'
+        'small-read:filters'
     ]
 );
 
@@ -179,18 +177,22 @@ function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
         $scope.groupId = $routeParams.groupId;
     }
     // load tweets
+    $scope.tweets = [];
+    $scope.loadMoreTweets = function() {
+        if ($scope.reachesEnd) return;
+        var maxId = $scope.tweets.length === 0 ? null : $scope.tweets[$scope.tweets.length - 1].id - 1;
+        Feeds.getTweets($scope.activeFeedId, maxId)
+        .then(function(data) {
+            if (data.length < 20) $scope.reachesEnd = true;
+            $scope.tweets = $scope.tweets.concat(data);
+        });
+    }
     if ($routeParams.feedId === 'all') {
-        $scope.tweets = [];
         $scope.activeFeedId = null;
     } else {
-        $scope.tweets = Feeds.getTweets($routeParams.feedId);
         $scope.activeFeedId = $routeParams.feedId;
+        $scope.loadMoreTweets();
     }
-
-    // event
-    $($window).on('scroll', function(event) {
-        $scope.$broadcast('listScrolling', $($window).scrollTop());
-    });
 }]);
 
 
@@ -280,6 +282,8 @@ app.directive('tweetsList', function() {
         link: function(scope, element) {
             element.on('scroll', function(event) {
                 scope.$broadcast('tweetsListScrolled');
+                var distanceToTop = element.children('.tweets-list-item').last().position().top;
+                if (distanceToTop - 100 < element.height()) scope.loadMoreTweets();
             });
         }
     }
