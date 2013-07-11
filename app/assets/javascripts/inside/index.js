@@ -9,9 +9,18 @@
 
 // App Init
 // ========================================
-var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll', 'small-read:feeds', 'small-read:filters']);
+var app = angular.module('SmallRead',
+    [
+        'ngSanitize',
+        'small-read:feeds',
+        'small-read:filters',
+        'infinite-scroll'
+    ]
+);
 
 
+// Value
+// ----------------------------------------
 app.value('feedCardsStyle', function(data) {
     for (var i = 0; i < data.length; i++) {
         // cover image
@@ -29,8 +38,17 @@ app.value('feedCardsStyle', function(data) {
 });
 
 
-app.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/', {
+// Config
+// ----------------------------------------
+app.config(
+['$routeProvider',
+function($routeProvider) {
+    $routeProvider
+    .when('/', {
+        templateUrl: 'cards_view.html',
+        controller: 'FeedShowcaseCtrl'
+    })
+    .when('/group/:groupId', {
         templateUrl: 'cards_view.html',
         controller: 'FeedShowcaseCtrl'
     })
@@ -44,126 +62,139 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 
-app.run(['$rootScope', 'Feeds', 'feedCardsStyle', function($rootScope, Feeds, feedCardsStyle) {
-    Feeds.getFeedCards().then(function(response) {
-        $rootScope.feedCards = feedCardsStyle(response.data);
-    });
+// Run
+// ----------------------------------------
+app.run(
+['$rootScope', 'Feeds', 'feedCardsStyle',
+function($rootScope, Feeds, feedCardsStyle) {
+    $rootScope.feedCards = Feeds.getFeedCards(feedCardsStyle);
 }]);
 
 
 // Controllers
 // ========================================
+// App
 app.controller('AppCtrl',
-    ['$scope', '$location', function($scope, $location) {
-        $scope.navbar = {
-            pined: false,
-            cardFormat: true,
-            styles: {
-                autoHide:      'navbar-autohide-true',
-                pin:           'icon-pushpin',
-                displayFormat: 'icon-list'
-            },
-            target: {
-                displayFormat: '#/feeds/all'
-            },
-            displayFormatButtonText: 'Reader Style',
-            pinNavbar: function() {
-                this.styles.autoHide = 'navbar-autohide-false';
-                this.styles.pin      = 'icon-remove';
-                this.pined           = true;
-            },
-            unpinNavbar: function() {
-                this.styles.autoHide = 'navbar-autohide-true';
-                this.styles.pin      = 'icon-pushpin';
-                this.pined           = false;
-            },
-            switchNavbar: function() {
-                if (this.pined) {
-                    this.unpinNavbar();
-                } else {
-                    this.pinNavbar();
-                }
-            },
-            changeDisplayFormat: function() {
-                if (this.cardFormat) { // switch to reader
-                    this.styles.displayFormat = 'icon-th';
-                    this.displayFormatButtonText = 'Card Style';
-                    this.cardFormat = false;
-                    // Disable auto hide navbar
-                    this.pinNavbar();
-                    this.styles.pin = 'hide';
-                    $location.path('/feeds/all');
-                } else { // switch to cards
-                    this.styles.displayFormat = 'icon-list';
-                    this.displayFormatButtonText = 'Reader Style';
-                    this.cardFormat = true;
-                    // Enable auto hide navbar
-                    this.unpinNavbar();
-                    $location.path('/');
-                }
+['$scope', '$location',
+function($scope, $location) {
+    $scope.navbar = {
+        pined: false,
+        cardFormat: true,
+        preferPinned: false,
+        styles: {
+            autoHide:      'navbar-autohide-true',
+            pin:           'icon-pushpin',
+            displayFormat: 'icon-list'
+        },
+        target: {
+            displayFormat: '#/feeds/all'
+        },
+        displayFormatButtonText: 'Reader Style',
+        pinNavbar: function() {
+            this.styles.autoHide = 'navbar-autohide-false';
+            this.styles.pin      = 'icon-remove';
+            this.pined           = true;
+        },
+        unpinNavbar: function() {
+            this.styles.autoHide = 'navbar-autohide-true';
+            this.styles.pin      = 'icon-pushpin';
+            this.pined           = false;
+        },
+        switchNavbar: function() {
+            if (this.pined) {
+                this.unpinNavbar();
+                this.preferPinned = false;
+            } else {
+                this.pinNavbar();
+                this.preferPinned = true;
             }
-        };
-    }]
-);
+        },
+        changeToReaderFormat: function() {
+            this.pinNavbar();
+            this.styles.pin = 'hide';
+            this.styles.displayFormat = 'icon-th';
+            this.displayFormatButtonText = 'Card Style';
+            this.cardFormat = false;
+        },
+        changeToCardsFormat: function() {
+            this.preferPinned ? this.pinNavbar() : this.unpinNavbar();
+            this.styles.displayFormat = 'icon-list';
+            this.displayFormatButtonText = 'Reader Style';
+            this.cardFormat = true;
+        },
+        changeDisplayFormat: function() {
+            if (this.cardFormat) { // switch to reader
+                $location.path('/feeds/all');
+            } else { // switch to cards
+                $location.path('/');
+            }
+        }
+    };
+}]);
 
 
+// Navbar
+app.controller('NavbarCtrl',
+['$scope',
+function($scope) {
+
+}]);
+
+
+// FeedShowcase
 app.controller('FeedShowcaseCtrl',
-    ['$scope', 'Feeds', function($scope, Feeds) {
+['$scope', 'Feeds', '$routeParams', '$rootScope',
+function($scope, Feeds, $routeParams, $rootScope) {
+    $scope.navbar.changeToCardsFormat();
+    $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+}]);
 
-    }]
-);
 
-
+// ReaderCtrl
 app.controller('ReaderCtrl',
-    ['$scope', '$http', '$routeParams', '$window', 'Feeds', function($scope, $http, $routeParams, $window, Feeds) {
-
-
-
-
-
-
-
-        // load more tweets
-        $scope.loadMoreTweets = function() {
-            if ($scope.reacheEnd || $scope.busyScrolling || $scope.tweets.length === 0) return;
-            $scope.busyScrolling = true;
-            var url = $scope.loadOnlyUnread ? $scope.baseUrl+"?max_id="+$scope.maxTweetId : $scope.baseUrl+"&max_id="+$scope.maxTweetId;
-            $http.get(url).success(function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    data[i].entities = angular.fromJson(data[i].entities);
-                }
-                $scope.tweets = $scope.tweets.concat(data);
-                if (data.length > 0) $scope.maxTweetId = data[data.length - 1].id - 1;
-                $scope.reacheEnd = data.length < 20 ? true : false;
-                $scope.busyScrolling = false;
-            });
-        };
-
-        // init task
+['$rootScope', '$scope', '$http', '$routeParams', '$window', 'Feeds',
+function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
+    // init task
+    $scope.navbar.changeToReaderFormat();
+    if ($routeParams.id === 'all') $scope.feedsToolbar = {styles: 'hide'};
+    $scope.feeds = Feeds.getFeeds();
+    // load tweets
+    if ($routeParams.id === 'all') {
         $scope.tweets = [];
-        $scope.busyScrolling = false;
-        $scope.reacheEnd = false;
-        $scope.loadOnlyUnread = true;
-        Feeds.getFeeds().then(function(response) {
-            $scope.feeds = response.data;
-        });
-        var tweetsId = $routeParams.id === 'all' ? null : $routeParams.id;
-        Feeds.getTweets(tweetsId).then(function(response) {
-            $scope.tweets = response.data;
-            $scope.reacheEnd = response.data.length < 20 ? true : false;
-            if (response.data.length > 0) $scope.maxTweetId = response.data[response.data.length - 1].id - 1;
-        });
+    } else {
+        $scope.tweets = Feeds.getTweets($routeParams.id);
+    }
 
-        // event
-        $($window).on('scroll', function(event) {
-            $scope.$broadcast('listScrolling', $($window).scrollTop());
-        });
-    }]
-);
+
+    // event
+    $($window).on('scroll', function(event) {
+        $scope.$broadcast('listScrolling', $($window).scrollTop());
+    });
+}]);
 
 
 // Directive
 // ========================================
+// Folder
+app.directive('folder',
+function() {
+    return {
+        link: function(scope, element, attrs) {
+            scope.$on('activeGroup', function(event, groupId) {
+                if (groupId === attrs.folder) {
+                    element.addClass('active');
+                } else if (typeof groupId === 'undefined' && attrs.folder === 'all') {
+                    element.addClass('active');
+                } else {
+                    element.removeClass('active');
+                }
+            });
+        }
+    };
+});
+
+
+// Tweet
 app.directive('tweet', function() {
     return {
         controller: ['$scope', '$element', '$http', function($scope, $element, $http) {

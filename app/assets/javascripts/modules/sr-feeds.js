@@ -43,9 +43,16 @@ SmallRead.factory('Feeds',
                 date.setISO8601(tweet.created_at);
                 tweet.created_at = date;
             },
-            getFeedCards: function() {
+            getFeedCards: function(callback, groupId) {
+                if (groupId) {
+                    var params = {};
+                    params['folder_id'] = groupId;
+                } else {
+                    var params = null;
+                }
                 var that = this;
-                return $http.get('/feeds_with_top_tweets', {
+                var http = $http.get('/feeds_with_top_tweets', {
+                    params: params,
                     transformResponse: function(data, headersGetter) {
                         var object = angular.fromJson(data);
                         for (var i = 0; i < object.length; i++) {
@@ -59,11 +66,15 @@ SmallRead.factory('Feeds',
                         return object;
                     }
                 });
+                return http.then(function(response) {
+                    return (callback) ? callback(response.data) : response.data;
+                });
             },
             getFeeds: function(folderId) {
                 folderId = typeof folderId !== 'undefined' ? folderId : null;
                 var url = folderId ? '/folders/'+folderId+'/feeds' : '/feeds';
-                return $http.get(url);
+                var http = $http.get(url);
+                return http.then(function(response) {return response.data;});
             },
             getTweets: function(sourceId, maxId, sourceType, readOnly) {
                 // default args
@@ -76,7 +87,7 @@ SmallRead.factory('Feeds',
                 var all = readOnly ? null : 'true';
                 // $http
                 var that = this;
-                return $http.get('/'+sourceType+'s/'+sourceId+'/tweets', {
+                var http = $http.get('/'+sourceType+'s/'+sourceId+'/tweets', {
                     params: {
                         max_id: maxId,
                         all: all
@@ -90,6 +101,7 @@ SmallRead.factory('Feeds',
                         return object;
                     }
                 });
+                return http.then(function(response) {return response.data;});
             }
         };
     }]

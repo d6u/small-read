@@ -61,8 +61,8 @@
     <div class="feeds-list">
 
         <!-- Return Button -->
-        <div class="feeds-list-item return-to-card-view">
-            <a href="" class="feeds-list-item-button">Back to Card View</a>
+        <div class="feeds-list-item return-to-card-view" ng-class="feedsToolbar.styles">
+            <a href="#/" class="feeds-list-item-button">Back to Card View</a>
         </div>
 
         <!-- Feed -->
@@ -99,7 +99,7 @@
                 </div>
                 <p class="tweet-text" ng-bind-html="tweet.text | tweetTextFilter:tweet.entities"></p>
                 <div class="tweet-entities">
-
+                    <a magnific-popup ng-repeat="media in tweet.entities.media" class="twitter-entity-image" ng-href="{{ media.media_url }}"></a>
                 </div>
             </div>
         </div>

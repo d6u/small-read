@@ -1,11 +1,14 @@
-<div class="navbar-edge" ng-class="navbar.styles.autoHide">
+<div class="navbar-edge" ng-controller="NavbarCtrl" ng-class="navbar.styles.autoHide">
+
+    <!-- Hover Area to increase the area that triggers to show navbar -->
     <div class="hover-area"></div>
 
     <!-- Inner Navbar -->
     <div class="navbar-inner">
 
+        <!-- Toolbar -->
         <div class="navbar-inner-toolbar">
-            <a class="toolbar-button pin-navbar" href="" ng-click="navbar.pinNavbar()">
+            <a class="toolbar-button pin-navbar" href="" ng-click="navbar.switchNavbar()">
                 <i ng-class="navbar.styles.pin"></i>
             </a>
             <a class="toolbar-button display-style" href="" ng-click="navbar.changeDisplayFormat()">
@@ -13,8 +16,10 @@
             </a>
         </div>
 
+        <!-- Navbar Content -->
         <div class="navbar-inner-container">
 
+            <!-- User Profile -->
             <div class="navbar-user-profile">
                 <div class="user-gravatar">
                     <img src="http://placeimg.com/45/45/any" alt="">
@@ -27,18 +32,19 @@
                 </div>
             </div>
 
+            <!-- Folders -->
             <div class="navbar-folder-group">
                 <div class="navbar-groups-title">Groups</div>
                 <ul>
-                    <li class="navbar-group-item">
-                        <%= link_to() do %>
+                    <li class="navbar-group-item" folder="all">
+                        <%= link_to('#/') do %>
                             All
                             <span class="navbar-unread-count"><%= @folders.inject(0) {|i, f| i + f.unread_count} %></span>
                         <% end %>
                     </li>
                     <% @folders.each do |folder| %>
-                        <li class="navbar-group-item">
-                            <%= link_to() do %>
+                        <li class="navbar-group-item" folder="<%= folder.id %>">
+                            <%= link_to('#/group/'+folder.id.to_s) do %>
                                 <%= folder.name %>
                                 <span class="navbar-unread-count"><%= folder.unread_count %></span>
                             <% end %>
@@ -47,7 +53,7 @@
                 </ul>
             </div>
 
+        <!-- END -->
         </div>
     </div>
-
 </div>
