@@ -147,6 +147,7 @@ app.controller('FeedShowcaseCtrl',
 function($scope, Feeds, $routeParams, $rootScope) {
     $scope.navbar.changeToCardsFormat();
     $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+    $scope.groupId = $routeParams.groupId ? $routeParams.groupId : '';
 }]);
 
 
@@ -223,6 +224,7 @@ app.directive('tweet', function() {
 });
 
 
+// magnificPopup
 app.directive('magnificPopup', function() {
     return {
         template: '<img ng-src="{{ media.media_url }}:thumb" />',

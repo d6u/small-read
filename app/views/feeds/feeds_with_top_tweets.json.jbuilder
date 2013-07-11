@@ -5,6 +5,7 @@ json.array! @user.twitters.first.feeds.where('unread_count > 0').order('unread_c
   json.name            feed.name
   json.screenName      feed.screen_name
   json.unreadCount     feed.unread_count
+  json.group_id        feed.folder_id
 
   # retrive data from db
   cover_tweet   = feed.top_image_tweets.limit(1).first
