@@ -1,17 +1,17 @@
 <script type="text/ng-template" id="cards_view.html">
     <div class="main-inner clearfix">
         <div class="feed-showcase"
-             ng-repeat="feedCard in feedCards | filter:{group_id: groupId}" ng-class="feedCard.styles">
+             ng-repeat="feed in feeds | filter:{group_id: groupId}" ng-class="feed.styles">
 
             <!-- Cover Tweet -->
-            <div class="feed-cover-image" ng-style="feedCard.coverBg"></div>
+            <div class="feed-cover-image" ng-style="feed.coverBg"></div>
             <div class="feed-cover-tweet">
                 <div class="feed-cover-tweet-inner">
                     <p class="tweet-text"
-                       ng-bind-html="feedCard.coverTweet.text | tweetTextFilter:feedCard.coverTweet.entities"></p>
+                       ng-bind-html="feed.coverTweet.text | tweetTextFilter:feed.coverTweet.entities"></p>
                     <p class="tweet-timestamp">
                         <a href="" target="_blank"
-                           ng-href="http://twitter.com/{{feedCard.screenName}}/status/{{feedCard.coverTweet.idStr}}">{{feedCard.coverTweet.created_at | tweetTimestampFilter}}</a>
+                           ng-href="http://twitter.com/{{feed.screen_name}}/status/{{feed.coverTweet.idStr}}">{{feed.coverTweet.created_at | tweetTimestampFilter}}</a>
                     </p>
                 </div>
             </div>
@@ -19,14 +19,14 @@
             <!-- More Top Tweets -->
             <div class="feed-top-tweets">
                 <div class="feed-top-tweet"
-                     ng-repeat="topTweet in feedCard.topTweets">
+                     ng-repeat="topTweet in feed.topTweets">
                     <div class="tweet-inner">
                         <div class="tweet-text"
                              ng-bind-html="topTweet.text | tweetTextFilter:[topTweet.entities, true]">
                         </div>
                         <p class="tweet-timestamp">
                             <a href="" target="_blank"
-                               ng-href="http://twitter.com/{{feedCard.screenName}}/status/{{topTweet.idStr}}">{{topTweet.created_at | tweetTimestampFilter}}</a>
+                               ng-href="http://twitter.com/{{feed.screenName}}/status/{{topTweet.idStr}}">{{topTweet.created_at | tweetTimestampFilter}}</a>
                         </p>
                     </div>
                 </div>
@@ -34,17 +34,17 @@
 
             <!-- Feed Profile -->
             <div class="feed-profile">
-                <img alt="" ng-src="{{feedCard.profileImageUrl}}">
+                <img alt="" ng-src="{{feed.profile_image_url}}">
                 <div class="profile-detail">
-                    <div class="profile-name">{{feedCard.name}}</div>
-                    <div class="profile-screen-name">@{{feedCard.screenName}}</div>
+                    <div class="profile-name">{{feed.name}}</div>
+                    <div class="profile-screen-name">@{{feed.screen_name}}</div>
                 </div>
-                <div class="feed-unread-count">{{feedCard.unreadCount}}</div>
+                <div class="feed-unread-count">{{feed.unread_count}}</div>
             </div>
 
             <!-- Action Button -->
             <div class="feed-button show-more">
-                <a href="" ng-href="#/group/{{feedCard.group_id}}/feeds/{{feedCard.id}}">Show More Tweets</a>
+                <a href="" ng-href="#/group/{{feed.group_id}}/feeds/{{feed.id}}">Show More Tweets</a>
             </div>
             <div class="feed-button mark-all-read">
                 <a href="">Mark All Read</a>
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Feed -->
-        <div class="feeds-list-item feed-profile" ng-repeat="feed in feeds" feed>
+        <div class="feeds-list-item feed-profile" ng-repeat="feed in feeds | filter:{folder_id: groupId}" feed>
             <a ng-href="#/group/{{feed.folder_id}}/feeds/{{feed.id}}">
                 <img ng-src="{{feed.profile_image_url}}" alt="">
                 <div class="profile-detail">

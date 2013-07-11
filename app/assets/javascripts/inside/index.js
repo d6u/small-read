@@ -67,7 +67,7 @@ function($routeProvider) {
 app.run(
 ['$rootScope', 'Feeds', 'feedCardsStyle',
 function($rootScope, Feeds, feedCardsStyle) {
-    $rootScope.feedCards = Feeds.getFeedCards(feedCardsStyle);
+    $rootScope.feeds = Feeds.getFeedCards(feedCardsStyle);
 }]);
 
 
@@ -133,7 +133,6 @@ function($scope, $location) {
         },
         changeToGroup: function(groupId) {
             var match = /.+?feeds\/(.+?)$/.exec($location.path());
-            console.log(match, $location.path());
             if (match) {
                 $location.path('/group/'+groupId+'/feeds/all');
             } else {
@@ -174,9 +173,9 @@ function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
     $scope.navbar.changeToReaderFormat();
     $rootScope.$broadcast('activeGroup', $routeParams.groupId);
     if ($routeParams.groupId === 'all') {
-        $scope.feeds = Feeds.getFeeds();
+        $scope.groupId = '';
     } else {
-        $scope.feeds = Feeds.getFeeds($routeParams.groupId);
+        $scope.groupId = $routeParams.groupId;
     }
     // load tweets
     if ($routeParams.feedId === 'all') {

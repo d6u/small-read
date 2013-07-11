@@ -44,14 +44,10 @@ SmallRead.factory('Feeds',
                 tweet.created_at = date;
             },
             getFeedCards: function(callback, groupId) {
-                if (groupId) {
-                    var params = {};
-                    params['folder_id'] = groupId;
-                } else {
-                    var params = null;
-                }
+                var params = {cards: 'true'};
+                if (groupId) params['folder_id'] = groupId;
                 var that = this;
-                var http = $http.get('/feeds_with_top_tweets', {
+                var http = $http.get('/feeds', {
                     params: params,
                     transformResponse: function(data, headersGetter) {
                         var object = angular.fromJson(data);

@@ -17,7 +17,11 @@ class FeedsController < ApplicationController
       @feeds = @user.twitters.first.feeds.order('unread_count DESC')
     end
 
-    render :json => @feeds
+    if params[:cards] === 'true'
+      render 'feeds_with_top_tweets.json', :formats => [:json]
+    else
+      render :json => @feeds
+    end
   end
 
 
@@ -27,7 +31,7 @@ class FeedsController < ApplicationController
   # GET /feeds_with_top_tweets
   # ----------------------------------------
   def feeds_with_top_tweets
-    render 'feeds_with_top_tweets.json', :formats => [:json]
+
   end
 
 
