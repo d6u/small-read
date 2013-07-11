@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="cards_view.html">
     <div class="main-inner clearfix">
         <div class="feed-showcase"
-             ng-repeat="feedCard in feedCards" ng-class="feedCard.styles">
+             ng-repeat="feedCard in feedCards | filter:{group_id: groupId}" ng-class="feedCard.styles">
 
             <!-- Cover Tweet -->
             <div class="feed-cover-image" ng-style="feedCard.coverBg"></div>
@@ -44,7 +44,7 @@
 
             <!-- Action Button -->
             <div class="feed-button show-more">
-                <a href="" ng-href="#/feeds/{{feedCard.id}}">Show More Tweets</a>
+                <a href="" ng-href="#/group/{{feedCard.group_id}}/feeds/{{feedCard.id}}">Show More Tweets</a>
             </div>
             <div class="feed-button mark-all-read">
                 <a href="">Mark All Read</a>
@@ -66,8 +66,8 @@
         </div>
 
         <!-- Feed -->
-        <div class="feeds-list-item feed-profile" ng-repeat="feed in feeds">
-            <a href="">
+        <div class="feeds-list-item feed-profile" ng-repeat="feed in feeds" feed>
+            <a ng-href="#/group/{{feed.folder_id}}/feeds/{{feed.id}}">
                 <img ng-src="{{feed.profile_image_url}}" alt="">
                 <div class="profile-detail">
                     <div class="profile-name">{{feed.name}}</div>

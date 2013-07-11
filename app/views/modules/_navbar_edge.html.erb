@@ -37,14 +37,14 @@
                 <div class="navbar-groups-title">Groups</div>
                 <ul>
                     <li class="navbar-group-item" folder="all">
-                        <%= link_to('#/') do %>
+                        <%= link_to('', :'ng-click' => "navbar.changeToGroup('all')") do %>
                             All
                             <span class="navbar-unread-count"><%= @folders.inject(0) {|i, f| i + f.unread_count} %></span>
                         <% end %>
                     </li>
                     <% @folders.each do |folder| %>
                         <li class="navbar-group-item" folder="<%= folder.id %>">
-                            <%= link_to('#/group/'+folder.id.to_s) do %>
+                            <%= link_to('', :'ng-click' => "navbar.changeToGroup('#{folder.id}')") do %>
                                 <%= folder.name %>
                                 <span class="navbar-unread-count"><%= folder.unread_count %></span>
                             <% end %>

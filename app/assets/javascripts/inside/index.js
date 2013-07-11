@@ -52,7 +52,7 @@ function($routeProvider) {
         templateUrl: 'cards_view.html',
         controller: 'FeedShowcaseCtrl'
     })
-    .when('/feeds/:id', {
+    .when('/group/:groupId/feeds/:feedId', {
         templateUrl: 'reader_view.html',
         controller: 'ReaderCtrl'
     })
@@ -124,9 +124,24 @@ function($scope, $location) {
         },
         changeDisplayFormat: function() {
             if (this.cardFormat) { // switch to reader
-                $location.path('/feeds/all');
+                $location.path('/group/all/feeds/all');
+                $scope.feedsToolbar = {styles: 'hide'};
             } else { // switch to cards
                 $location.path('/');
+                $scope.feedsToolbar = {styles: null};
+            }
+        },
+        changeToGroup: function(groupId) {
+            var match = /.+?feeds\/(.+?)$/.exec($location.path());
+            console.log(match, $location.path());
+            if (match) {
+                $location.path('/group/'+groupId+'/feeds/all');
+            } else {
+                if (groupId === 'all') {
+                    $location.path('/');
+                } else {
+                    $location.path('/group/'+groupId);
+                }
             }
         }
     };
@@ -157,15 +172,20 @@ app.controller('ReaderCtrl',
 function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
     // init task
     $scope.navbar.changeToReaderFormat();
-    if ($routeParams.id === 'all') $scope.feedsToolbar = {styles: 'hide'};
-    $scope.feeds = Feeds.getFeeds();
-    // load tweets
-    if ($routeParams.id === 'all') {
-        $scope.tweets = [];
+    $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+    if ($routeParams.groupId === 'all') {
+        $scope.feeds = Feeds.getFeeds();
     } else {
-        $scope.tweets = Feeds.getTweets($routeParams.id);
+        $scope.feeds = Feeds.getFeeds($routeParams.groupId);
     }
-
+    // load tweets
+    if ($routeParams.feedId === 'all') {
+        $scope.tweets = [];
+        $scope.activeFeedId = null;
+    } else {
+        $scope.tweets = Feeds.getTweets($routeParams.feedId);
+        $scope.activeFeedId = $routeParams.feedId;
+    }
 
     // event
     $($window).on('scroll', function(event) {
@@ -190,6 +210,20 @@ function() {
                     element.removeClass('active');
                 }
             });
+        }
+    };
+});
+
+
+// feed
+app.directive('feed', function() {
+    return {
+        link: function(scope, element, attrs) {
+            if (scope.feed.id == scope.activeFeedId) {
+                element.addClass('active');
+            } else {
+                // element.removeClass();
+            }
         }
     };
 });
