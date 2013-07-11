@@ -1,0 +1,110 @@
+<script type="text/ng-template" id="cards_view.html">
+    <div class="main-inner clearfix">
+        <div class="feed-showcase"
+             ng-repeat="feedCard in feedCards | filter:{group_id: groupId}" ng-class="feedCard.styles">
+
+            <!-- Cover Tweet -->
+            <div class="feed-cover-image" ng-style="feedCard.coverBg"></div>
+            <div class="feed-cover-tweet">
+                <div class="feed-cover-tweet-inner">
+                    <p class="tweet-text"
+                       ng-bind-html="feedCard.coverTweet.text | tweetTextFilter:feedCard.coverTweet.entities"></p>
+                    <p class="tweet-timestamp">
+                        <a href="" target="_blank"
+                           ng-href="http://twitter.com/{{feedCard.screenName}}/status/{{feedCard.coverTweet.idStr}}">{{feedCard.coverTweet.created_at | tweetTimestampFilter}}</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- More Top Tweets -->
+            <div class="feed-top-tweets">
+                <div class="feed-top-tweet"
+                     ng-repeat="topTweet in feedCard.topTweets">
+                    <div class="tweet-inner">
+                        <div class="tweet-text"
+                             ng-bind-html="topTweet.text | tweetTextFilter:[topTweet.entities, true]">
+                        </div>
+                        <p class="tweet-timestamp">
+                            <a href="" target="_blank"
+                               ng-href="http://twitter.com/{{feedCard.screenName}}/status/{{topTweet.idStr}}">{{topTweet.created_at | tweetTimestampFilter}}</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feed Profile -->
+            <div class="feed-profile">
+                <img alt="" ng-src="{{feedCard.profileImageUrl}}">
+                <div class="profile-detail">
+                    <div class="profile-name">{{feedCard.name}}</div>
+                    <div class="profile-screen-name">@{{feedCard.screenName}}</div>
+                </div>
+                <div class="feed-unread-count">{{feedCard.unreadCount}}</div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="feed-button show-more">
+                <a href="" ng-href="#/group/{{feedCard.group_id}}/feeds/{{feedCard.id}}">Show More Tweets</a>
+            </div>
+            <div class="feed-button mark-all-read">
+                <a href="">Mark All Read</a>
+            </div>
+
+        </div>
+    </div>
+</script>
+
+
+
+<script type="text/ng-template" id="reader_view.html">
+    <!-- Feed List -->
+    <div class="feeds-list">
+
+        <!-- Return Button -->
+        <div class="feeds-list-item return-to-card-view" ng-class="feedsToolbar.styles">
+            <a href="#/" class="feeds-list-item-button">Back to Card View</a>
+        </div>
+
+        <!-- Feed -->
+        <div class="feeds-list-item feed-profile" ng-repeat="feed in feeds" feed>
+            <a ng-href="#/group/{{feed.folder_id}}/feeds/{{feed.id}}">
+                <img ng-src="{{feed.profile_image_url}}" alt="">
+                <div class="profile-detail">
+                    <div class="profile-name">{{feed.name}}</div>
+                    <div class="profile-screen-name">@{{feed.screen_name}}</div>
+                </div>
+                <div class="feed-unread-count">{{feed.unread_count}}</div>
+            </a>
+        </div>
+
+    <!-- END -->
+    </div>
+
+
+    <!-- Tweets -->
+    <div class="tweets-list">
+
+        <!-- Toolbar -->
+        <div class="tweets-toolbar"></div>
+
+        <!-- Tweet -->
+        <div class="tweets-list-item" ng-repeat="tweet in tweets">
+            <div class="tweet-content">
+                <div class="tweet-user-profile">
+                    <a class="user-profile-image" href="#">
+                        <img ng-src="{{tweet.profile_image_url}}">
+                    </a>
+                    <a class="user-name" href="">{{tweet.name}} <span class="user-screen-name">@{{tweet.screen_name}}</span></a>
+                    <a class="tweet-timestamp" href="">{{tweet.created_at | tweetTimestampFilter}}</a>
+                </div>
+                <p class="tweet-text" ng-bind-html="tweet.text | tweetTextFilter:tweet.entities"></p>
+                <div class="tweet-entities">
+                    <a magnific-popup ng-repeat="media in tweet.entities.media" class="twitter-entity-image" ng-href="{{ media.media_url }}"></a>
+                </div>
+            </div>
+        </div>
+
+    <!-- END -->
+    </div>
+
+</script>

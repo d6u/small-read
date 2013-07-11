@@ -12,12 +12,12 @@ class FeedsController < ApplicationController
   # ----------------------------------------
   def index
     if params[:folder_id]
-      @feeds = @user.folders.find(params[:folder_id]).feeds
+      @feeds = @user.folders.find(params[:folder_id]).feeds.order('unread_count DESC')
     else
-      @feeds = @user.twitters[0].feeds
+      @feeds = @user.twitters.first.feeds.order('unread_count DESC')
     end
 
-    render json: @feeds
+    render :json => @feeds
   end
 
 

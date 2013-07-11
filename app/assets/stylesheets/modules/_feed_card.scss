@@ -1,0 +1,255 @@
+// Cell Style
+// ----------------------------------------
+.feed-showcase {
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+
+    &.with-image {
+        .feed-cover-tweet {
+            top: 320px;
+        }
+    }
+
+    &.without-image {
+        .feed-cover-tweet {
+            top: 0;
+        }
+
+        &.with-top-tweets-2 {
+            .feed-cover-tweet {
+
+            }
+            .feed-top-tweets {
+                height: 320px;
+            }
+            .feed-top-tweet {
+                height: 159px;
+            }
+        }
+
+        &.with-top-tweets-1 {
+            .feed-cover-tweet {
+                height: 320px;
+            }
+            .feed-top-tweets {
+                height: 183px;
+            }
+            .feed-top-tweet {
+                height: 182px;
+            }
+        }
+
+        &.with-top-tweets-0 {
+            .feed-cover-tweet {
+                height: 503px;
+            }
+        }
+    }
+}
+
+.feed-cover-image {
+    height: 320px;
+    background-size: cover;
+    background-repeat: none;
+    background-position: center;
+}
+
+.feed-cover-tweet,
+.feed-top-tweets,
+.feed-top-tweet
+{
+    transition: all 0.2s;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.feed-cover-tweet {
+    position: relative;
+    width: 100%;
+    z-index: 100;
+
+    position: absolute;
+    height: 182px;
+    font-size: 19px;
+    font-weight: bold;
+    line-height: 1.15;
+    border-bottom: 1px solid $gray3;
+    background-color: white;
+}
+
+.very-long-zh-text {
+    .feed-cover-tweet {
+        font-size: 16px;
+    }
+}
+
+.feed-cover-tweet-inner,
+.tweet-inner {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translate(0, -50%);
+    -webkit-transform: translate(0, -50%);
+}
+
+.tweet-text {
+    margin-bottom: 5px;
+    padding: 10px 15px 0 15px;
+    word-wrap: break-word;
+    line-height: 1.2;
+
+    img {
+        float: right;
+        margin-left: 5px;
+        margin-bottom: 10px;
+        width: 40px;
+        height: 40px;
+    }
+
+    p {
+        overflow: hidden;
+        margin: 0;
+    }
+}
+
+.tweet-timestamp {
+    clear: both;
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-right: 15px;
+    text-align: right;
+    color: #999;
+}
+
+.feed-top-tweets {
+    position: absolute;
+    bottom: 45px;
+    background-color: white;
+    z-index: 90;
+    overflow: hidden;
+    height: 182px;
+    width: 100%;
+}
+
+.feed-top-tweet {
+    height: 90px;
+    border-bottom: 1px solid $gray3;
+    width: 100%;
+}
+
+.feed-profile {
+    height: 45px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+
+    img {
+        width: 35px;
+        height: 35px;
+        margin: 5px;
+        float: left;
+    }
+}
+
+.profile-detail {
+    float: left;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.profile-screen-name {
+    color: #999;
+    font-size: 12px;
+}
+
+.feed-unread-count {
+    float: right;
+    background-color: $blue;
+    color: white;
+    font-weight: bold;
+    font-size: 22px;
+    height: 100%;
+    width: 45px;
+    text-align: center;
+    line-height: 45px;
+}
+
+.feed-button {
+    height: 45px;
+    position: absolute;
+    width: 100%;
+    background-color: white;
+    display: none;
+    text-align: center;
+    a {
+        line-height: 45px;
+        font-size: 21px;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &.show-more {
+        bottom: 0;
+    }
+
+    &.mark-all-read {
+        top: -45px;
+        background-color: $blue;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        a {
+            color: white;
+        }
+    }
+}
+
+// Hover State
+// ----------------------------------------
+.feed-showcase {
+    &:hover {
+        &.with-image {
+
+            .feed-cover-tweet {
+                top: 0;
+            }
+
+            &.with-top-tweets-2 {
+                .feed-top-tweets {
+                    height: 320px;
+                }
+                .feed-top-tweet {
+                    height: 159px;
+                }
+            }
+
+            &.with-top-tweets-1 {
+                .feed-cover-tweet {
+                    height: 320px;
+                }
+                .feed-top-tweets {
+                    height: 183px;
+                }
+                .feed-top-tweet {
+                    height: 182px;
+                }
+            }
+
+            &.with-top-tweets-0 {
+                .feed-cover-tweet {
+                    height: 503px;
+                }
+            }
+        }
+
+        .feed-button {
+            display: block;
+        }
+    }
+}

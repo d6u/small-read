@@ -1,29 +1,34 @@
-// Variables and Mixins
-@import "variables";
-
+// Variables
+// ----------------------------------------
+@import "variables_and_mixins/variables";
 
 // Base
-@import "base/base";
-@import "base/skeleton.css";
-@import "base/center_grid";
+// ----------------------------------------
+@import "base/reset";
+@import "base/basic";
+@import "base/type";
+@import "base/elements";
 
+// Components
+// ----------------------------------------
+@import "components/font-awesome";
+@import "components/buttons";
+@import "components/forms";
 
-// Component
-@import "component/font-awesome";
-@import "component/buttons";
-@import "component/buttons_skin";
-@import "component/inputs";
-@import "component/messages";
+// Layouts
+// ----------------------------------------
+@import "layouts/grid";
+@import "layouts/inside_main";
 
+// Modules
+// ----------------------------------------
+@import "modules/navbar_edge";
+@import "modules/navbar_edge_inner";
+@import "modules/feed_card";
+@import "modules/feeds_list";
+@import "modules/tweets";
+@import "magnific-popup.css";
 
-// Layout
-@import "layout/inside";
-
-
-// Module
-@import "module/inside";
-@import "module/feed_showcase"
-
-
-// State
-
+// Utilities
+// ----------------------------------------
+@import "utilities/mis";

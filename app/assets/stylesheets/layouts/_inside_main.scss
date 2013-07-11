@@ -1,0 +1,15 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: $cloud;
+}
+
+ng-view {
+    display: block;
+}
+
+.over-scroll-block {
+    height: 100%;
+}

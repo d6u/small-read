@@ -1,0 +1,65 @@
+// Container
+// ----------------------------------------
+.feeds-list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 200px;
+    width: 300px;
+    background-color: white;
+    border-right: 1px solid $gray2;
+    overflow-y: auto;
+    &::after {
+        content: "";
+        height: 45px;
+        display: block;
+    }
+}
+
+
+// Items
+// ----------------------------------------
+.feeds-list-item {
+    border-bottom: 1px solid $gray2;
+    height: 45px;
+    a {
+        display: block;
+        height: 45px;
+        width: 100%;
+    }
+    &:hover, &.active {
+        background-color: $cloud;
+    }
+}
+
+// Menu
+.return-to-card-view {
+
+}
+
+.feeds-list-item-button {
+    text-align: center;
+    line-height: 45px;
+    font-size: 21px;
+}
+
+// Feed
+.feeds-list-item {
+    &.feed-profile {
+        position: static;
+        bottom: auto;
+    }
+    .profile-name {
+        color: $gray6;
+    }
+    .feed-unread-count {
+        font-size: 16px;
+        padding: 3px 5px;
+        height: auto;
+        width: auto;
+        line-height: 1;
+        margin-top: 11px;
+        margin-right: 5px;
+        border-radius: 2px;
+    }
+}

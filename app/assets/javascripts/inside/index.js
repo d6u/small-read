@@ -1,100 +1,269 @@
-//= require modules/time-parser.js
 //= require jquery-2.X.min.js
+//= require jquery.magnific-popup.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
+//= require modules/ng-infinite-scroll.js
+//= require modules/sr-feeds.js
+//= require modules/sr-filters.js
 
 
 // App Init
 // ========================================
-var app = angular.module('SmallRead', ['ngSanitize']);
+var app = angular.module('SmallRead',
+    [
+        'ngSanitize',
+        'small-read:feeds',
+        'small-read:filters',
+        'infinite-scroll'
+    ]
+);
 
-app.controller('AppCtrl',
-    ['$scope', '$http', function($scope, $http) {
-        $http.get('/feeds_with_top_tweets')
-        .then(function(response) {
-            for (var i = 0; i < response.data.length; i++) {
-                // parase entities from JSON to object
-                response.data[i].coverTweet.entities = angular.fromJson(response.data[i].coverTweet.entities);
-                response.data[i].coverTweet.createdAt = parseTime(response.data[i].coverTweet.createdAt);
-                for (var j = 0; j < response.data[i].topTweets.length; j++) {
-                    response.data[i].topTweets[j].entities = angular.fromJson(response.data[i].topTweets[j].entities);
-                    response.data[i].topTweets[j].createdAt = parseTime(response.data[i].topTweets[j].createdAt);
-                };
-                // inject coverBg for background image
-                if (response.data[i].coverTweet.withImage) {
-                    response.data[i].coverBg = {
-                        backgroundImage: "url(\""+response.data[i].coverTweet.entities.media[0].media_url+":small\")"
-                    };
-                    response.data[i].coverTextClass = "has-cover-image";
-                } else {
-                    response.data[i].coverTextClass = (response.data[i].coverTweet.text.length < 100) ? "no-cover-image" : "no-cover-image very-long-text";
-                }
+
+// Value
+// ----------------------------------------
+app.value('feedCardsStyle', function(data) {
+    for (var i = 0; i < data.length; i++) {
+        // cover image
+        if (data[i].coverTweet.withImage) {
+            data[i].coverBg = {
+                backgroundImage: "url(\""+data[i].coverTweet.entities.media[0].media_url+":small\")"
             };
-            $scope.feeds = response.data;
-        });
-    }]
-);
+        }
+        // styles
+        data[i].styles = (data[i].coverTweet.entities.media) ? "with-image" : "without-image";
+        data[i].styles += " with-top-tweets-"+data[i].topTweets.length;
+        if (data[i].coverTweet.lang === 'zh' && data[i].coverTweet.text.length > 100) data[i].styles += " very-long-zh-text"; // fix chinese long text overflow
+    }
+    return data;
+});
 
 
-// Filters
+// Config
+// ----------------------------------------
+app.config(
+['$routeProvider',
+function($routeProvider) {
+    $routeProvider
+    .when('/', {
+        templateUrl: 'cards_view.html',
+        controller: 'FeedShowcaseCtrl'
+    })
+    .when('/group/:groupId', {
+        templateUrl: 'cards_view.html',
+        controller: 'FeedShowcaseCtrl'
+    })
+    .when('/group/:groupId/feeds/:feedId', {
+        templateUrl: 'reader_view.html',
+        controller: 'ReaderCtrl'
+    })
+    .otherwise({
+        redirectTo: '/'
+    });
+}]);
+
+
+// Run
+// ----------------------------------------
+app.run(
+['$rootScope', 'Feeds', 'feedCardsStyle',
+function($rootScope, Feeds, feedCardsStyle) {
+    $rootScope.feedCards = Feeds.getFeedCards(feedCardsStyle);
+}]);
+
+
+// Controllers
 // ========================================
-app.filter(
-    'tweetTextFilter',
-    function() {
-        return function(input, entities) {
-            // extract and sort entities
-            var entity_array = [];
-            for(var entity in entities) {
-                angular.forEach(entities[entity], function(value, key){
-                    value.type = entity;
-                    entity_array.push(value);
-                });
-            }
-            entity_array.sort(function(a,b){
-                return a.indices[0] - b.indices[0];
-            });
-            // extract input pieces
-            var input_pieces = [];
-            var beginning_point = 0;
-            angular.forEach(entity_array, function(value, key) {
-                input_pieces.push(input.slice(beginning_point, value.indices[0]));
-                switch (value.type) {
-                    case "urls":
-                        input_pieces.push('<a href="'+value.expanded_url+'" target="_blank">'+value.display_url+'</a>');
-                        break;
-                    case "hashtags":
-                        input_pieces.push('<a href="https://twitter.com/search?q=%23'+value.text+'&src=hash" target="_blank>#'+value.text+'</a>');
-                        break;
-                    case "user_mentions":
-                        input_pieces.push('<a href="http://twitter.com/'+value.screen_name+'" target="_blank>@'+value.screen_name+'</a>');
-                        break;
-                    case "media":
-                        input_pieces.push('<a href="'+value.media_url+'" target="_blank>'+value.display_url+'</a>');
-                        break;
-                }
-                beginning_point = value.indices[1];
-            });
-            // last piece, '140' fix truncated tweet text issue
-            input_pieces.push(input.slice(beginning_point, 140));
-            // return input
-            return input_pieces.join("");
-        };
-    }
-);
-
-app.filter(
-    'tweetTimestampFilter',
-    function() {
-        return function(input) {
-            var currentDate = new Date();
-            var diffInTime = currentDate - input;
-            if (diffInTime / 1000 / 60 <= 60) {
-                return Math.floor(diffInTime / 1000 / 60) + " mins ago";
-            } else if (diffInTime / 1000 / 60 / 60 <= 24) {
-                return Math.floor(diffInTime / 1000 / 60 / 60) + " hours ago";
+// App
+app.controller('AppCtrl',
+['$scope', '$location',
+function($scope, $location) {
+    $scope.navbar = {
+        pined: false,
+        cardFormat: true,
+        preferPinned: false,
+        styles: {
+            autoHide:      'navbar-autohide-true',
+            pin:           'icon-pushpin',
+            displayFormat: 'icon-list'
+        },
+        target: {
+            displayFormat: '#/feeds/all'
+        },
+        displayFormatButtonText: 'Reader Style',
+        pinNavbar: function() {
+            this.styles.autoHide = 'navbar-autohide-false';
+            this.styles.pin      = 'icon-remove';
+            this.pined           = true;
+        },
+        unpinNavbar: function() {
+            this.styles.autoHide = 'navbar-autohide-true';
+            this.styles.pin      = 'icon-pushpin';
+            this.pined           = false;
+        },
+        switchNavbar: function() {
+            if (this.pined) {
+                this.unpinNavbar();
+                this.preferPinned = false;
             } else {
-                return input.toDateString();
+                this.pinNavbar();
+                this.preferPinned = true;
             }
-        };
+        },
+        changeToReaderFormat: function() {
+            this.pinNavbar();
+            this.styles.pin = 'hide';
+            this.styles.displayFormat = 'icon-th';
+            this.displayFormatButtonText = 'Card Style';
+            this.cardFormat = false;
+        },
+        changeToCardsFormat: function() {
+            this.preferPinned ? this.pinNavbar() : this.unpinNavbar();
+            this.styles.displayFormat = 'icon-list';
+            this.displayFormatButtonText = 'Reader Style';
+            this.cardFormat = true;
+        },
+        changeDisplayFormat: function() {
+            if (this.cardFormat) { // switch to reader
+                $location.path('/group/all/feeds/all');
+                $scope.feedsToolbar = {styles: 'hide'};
+            } else { // switch to cards
+                $location.path('/');
+                $scope.feedsToolbar = {styles: null};
+            }
+        },
+        changeToGroup: function(groupId) {
+            var match = /.+?feeds\/(.+?)$/.exec($location.path());
+            console.log(match, $location.path());
+            if (match) {
+                $location.path('/group/'+groupId+'/feeds/all');
+            } else {
+                if (groupId === 'all') {
+                    $location.path('/');
+                } else {
+                    $location.path('/group/'+groupId);
+                }
+            }
+        }
+    };
+}]);
+
+
+// Navbar
+app.controller('NavbarCtrl',
+['$scope',
+function($scope) {
+
+}]);
+
+
+// FeedShowcase
+app.controller('FeedShowcaseCtrl',
+['$scope', 'Feeds', '$routeParams', '$rootScope',
+function($scope, Feeds, $routeParams, $rootScope) {
+    $scope.navbar.changeToCardsFormat();
+    $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+    $scope.groupId = $routeParams.groupId ? $routeParams.groupId : '';
+}]);
+
+
+// ReaderCtrl
+app.controller('ReaderCtrl',
+['$rootScope', '$scope', '$http', '$routeParams', '$window', 'Feeds',
+function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
+    // init task
+    $scope.navbar.changeToReaderFormat();
+    $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+    if ($routeParams.groupId === 'all') {
+        $scope.feeds = Feeds.getFeeds();
+    } else {
+        $scope.feeds = Feeds.getFeeds($routeParams.groupId);
     }
-);
+    // load tweets
+    if ($routeParams.feedId === 'all') {
+        $scope.tweets = [];
+        $scope.activeFeedId = null;
+    } else {
+        $scope.tweets = Feeds.getTweets($routeParams.feedId);
+        $scope.activeFeedId = $routeParams.feedId;
+    }
+
+    // event
+    $($window).on('scroll', function(event) {
+        $scope.$broadcast('listScrolling', $($window).scrollTop());
+    });
+}]);
+
+
+// Directive
+// ========================================
+// Folder
+app.directive('folder',
+function() {
+    return {
+        link: function(scope, element, attrs) {
+            scope.$on('activeGroup', function(event, groupId) {
+                if (groupId === attrs.folder) {
+                    element.addClass('active');
+                } else if (typeof groupId === 'undefined' && attrs.folder === 'all') {
+                    element.addClass('active');
+                } else {
+                    element.removeClass('active');
+                }
+            });
+        }
+    };
+});
+
+
+// feed
+app.directive('feed', function() {
+    return {
+        link: function(scope, element, attrs) {
+            if (scope.feed.id == scope.activeFeedId) {
+                element.addClass('active');
+            } else {
+                // element.removeClass();
+            }
+        }
+    };
+});
+
+
+// Tweet
+app.directive('tweet', function() {
+    return {
+        controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
+            $scope.markingRead = false;
+            $scope.markRead = function() {
+                if ($scope.tweet.read || $scope.markingRead) return;
+                $scope.markingRead = true;
+                $scope.tweet.read = true;
+                $element.addClass('read');
+                // TODO: wait for angular.js fix
+                //       use get function to avoid angular.js rapid put error
+                $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
+                .success(function() {
+                    $scope.markingRead = false;
+                });
+            };
+        }],
+        link: function(scope, element, attrs) {
+            scope.$on('listScrolling', function(event, windowScrollTop) {
+                if (element.position().top - windowScrollTop - 56 < -30) {
+                    scope.markRead();
+                }
+            });
+        }
+    };
+});
+
+
+// magnificPopup
+app.directive('magnificPopup', function() {
+    return {
+        template: '<img ng-src="{{ media.media_url }}:thumb" />',
+        link: function(scope, element, attrs) {
+            $(element[0]).magnificPopup({type:'image'});
+        }
+    };
+});
