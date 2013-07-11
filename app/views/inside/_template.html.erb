@@ -59,7 +59,7 @@
 
 <script type="text/ng-template" id="reader_view.html">
     <!-- Feed List -->
-    <div class="feeds-list">
+    <div class="feeds-list" perfect-scrollbar>
 
         <!-- Return Button -->
         <div class="feeds-list-item return-to-card-view"
@@ -85,13 +85,13 @@
 
 
     <!-- Tweets -->
-    <div class="tweets-list">
+    <div class="tweets-list" perfect-scrollbar tweets-list>
 
         <!-- Toolbar -->
         <div class="tweets-toolbar"></div>
 
         <!-- Tweet -->
-        <div class="tweets-list-item" ng-repeat="tweet in tweets">
+        <div class="tweets-list-item" ng-repeat="tweet in tweets" tweet>
             <div class="tweet-content">
                 <div class="tweet-user-profile">
                     <a class="user-profile-image" href="#">

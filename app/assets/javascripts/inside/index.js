@@ -1,5 +1,6 @@
 //= require jquery-2.X.min.js
 //= require jquery.magnific-popup.min.js
+//= require modules/perfect-scrollbar-0.4.1.with-mousewheel.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
 //= require modules/ng-infinite-scroll.js
@@ -234,12 +235,9 @@ app.directive('tweet', function() {
         controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
             $scope.markingRead = false;
             $scope.markRead = function() {
-                if ($scope.tweet.read || $scope.markingRead) return;
                 $scope.markingRead = true;
-                $scope.tweet.read = true;
                 $element.addClass('read');
-                // TODO: wait for angular.js fix
-                //       use get function to avoid angular.js rapid put error
+                $scope.tweet.read = true;
                 $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
                 .success(function() {
                     $scope.markingRead = false;
@@ -247,10 +245,8 @@ app.directive('tweet', function() {
             };
         }],
         link: function(scope, element, attrs) {
-            scope.$on('listScrolling', function(event, windowScrollTop) {
-                if (element.position().top - windowScrollTop - 56 < -30) {
-                    scope.markRead();
-                }
+            scope.$on('tweetsListScrolled', function(event) {
+                if (!scope.tweet.read && !scope.markingRead && element.position().top < -25) scope.markRead();
             });
         }
     };
@@ -265,4 +261,26 @@ app.directive('magnificPopup', function() {
             $(element[0]).magnificPopup({type:'image'});
         }
     };
+});
+
+// perfect-scrollbar
+app.directive('perfectScrollbar', function() {
+    return {
+        link: function(scope, element) {
+            element.perfectScrollbar({
+                wheelSpeed: 25
+            });
+        }
+    }
+});
+
+// tweets-list
+app.directive('tweetsList', function() {
+    return {
+        link: function(scope, element) {
+            element.on('scroll', function(event) {
+                scope.$broadcast('tweetsListScrolled');
+            });
+        }
+    }
 });

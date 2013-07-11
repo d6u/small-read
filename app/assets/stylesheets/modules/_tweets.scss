@@ -1,8 +1,19 @@
 // Container
 // ----------------------------------------
 .tweets-list {
-    margin-left: 300px;
-    padding-top: 61px;
+    // margin-left: 300px;
+    // padding-top: 61px;
+    position: absolute;
+    left: 501px;
+    right: 0;
+    top: 61px;
+    bottom: 0;
+    overflow: hidden;
+    &:after {
+        display: block;
+        content: "";
+        height: 100%;
+    }
 }
 
 
