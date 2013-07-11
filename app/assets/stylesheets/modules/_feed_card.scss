@@ -3,6 +3,14 @@
 .feed-showcase {
     position: relative;
     box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    height: 548px;
+    width: $feedCardWidth;
+    float: left;
+    background: white;
 
     &.with-image {
         .feed-cover-tweet {
@@ -46,6 +54,7 @@
         }
     }
 }
+
 
 .feed-cover-image {
     height: 320px;
@@ -209,6 +218,7 @@
         }
     }
 }
+
 
 // Hover State
 // ----------------------------------------

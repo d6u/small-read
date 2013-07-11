@@ -8,16 +8,6 @@
 
         <!-- Toolbar -->
         <div class="navbar-inner-toolbar">
-            <a class="toolbar-button pin-navbar" href="" ng-click="navbar.switchNavbar()">
-                <i ng-class="navbar.styles.pin"></i>
-            </a>
-            <a class="toolbar-button display-style" href="" ng-click="navbar.changeDisplayFormat()">
-                <i ng-class="navbar.styles.displayFormat"></i> {{navbar.displayFormatButtonText}}
-            </a>
-        </div>
-
-        <!-- Navbar Content -->
-        <div class="navbar-inner-container">
 
             <!-- User Profile -->
             <div class="navbar-user-profile">
@@ -26,11 +16,16 @@
                 </div>
                 <div class="user-profile-detail">
                     <div class="user-profile-email"><%= @user.email || link_to("Please set up your email") %></div>
-                    <div class="user-profile-update-timer">
+                    <!-- <div class="user-profile-update-timer">
                         Last update: <span>12 mins ago</span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
+
+        </div>
+
+        <!-- Navbar Content -->
+        <div class="navbar-inner-container">
 
             <!-- Folders -->
             <div class="navbar-folder-group">
@@ -53,7 +48,19 @@
                 </ul>
             </div>
 
-        <!-- END -->
         </div>
+        <!-- END -->
+
+        <!-- Bottom Toolbar -->
+        <div class="navbar-inner-toolbar toolbar-bottom">
+            <a class="toolbar-button pin-navbar" href="" ng-click="navbar.switchNavbar()">
+                <i ng-class="navbar.styles.pin"></i>
+            </a>
+            <a class="toolbar-button display-style" href="" ng-click="navbar.changeDisplayFormat()">
+                <i ng-class="navbar.styles.displayFormat"></i> {{navbar.displayFormatButtonText}}
+            </a>
+        </div>
+
+
     </div>
 </div>
