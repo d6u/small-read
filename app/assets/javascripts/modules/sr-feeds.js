@@ -44,14 +44,10 @@ SmallRead.factory('Feeds',
                 tweet.created_at = date;
             },
             getFeedCards: function(callback, groupId) {
-                if (groupId) {
-                    var params = {};
-                    params['folder_id'] = groupId;
-                } else {
-                    var params = null;
-                }
+                var params = {cards: 'true'};
+                if (groupId) params['folder_id'] = groupId;
                 var that = this;
-                var http = $http.get('/feeds_with_top_tweets', {
+                var http = $http.get('/feeds', {
                     params: params,
                     transformResponse: function(data, headersGetter) {
                         var object = angular.fromJson(data);
@@ -78,20 +74,24 @@ SmallRead.factory('Feeds',
             },
             getTweets: function(sourceId, maxId, sourceType, readOnly) {
                 // default args
-                sourceId = typeof sourceId !== 'undefined' ? sourceId : null;
-                maxId = typeof maxId !== 'undefined' ? maxId : null;
+                sourceId   = typeof sourceId !== 'undefined' ? sourceId : null;
+                maxId      = typeof maxId !== 'undefined' ? maxId : null;
                 sourceType = typeof sourceType !== 'undefined' ? sourceType : 'feed';
-                readOnly = typeof readOnly !== 'undefined' ? readOnly : true;
+                readOnly   = typeof readOnly !== 'undefined' ? readOnly : true;
                 // options for http get
                 var url = sourceId ? '/'+sourceType+'s/'+sourceId+'/tweets' : '/tweets';
                 var all = readOnly ? null : 'true';
                 // $http
                 var that = this;
+                if (maxId || all) {
+                    var params = {};
+                    if (maxId) params['max_id'] = maxId;
+                    if (all)   params['all']    = all;
+                } else {
+                    var params = null;
+                }
                 var http = $http.get('/'+sourceType+'s/'+sourceId+'/tweets', {
-                    params: {
-                        max_id: maxId,
-                        all: all
-                    },
+                    params: params,
                     transformResponse: function(data, headersGetter) {
                         var object = angular.fromJson(data);
                         for (var i = 0; i < object.length; i++) {
