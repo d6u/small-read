@@ -1,6 +1,6 @@
-<div class="settings-body">
+<div class="settings-container">
 
-    <%= form_for(:user, html: {class: ""}) do |f| %>
+    <%= form_for(:user, html: {:class => 'setting-form-normal'}) do |f| %>
         <%= field_set_tag('Change Password') do %>
 
             <!-- Current Password -->
@@ -26,7 +26,7 @@
             <% end %>
 
             <!-- Submit -->
-            <%= f.button('Update', class: 'btn btn-primary') %>
+            <%= f.button('Update', :class => 'button button-blue') %>
 
         <% end %>
     <% end %>

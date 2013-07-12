@@ -9,3 +9,33 @@
         color: $gray6;
     }
 }
+
+.setting-form-normal {
+    legend {
+        font-size: 18px;
+        margin-bottom: 14px;
+    }
+}
+
+.twitter-account-list-item {
+    padding: 0 15px;
+    height: 60px;
+    background-color: $blue;
+    width: 400px;
+    font-size: 32px;
+    line-height: 60px;
+    color: white;
+    margin-bottom: 20px;
+
+    a {
+        color: white;
+        &:hover {
+            color: $gray2;
+        }
+    }
+    i {
+        float: right;
+        line-height: 60px;
+        padding: 0 15px;
+    }
+}
