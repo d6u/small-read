@@ -19,9 +19,9 @@ class InsideController < ApplicationController
   def logout
     if params[:confirmation] == 'yes'
       forget_user
-      redirect_to({controller: 'outside', action: 'index'})
+      redirect_to({:controller => 'outside', :action => 'index'})
     else
-      redirect_to({controller: 'inside', action: 'index'})
+      redirect_to({:controller => 'inside', :action => 'index'})
     end
   end
 
