@@ -1,31 +1,36 @@
-// Variables and Mixins
-@import "variables";
-
+// Variables
+// ----------------------------------------
+@import "variables_and_mixins/variables";
 
 // Base
-@import "base/base";
-@import "base/skeleton.css";
-@import "base/center_grid";
+// ----------------------------------------
+@import "base/reset";
+@import "base/basic";
+@import "base/type";
+@import "base/elements";
 
+// Components
+// ----------------------------------------
+@import "components/font-awesome";
+@import "components/buttons";
+@import "components/buttons_skin";
+@import "components/forms";
+@import "components/inputs";
+@import "components/messages";
 
-// Component
-@import "component/font-awesome";
-@import "component/buttons";
-@import "component/buttons_skin";
-@import "component/inputs";
-@import "component/messages";
+// Layouts
+// ----------------------------------------
+@import "layouts/grid";
+@import "layouts/center_grid";
+@import "layouts/outside";
 
+// Modules
+// ----------------------------------------
+@import "modules/navbar_fixed";
+@import "modules/sections";
+@import "modules/forms";
+@import "modules/footer";
 
-// Layout
-@import "layout/outside";
-
-
-// Module
-@import "module/navbar_fixed";
-@import "module/sections";
-@import "module/forms";
-@import "module/footer";
-
-
-// State
-
+// Utilities
+// ----------------------------------------
+@import "utilities/mis";

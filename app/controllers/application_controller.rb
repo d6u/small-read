@@ -88,15 +88,17 @@ class ApplicationController < ActionController::Base
   end
 
 
-  # TODO: refactor
-  # forget_user
+  ##
+  # forget user on this computer
+  #
+  #     args[:all] = true : will forget user on every computer
   #
   # ----------------------------------
   def forget_user(args={})
     session[:user_id] = nil
     if cookies.signed[:user_token]
       RememberLogin.delete_all(:matching_code => cookies.signed[:user_token])
-      cookies.delete(:user_token)
+      cookies.delete :user_token, :domain => :all
     end
     if args[:all] === true
       @user.remember_logins.destroy_all

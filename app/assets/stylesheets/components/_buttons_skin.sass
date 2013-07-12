@@ -1,10 +1,35 @@
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:active,
+button:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+input[type="button"]:active,
+.button.full-width,
+button.full-width,
+input[type="submit"].full-width,
+input[type="reset"].full-width,
+input[type="button"].full-width
+
+    border: none
+    text-shadow: none
+
+
 .button
     // Button with Colors
     &.button-blue
         background: $blue
         color: white
         &:hover
-            background: $blue_dark
+            background: $blueDark
 
     &.button-green
         background: $green
@@ -58,7 +83,7 @@
     width: 60px
     height: 60px
     display: inline-block
-    background: $blue_dark
+    background: $blueDark
     color: white
     font-size: 36px
     line-height: 60px
