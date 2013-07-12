@@ -87,10 +87,6 @@ class ApplicationController < ActionController::Base
     session[:user_id] = @user.id
   end
 
-  # TODO: remove
-  def redirect_to_welcome_if_no_email
-    redirect_to controller: 'inside', action: 'welcome' unless @user.email
-  end
 
   # TODO: refactor
   # forget_user

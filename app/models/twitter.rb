@@ -29,6 +29,7 @@ class Twitter < ActiveRecord::Base
 
     home_timeline = self.home_timeline({:count => 200}, {:pages => 5})[:data]
     # home_timeline is not empty (not exceeding API limits)
+    if !home_timeline.empty?
       # 2. assamble user data from home_timeline
       timeline_users = (home_timeline.map {|t| t['user']['id_str'] === self.user_id ? nil : t['user']}).compact.uniq
 
@@ -121,7 +122,6 @@ class Twitter < ActiveRecord::Base
   def update_existing_tweets(existing_tweets)
     existing_tweets.each do |t|
       tweet = self.tweets.where(:id_str => t['id_str']).first
-      # TODO: NoMethodError: undefined method `attributes=' for nil:NilClass
       begin
         tweet.attributes = {:retweet_count => t['retweet_count'], :favorite_count => t['favorite_count']}
         tweet.save if tweet.changed?
