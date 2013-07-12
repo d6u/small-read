@@ -51,9 +51,10 @@ function($routeProvider) {
         templateUrl: 'cards_view.html',
         controller: 'FeedShowcaseCtrl'
     })
-    .when('/group/:groupId/feeds/:feedId', {
+    .when('/group/:groupId/feeds', {
         templateUrl: 'reader_view.html',
-        controller: 'ReaderCtrl'
+        controller: 'ReaderCtrl',
+        reloadOnSearch: false
     })
     .otherwise({
         redirectTo: '/'
@@ -84,9 +85,6 @@ function($scope, $location) {
             autoHide:      'navbar-autohide-true',
             pin:           'icon-pushpin',
             displayFormat: 'icon-list'
-        },
-        target: {
-            displayFormat: '#/feeds/all'
         },
         displayFormatButtonText: 'Reader Style',
         pinNavbar: function() {
@@ -123,17 +121,18 @@ function($scope, $location) {
         },
         changeDisplayFormat: function() {
             if (this.cardFormat) { // switch to reader
-                $location.path('/group/all/feeds/all');
+                $location.path('/group/all/feeds');
                 $scope.feedsToolbar = {styles: 'hide'};
             } else { // switch to cards
                 $location.path('/');
+                $location.search('feed_id', null);
                 $scope.feedsToolbar = {styles: null};
             }
         },
         changeToGroup: function(groupId) {
-            var match = /.+?feeds\/(.+?)$/.exec($location.path());
-            if (match) {
-                $location.path('/group/'+groupId+'/feeds/all');
+            if ($location.search.feed_id || /.+\/feeds.*/.exec($location.path())) {
+                $location.path('/group/'+groupId+'/feeds');
+                $location.search('feed_id', null);
             } else {
                 if (groupId === 'all') {
                     $location.path('/');
@@ -178,21 +177,34 @@ function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
     }
     // load tweets
     $scope.tweets = [];
-    $scope.loadMoreTweets = function() {
-        if ($scope.reachesEnd) return;
-        var maxId = $scope.tweets.length === 0 ? null : $scope.tweets[$scope.tweets.length - 1].id - 1;
+    $scope.tweetsLoading = false;
+    $scope.loadMoreTweets = function(reload) {
+        if ($scope.reachesEnd || $scope.tweetsLoading) return;
+        $scope.tweetsLoading = true;
+        if (reload === true) {
+            var maxId = null;
+        } else {
+            var maxId = $scope.tweets.length === 0 ? null : $scope.tweets[$scope.tweets.length - 1].id - 1;
+        }
         Feeds.getTweets($scope.activeFeedId, maxId)
         .then(function(data) {
             if (data.length < 20) $scope.reachesEnd = true;
-            $scope.tweets = $scope.tweets.concat(data);
+            $scope.tweets = reload ? data : $scope.tweets.concat(data);
+            $scope.tweetsLoading = false;
         });
     }
-    if ($routeParams.feedId === 'all') {
-        $scope.activeFeedId = null;
-    } else {
-        $scope.activeFeedId = $routeParams.feedId;
-        $scope.loadMoreTweets();
+    // events $routeChangeSuccess
+    var routeChangeCallback = function(event, route) {
+        $scope.reachesEnd = false;
+        if (typeof route.params.feed_id === 'undefined' || route.params.feed_id === 'all') {
+            $scope.activeFeedId = null;
+        } else {
+            $scope.activeFeedId = route.params.feed_id;
+            $scope.loadMoreTweets(true);
+        }
     }
+    $scope.$on('$routeChangeSuccess', routeChangeCallback);
+    $scope.$on('$routeUpdate', routeChangeCallback);
 }]);
 
 
@@ -221,11 +233,16 @@ function() {
 app.directive('feed', function() {
     return {
         link: function(scope, element, attrs) {
-            if (scope.feed.id == scope.activeFeedId) {
-                element.addClass('active');
-            } else {
-                // element.removeClass();
+            var changeActiveState = function(event, route) {
+                var targetFeedId = typeof route !== 'undefined' ? route.params.feed_id : scope.activeFeedId;
+                if (scope.feed.id == targetFeedId) {
+                    element.addClass('active');
+                } else {
+                    element.removeClass('active');
+                }
             }
+            changeActiveState();
+            scope.$on('$routeUpdate', changeActiveState);
         }
     };
 });
@@ -284,6 +301,10 @@ app.directive('tweetsList', function() {
                 scope.$broadcast('tweetsListScrolled');
                 var distanceToTop = element.children('.tweets-list-item').last().position().top;
                 if (distanceToTop - 100 < element.height()) scope.loadMoreTweets();
+            });
+            scope.$on('$routeUpdate', function(event, route) {
+                element.scrollTop(0);
+                element.perfectScrollbar('update');
             });
         }
     }

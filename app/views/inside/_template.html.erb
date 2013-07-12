@@ -45,7 +45,7 @@
 
             <!-- Action Button -->
             <div class="feed-button show-more">
-                <a href="" ng-href="#/group/{{feed.group_id}}/feeds/{{feed.id}}">Show More Tweets</a>
+                <a href="" ng-href="#/group/{{feed.group_id}}/feeds?feed_id={{feed.id}}">Show More Tweets</a>
             </div>
             <div class="feed-button mark-all-read">
                 <a href="">Mark All Read</a>
@@ -70,7 +70,7 @@
         <!-- Feed -->
         <div class="feeds-list-item feed-profile"
              feed ng-repeat="feed in feeds | filter:{folder_id: groupId}">
-            <a ng-href="#/group/{{feed.folder_id}}/feeds/{{feed.id}}">
+            <a ng-href="#/group/{{feed.folder_id}}/feeds?feed_id={{feed.id}}">
                 <img ng-src="{{feed.profile_image_url}}" alt="">
                 <div class="profile-detail">
                     <div class="profile-name">{{feed.name}}</div>
