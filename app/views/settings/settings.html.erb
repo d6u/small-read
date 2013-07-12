@@ -1,16 +1,16 @@
-<div class="settings-container">
-    <!-- Settings Form -->
-    <%= form_for(:user, :html => {:class => 'setting-form-normal'}) do |f| %>
-        <%= field_set_tag('General Settings') do %>
-            <%= f.label(:name, {:class => ''}) %>
-            <%= f.text_field(:name, placeholder: 'Name') %>
-            <span class="help-block"><%
-            if !@user.errors[:name].empty?
-                @user.errors[:name].each do |e|
-                    %><%= e %><%
-                end
-            end %></span>
-            <%= f.button('Update', :class => 'button button-blue') %>
-        <% end %>
-    <% end %>
-</div>
+<div class="sr-title sr-title-setting">Change Username</div>
+
+
+<!-- Settings Form -->
+<%= form_for(:user, :html => {:class => 'setting-form-normal'}) do |f| %>
+    <%= f.label(:name, {:class => ''}) %>
+    <%= f.text_field(:name, placeholder: 'Name') %>
+    <span class="help-block">
+        <% if !@user.errors[:name].empty?
+            @user.errors[:name].each do |e|
+                %><%= e %><%
+            end
+        end %>
+    </span>
+    <%= f.button('Update', :class => 'button button-blue') %>
+<% end %>

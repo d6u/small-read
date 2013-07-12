@@ -1,7 +1,11 @@
 <%= render :layout => 'layouts/htmldoc' do %>
     <%= render 'settings/settings_navbar_side' %>
-    <section class="settings-section">
-        <%= render 'settings/settings_section_nav' %>
-        <%= yield %>
+    <section class="setting-section">
+        <div class="setting-container">
+            <%= render 'settings/settings_section_nav' %>
+            <div class="setting-content">
+                <%= yield %>
+            </div>
+        </div>
     </section>
 <% end %>

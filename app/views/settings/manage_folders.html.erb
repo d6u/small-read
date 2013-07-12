@@ -1,25 +1,25 @@
-<div class="settings-container">
+<div class="sr-title sr-title-setting">Manage Folders</div>
 
-    <!-- Folder Management -->
-    <div class="folder-management">
-        <p class="lead-title">Manage Folders</p>
-        <div class="form-inline create-new-folder-block">
-            <span class="help-inline">Create a new folder </span>
-            <%= text_field_tag :new_folder_name, nil, :class => 'input-xlarge', :placeholder => 'New folder name' %>
-            <%= button_tag "Create", :type => 'button', :class => 'btn btn-primary', :id => 'create_new_folder_button' %>
-            <span class="alert alert-error" id="create_folder_alert">Name cannot be empty.</span>
-        </div>
+<!-- Folder Management -->
+<div class="folder-management">
+    <div class="form-inline create-new-folder-block">
+        <span class="help-inline">Create a new folder </span>
+        <form action="post">
+            <div class="input-append">
+                <input type="text" class="input-box">
+                <button type="submit" class="button button-blue">Add</button>
+            </div>
+        </form>
+    </div>
 
-        <div class="folder-list">
-            <% @folders.each do |folder| %>
+    <div class="folder-list">
+        <% @folders.each do |folder| %>
             <div class="folder-list-item alert alert-info form-inline"
-                 <%= output_attributes_as_dataset(folder) %>>
-                <div class="btn-group">
-                    <a class="btn btn-primary rearrange-folder">
-                        <i class="icon-resize-vertical"></i>
-                    </a>
-                    <button class="btn btn-primary rename-folder" <%= disabled_if_reserved(folder) %>>Rename</button>
-                </div>
+                <%= output_attributes_as_dataset(folder) %>>
+                <a class="button rearrange-folder">
+                    <i class="icon-resize-vertical"></i>
+                </a>
+                <button class="rename-folder" <%= disabled_if_reserved(folder) %>>Rename</button>
                 <span class="folder-list-item-name"><%= folder.name %></span>
                 <span class="folder-list-item-rename hide">
                     <input type="text" value="<%= folder.name %>">
@@ -29,10 +29,8 @@
                     <i class="icon-trash"></i>
                 </button>
             </div>
-            <% end %>
-        </div>
+        <% end %>
     </div>
-
 </div>
 
 <%= render 'templates' %>

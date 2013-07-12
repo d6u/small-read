@@ -1,51 +1,30 @@
 .setting-section-nav {
-    background-color: $blue;
+    width: 80px;
+    margin-right: 40px;
+    background-color: $greenDark;
     color: white;
     overflow: hidden;
+    float: left;
+    border-radius: 3px;
 }
 
 .settings-section-nav-inner {
-    margin: 0 auto;
-    margin-top: 10px;
-    width: (64px + 30px) * 6;
-    padding-right: 30px;
     a {
-        position: relative;
         text-align: center;
         color: white;
         display: block;
         float: left;
-        width: 64px;
-        height: 100px;
-        margin-left: 30px;
+        width: 60px;
+        padding: 10px;
         span {
             display: block;
             height: 60px;
             font-size: 35px;
             line-height: 60px;
-            border-width: 2px;
-            border-style: solid;
-            border-color: $blue;
-            border-radius: 32px;
         }
-        &:hover {
-            color: white;
-            text-decoration: none;
-            span {
-                border-color: $yellow;
-            }
+        &:hover,
+        &.active {
+            background-color: $green;
         }
     }
-}
-
-.settings-nav-active-indicator {
-    $arrow-size: 12px;
-    width: 0;
-    height: 0;
-    border-left: $arrow-size solid transparent;
-    border-right: $arrow-size solid transparent;
-    border-bottom: $arrow-size solid white;
-    position: absolute;
-    bottom: 0;
-    right: 20px;
 }

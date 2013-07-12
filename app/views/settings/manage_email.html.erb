@@ -1,34 +1,31 @@
-<div class="settings-container">
+<div class="sr-title sr-title-setting">Change Email</div>
 
-    <%= form_for(:user, html: {:class => 'setting-form-normal'}) do |f| %>
-        <%= field_set_tag('Change Password') do %>
 
-            <!-- Current Password -->
-            <%= f.label(:current_password, {class: ""}) %>
-            <%= f.password_field(:current_password, placeholder: 'Current password') %>
-            <% unless @user.errors[:current_password].empty? %>
-                <% @user.errors[:current_password].each do |e| %>
-                    <span class="help-block alert"><%= e %></span>
-                <% end %>
-            <% else %>
-                <span class="help-block"></span>
-            <% end %>
+<%= form_for(:user, html: {:class => 'setting-form-normal'}) do |f| %>
 
-            <!-- Email -->
-            <%= f.label(:email, {class: ""}) %>
-            <%= f.text_field(:email, placeholder: 'Email') %>
-            <% unless @user.errors[:email].empty? %>
-                <% @user.errors[:email].each do |e| %>
-                    <span class="help-block alert"><%= e %></span>
-                <% end %>
-            <% else %>
-                <span class="help-block"></span>
-            <% end %>
-
-            <!-- Submit -->
-            <%= f.button('Update', :class => 'button button-blue') %>
-
+    <!-- Current Password -->
+    <%= f.label(:current_password, {class: ""}) %>
+    <%= f.password_field(:current_password, placeholder: 'Current password') %>
+    <% unless @user.errors[:current_password].empty? %>
+        <% @user.errors[:current_password].each do |e| %>
+            <span class="help-block alert"><%= e %></span>
         <% end %>
+    <% else %>
+        <span class="help-block"></span>
     <% end %>
 
-</div>
+    <!-- Email -->
+    <%= f.label(:email, {class: ""}) %>
+    <%= f.text_field(:email, placeholder: 'Email') %>
+    <% unless @user.errors[:email].empty? %>
+        <% @user.errors[:email].each do |e| %>
+            <span class="help-block alert"><%= e %></span>
+        <% end %>
+    <% else %>
+        <span class="help-block"></span>
+    <% end %>
+
+    <!-- Submit -->
+    <%= f.button('Update', :class => 'button button-blue') %>
+
+<% end %>

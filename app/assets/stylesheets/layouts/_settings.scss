@@ -1,7 +1,14 @@
-.settings-section {
+.setting-section {
     margin-left: 200px;
 }
 
-.settings-container {
-    padding: 50px;
+.setting-container {
+    width: 80px + 40px + 512px;
+    margin-left: 60px;
+    padding-top: 40px;
+}
+
+.setting-content {
+    width: 512px;
+    float: right;
 }
