@@ -1,0 +1,10 @@
+.list-toolbar-button {
+    text-align: center;
+    line-height: 60px;
+    font-size: 21px;
+    float: right;
+    padding: 0 10px;
+    &:hover {
+        background-color: $gray1;
+    }
+}

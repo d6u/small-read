@@ -48,7 +48,7 @@
                 <a href="" ng-href="#/group/{{feed.group_id}}/feeds?feed_id={{feed.id}}">Show More Tweets</a>
             </div>
             <div class="feed-button mark-all-read">
-                <a href="">Mark All Read</a>
+                <a href="" ng-click="markAllRead(feed.id)">Mark All Read</a>
             </div>
 
         </div>
@@ -88,7 +88,9 @@
     <div class="tweets-list" perfect-scrollbar tweets-list>
 
         <!-- Toolbar -->
-        <div class="tweets-toolbar"></div>
+        <div class="tweets-toolbar">
+            <a href="" class="list-toolbar-button mark-all-read" ng-click="markAllRead(activeFeedId)">Mark All Read</a>
+        </div>
 
         <!-- Tweet -->
         <div class="tweets-list-item" ng-repeat="tweet in tweets" tweet>
