@@ -1,0 +1,11 @@
+.navbar-toolbar-button {
+    display: block;
+    height: 45px;
+    font-size: 16px;
+    line-height: 45px;
+    text-align: center;
+    &:hover {
+        background-color: white;
+        color: $gray6;
+    }
+}

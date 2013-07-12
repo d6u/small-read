@@ -1,5 +1,4 @@
-<div class="settings-body">
-
+<div class="settings-container">
     <!-- Settings Form -->
     <%= form_for(:user, html: {}) do |f| %>
         <%= field_set_tag('General Settings') do %>
@@ -14,5 +13,4 @@
             <%= f.button('Update', class: 'btn btn-primary') %>
         <% end %>
     <% end %>
-
 </div>
