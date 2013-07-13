@@ -32,6 +32,13 @@ Date.prototype.setISO8601 = function (string) {
 // ----------------------------------------
 var SmallRead = angular.module('small-read:feeds', []);
 
+SmallRead.config(
+['$httpProvider',
+function($httpProvider) {
+    var token = angular.element('meta[name="csrf-token"]').attr('content');
+    $httpProvider.defaults.headers.common['X-CSRF-Token'] = token;
+}]);
+
 SmallRead.factory('Feeds',
     ['$http', '$q', '$timeout', function($http, $q, $timeout) {
         return {
@@ -102,6 +109,32 @@ SmallRead.factory('Feeds',
                     }
                 });
                 return http.then(function(response) {return response.data;});
+            },
+            getFolders: function() {
+                var http = $http.get('/folders');
+                return http.then(function(response) {return response.data;});
+            },
+            addFolder: function(folder) {
+                var http = $http.post(
+                    '/folders',
+                    {folder: folder}
+                );
+                return http.then(function(response) {return response.data;});
+            },
+            updateFolders: function(folders) {
+                var httpRequests = [];
+                for (var i = 0; i < folders.length; i++) {
+                    folders[i]
+                    var http = $http.put(
+                        '/folders/'+folders[i].id,
+                        {folder: folders[i]}
+                    );
+                    httpRequests.push(http);
+                };
+                return $q.all(httpRequests);
+            },
+            deleteFolder: function(id) {
+                return $http.delete('/folders/'+id);
             }
         };
     }]

@@ -2,35 +2,41 @@
 
 <!-- Folder Management -->
 <div class="folder-management">
+
+    <!-- Add New Folder -->
     <div class="form-inline create-new-folder-block">
         <span class="help-inline">Create a new folder </span>
-        <form action="post">
+        <form name="newFolderForm" ng-submit="folderManagement.addNewFolder()">
             <div class="input-append">
-                <input type="text" class="input-box">
-                <button type="submit" class="button button-blue">Add</button>
+                <input type="text" class="input-box" ng-model="newFolderName" ng-change="folderManagement.validateName()">
+                <button type="submit" class="button button-green">Add</button>
             </div>
         </form>
+        <div class="message">{{message}}</div>
     </div>
 
-    <div class="folder-list">
-        <% @folders.each do |folder| %>
-            <div class="folder-list-item alert alert-info form-inline"
-                <%= output_attributes_as_dataset(folder) %>>
-                <a class="button rearrange-folder">
-                    <i class="icon-resize-vertical"></i>
-                </a>
-                <button class="rename-folder" <%= disabled_if_reserved(folder) %>>Rename</button>
-                <span class="folder-list-item-name"><%= folder.name %></span>
-                <span class="folder-list-item-rename hide">
-                    <input type="text" value="<%= folder.name %>">
-                    <button class="btn submit-folder-rename">Change</button>
-                </span>
-                <button class="btn btn-primary delete-folder" <%= disabled_if_reserved(folder) %>>
-                    <i class="icon-trash"></i>
-                </button>
-            </div>
-        <% end %>
+    <!-- Folder List -->
+    <div class="folder-list" jq-sortable jq-connect-with="">
+        <div class="folder-list-item alert alert-info form-inline"
+             ng-repeat="folder in folders" ng-init="showRename = false; folder.newName = folder.name">
+            <a class="button button-blue rearrange-folder">
+                <i class="icon-resize-vertical"></i>
+            </a>
+            <a class="button button-blue rename-folder" ng-click="showRename = !showRename" ng-show="!folder.reserved && !showRename">Rename</a>
+            <a class="button button-blue rename-folder" ng-click="showRename = !showRename; folder.newName = folder.name" ng-show="showRename">Cancel</a>
+            <a class="button button-blue delete-folder" ng-show="!folder.reserved" ng-click="folderManagement.removeFolder(folder, $index)">
+                <i class="icon-trash"></i>
+            </a>
+            <span class="folder-list-item-name" ng-show="!showRename">{{folder.name}}</span>
+            <span class="folder-list-item-rename" ng-show="showRename">
+                <input type="text" ng-model="folder.newName">
+                <a class="button button-blue submit-folder-rename" ng-click="showRename = !showRename; folderManagement.updateFolderName(folder)">Update</a>
+            </span>
+        </div>
     </div>
+
+
 </div>
+
 
 <%= render 'templates' %>
