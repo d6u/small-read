@@ -13,13 +13,15 @@ class CleanDuplicateTweets
   def self.perform
     timer = Time.now
 
-    Tweet.all.inject([]) do |inject, tweet|
-      if !inject.include? "#{tweet.feed_id}-#{tweet.id_str}"
-        inject << "#{tweet.feed_id}-#{tweet.id_str}"
-      else
-        tweet.destroy
+    Feed.all.each do |feed|
+      feed.tweets.inject([]) do |inject, tweet|
+        if !inject.include? tweet.id_str
+          inject << tweet.id_str
+        else
+          tweet.destroy
+        end
+        inject
       end
-      inject
     end
 
     puts "--> CleanDuplicateTweets task finished, #{Time.now - timer} seconds used."
