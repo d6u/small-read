@@ -109,6 +109,32 @@ class Tweet < ActiveRecord::Base
 
 
   ##
+  # Determine Tweets' types and scores
+  #
+  # ----------------------------------------
+  def self.analyze_tweets_for_twitter_id(twitter_id, options={})
+    if options[:count] === :all
+      limit_count = nil
+    elsif options[:count] === nil
+      limit_count = 800
+    else
+      limit_count = options[:count]
+    end
+
+    feeds = Feed.select(:id).where('twitter_id = ?', twitter_id).pluck(:id)
+    if limit_count === nil
+      feeds.each do |feed_id|
+        tweets = Tweet.where('feed_id = ?', feed_id)
+        ActiveRecord::Base.transaction {tweets.each {|tweet| tweet.detect_tweet_type.calculate_score}} if !tweets.empty?
+      end
+    else
+      tweets = Tweet.where(:feed_id => feeds, :read => false).order('id DESC').limit(limit_count)
+      ActiveRecord::Base.transaction {tweets.each {|tweet| tweet.detect_tweet_type.calculate_score}} if !tweets.empty?
+    end
+  end
+
+
+  ##
   # Detect which element this tweet has
   #
   # :with_image, :with_url, :with_coordinate, :with_mention, :with_hashtag
@@ -125,7 +151,7 @@ class Tweet < ActiveRecord::Base
     self.with_url        = true if entities['urls'] && !entities['urls'].empty?
     self.with_mention    = true if entities['user_mentions'] && !entities['user_mentions'].empty?
     self.with_hashtag    = true if entities['hashtags'] && !entities['hashtags'].empty?
-    self.save
+    self.save if self.changed?
     return self
   end
 
@@ -135,37 +161,12 @@ class Tweet < ActiveRecord::Base
   #
   # --------------------------------------------------
   def calculate_score
-    self.score = self.retweet_count * 10 + self.favorite_count * 10
-    self.score += 10 if self.with_image
-    self.save
+    new_score  = self.retweet_count * 10 + self.favorite_count * 10
+    new_score += 10 if self.with_image
+    self.score = new_score
+    self.save if self.changed?
     return self
   end
 
-
-  # TODO: benchmark and clean up old methods
-  def self.new_from_raw(tw)
-    if tw['retweeted_status']
-      content = {
-        retweeted_status_id_str:      tw['retweeted_status']['id_str'],
-        retweeted_status_user_id_str: tw['retweeted_status']['user']['id_str'],
-        retweeted_status_user_screen_name: tw['retweeted_status']['user']['screen_name'],
-        retweeted_status_user_name:   tw['retweeted_status']['user']['name'],
-        retweeted_status_user_profile_image_url: tw['retweeted_status']['user']['profile_image_url'],
-        # tweet content
-        text:     tw['retweeted_status']['text'],
-        entities: tw['retweeted_status']['entities'].to_json,
-        lang:     tw['retweeted_status']['lang']
-      }
-    else
-      content = {
-        text:     tw['text'],
-        entities: tw['entities'].to_json,
-        lang:     tw['lang']
-      }
-    end
-    content[:id_str] = tw['id_str']
-    content[:created_at] = tw['created_at']
-    return Tweet.new(content)
-  end
 
 end
