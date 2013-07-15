@@ -86,8 +86,12 @@ class Twitter < ActiveRecord::Base
   #
   # ----------------------------------------
   def self.analyze_timeline(twitter_id, options={})
-    ActiveRecord::Base.transaction do
+    if options[:all]
       Twitter.find_by_id(twitter_id).feeds.each {|feed| feed.update_top_tweets(options)}
+    else
+      ActiveRecord::Base.transaction do
+        Twitter.find_by_id(twitter_id).feeds.each {|feed| feed.update_top_tweets(options)}
+      end
     end
   end
 
