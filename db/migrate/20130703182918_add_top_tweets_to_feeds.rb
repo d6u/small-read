@@ -16,9 +16,6 @@ class AddTopTweetsToFeeds < ActiveRecord::Migration
     add_column :read_tweets, :with_coordinate, :boolean, :default => false
     add_column :read_tweets, :with_mention,    :boolean, :default => false
     add_column :read_tweets, :with_hashtag,    :boolean, :default => false
-
-    puts "--> Updating score of tweets"
-    Twitter.pluck('id').each {|id|Twitter.analyze_timeline(id, {:all => true})}
   end
 
 

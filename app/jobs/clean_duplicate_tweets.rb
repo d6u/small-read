@@ -24,6 +24,13 @@ class CleanDuplicateTweets
       end
     end
 
+    puts "--> Updating score of tweets"
+    Feed.all.each do |feed|
+      feed.tweets.each do |tweet|
+        tweet.detect_tweet_type.calculate_score
+      end
+    end
+
     puts "--> CleanDuplicateTweets task finished, #{Time.now - timer} seconds used."
   end
 
