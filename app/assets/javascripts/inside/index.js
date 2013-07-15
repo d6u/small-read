@@ -67,7 +67,10 @@ function($routeProvider) {
 app.run(
 ['$rootScope', 'Feeds', 'feedCardsStyle',
 function($rootScope, Feeds, feedCardsStyle) {
-    $rootScope.feeds = Feeds.getFeedCards(feedCardsStyle);
+    Feeds.getFeedCards(feedCardsStyle)
+    .then(function(data) {
+        $rootScope.feeds = data;
+    });
 }]);
 
 
@@ -75,8 +78,8 @@ function($rootScope, Feeds, feedCardsStyle) {
 // ========================================
 // App
 app.controller('AppCtrl',
-['$scope', '$location',
-function($scope, $location) {
+['$scope', '$location', '$http', '$rootScope',
+function($scope, $location, $http, $rootScope) {
     $scope.navbar = {
         pined: false,
         cardFormat: true,
@@ -142,21 +145,36 @@ function($scope, $location) {
             }
         }
     };
+    // functions
+    $scope.markAllRead = function(feedId) {
+        $http.post('/mark_all_read?feed_id='+feedId)
+        .success(function() {
+            var targetPosition = 0;
+            for (var i = 0; i < $rootScope.feeds.length; i++) {
+                if ($rootScope.feeds[i].id == feedId) {
+                    targetPosition = i;
+                    break;
+                }
+            };
+            $rootScope.feeds.splice(targetPosition, 1);
+        });
+    };
 }]);
 
 
 // Navbar
 app.controller('NavbarCtrl',
-['$scope',
-function($scope) {
+['$scope', '$http',
+function($scope, $http) {
 
 }]);
 
 
 // FeedShowcase
 app.controller('FeedShowcaseCtrl',
-['$scope', 'Feeds', '$routeParams', '$rootScope',
-function($scope, Feeds, $routeParams, $rootScope) {
+['$scope', 'Feeds', '$routeParams', '$rootScope', '$http',
+function($scope, Feeds, $routeParams, $rootScope, $http) {
+    // init
     $scope.navbar.changeToCardsFormat();
     $rootScope.$broadcast('activeGroup', $routeParams.groupId);
     $scope.groupId = $routeParams.groupId ? $routeParams.groupId : '';

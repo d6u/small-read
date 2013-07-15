@@ -1,4 +1,7 @@
-<div class="settings-body">
+<div class="sr-title sr-title-setting">Manage Connected Account</div>
+
+
+<div class="settings-container">
 
     <% if flash[:add_twitter_error] %>
     <div class="alert alert-error">
@@ -14,13 +17,17 @@
 
     <!-- Settings Form -->
     <% @user.twitters.each do |t| %>
-    <div class="alert alert-info twitter-account">
-        <%= link_to({:delete_twitter => true, twitter_id: t.id}, {class: "close", confirm: "Are your sure to un-connect @#{t.screen_name} ?", 'data-dismiss' => 'alert'}) do %>
+    <div class="twitter-account-list-item">
+        <%= link_to({:delete_twitter => true, :twitter_id => t.id},
+            {:confirm => "Are your sure to un-connect @#{t.screen_name} ?",
+             'data-dismiss' => 'alert'}) do %>
         <i class="icon-remove"></i>
         <% end %>
         @<%= t.screen_name %>
     </div>
     <% end %>
-    <%= link_to('Link another Twitter account', {link_twitter: true}, {class: "btn btn-info"}) %>
+    <%= link_to('Link another Twitter account',
+        {:link_twitter => true},
+        {:class => 'button button-blue'}) %>
 
 </div>

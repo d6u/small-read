@@ -60,6 +60,7 @@ $toolbarHeight: 45px;
 // ----------------------------------------
 .navbar-user-profile {
     padding: 10px;
+    position: relative;
 }
 
 .user-gravatar {
@@ -91,6 +92,40 @@ $toolbarHeight: 45px;
     color: $gray1;
 }
 
+.user-profile-hover-menu {
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+    top: 60px;
+    left: 0;
+    background-color: white;
+    display: none;
+    a {
+        color: $gray6;
+        display: block;
+        line-height: 42px;
+        font-size: 16px;
+        text-indent: 10px;
+    }
+    ul {
+        margin-bottom: 0;
+    }
+    li {
+        margin-bottom: 0;
+        &:hover {
+            background-color: $gray2;
+        }
+    }
+}
+
+.navbar-user-profile {
+    &:hover {
+        .user-profile-hover-menu {
+            display: block;
+        }
+    }
+}
+
 
 // Navbar Content
 // ----------------------------------------
@@ -118,6 +153,7 @@ $toolbarHeight: 45px;
     font-size: 12px;
     text-indent: 10px;
     font-weight: bold;
+    color: $gray3;
 }
 
 .navbar-group-item {

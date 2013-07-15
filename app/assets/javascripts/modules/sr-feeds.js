@@ -32,6 +32,13 @@ Date.prototype.setISO8601 = function (string) {
 // ----------------------------------------
 var SmallRead = angular.module('small-read:feeds', []);
 
+SmallRead.config(
+['$httpProvider',
+function($httpProvider) {
+    var token = angular.element('meta[name="csrf-token"]').attr('content');
+    $httpProvider.defaults.headers.common['X-CSRF-Token'] = token;
+}]);
+
 SmallRead.factory('Feeds',
     ['$http', '$q', '$timeout', function($http, $q, $timeout) {
         return {
@@ -72,6 +79,17 @@ SmallRead.factory('Feeds',
                 var http = $http.get(url);
                 return http.then(function(response) {return response.data;});
             },
+            updateFeeds: function(feeds) {
+                var httpRequests = [];
+                for (var i = 0; i < feeds.length; i++) {
+                    var http = $http.put(
+                        '/feeds/'+feeds[i].id,
+                        {feed: feeds[i]}
+                    );
+                    httpRequests.push(http);
+                };
+                return $q.all(httpRequests);
+            },
             getTweets: function(sourceId, maxId, sourceType, readOnly) {
                 // default args
                 sourceId   = typeof sourceId !== 'undefined' ? sourceId : null;
@@ -101,6 +119,35 @@ SmallRead.factory('Feeds',
                         return object;
                     }
                 });
+                return http.then(function(response) {return response.data;});
+            },
+            getFolders: function() {
+                var http = $http.get('/folders');
+                return http.then(function(response) {return response.data;});
+            },
+            addFolder: function(folder) {
+                var http = $http.post(
+                    '/folders',
+                    {folder: folder}
+                );
+                return http.then(function(response) {return response.data;});
+            },
+            updateFolders: function(folders) {
+                var httpRequests = [];
+                for (var i = 0; i < folders.length; i++) {
+                    var http = $http.put(
+                        '/folders/'+folders[i].id,
+                        {folder: folders[i]}
+                    );
+                    httpRequests.push(http);
+                };
+                return $q.all(httpRequests);
+            },
+            deleteFolder: function(id) {
+                return $http.delete('/folders/'+id);
+            },
+            getGroupsAndFeeds: function() {
+                var http = $http.get('/bg/load_folders_and_feeds');
                 return http.then(function(response) {return response.data;});
             }
         };

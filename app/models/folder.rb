@@ -32,6 +32,7 @@ class Folder < ActiveRecord::Base
   # ========================================
   before_destroy :move_feeds_to_general_folder
   # TODO: prevent general and muted folder from being deleted
+  before_create :normalize_fields
 
 
   ##
@@ -44,6 +45,15 @@ class Folder < ActiveRecord::Base
   def move_feeds_to_general_folder
     general_folder = Folder.where(["user_id = ? AND lower(name) = 'general'", self.user_id]).first
     self.feeds.update_all(:folder_id => general_folder.id)
+  end
+
+
+  ##
+  # Assign default value
+  #
+  # ----------------------------------------
+  def normalize_fields
+    self.unread_count = 0
   end
 
 end
