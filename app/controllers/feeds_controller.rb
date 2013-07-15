@@ -1,17 +1,39 @@
 class FeedsController < ApplicationController
-  # Filter
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # ========================================
 
+
+  # Actions
+  # ========================================
+
+  ##
   # GET /feeds
+  #
+  # ----------------------------------------
   def index
     if params[:folder_id]
-      @feeds = @user.folders.find(params[:folder_id]).feeds
+      @feeds = @user.folders.find(params[:folder_id]).feeds.order('unread_count DESC')
     else
-      @feeds = @user.twitters[0].feeds
+      @feeds = @user.twitters.first.feeds.order('unread_count DESC')
     end
 
-    render json: @feeds
+    if params[:cards] === 'true'
+      render 'feeds_with_top_tweets.json', :formats => [:json]
+    else
+      render :json => @feeds
+    end
   end
+
+
+  ##
+  # Add top tweets data onto feeds
+  #
+  # GET /feeds_with_top_tweets
+  # ----------------------------------------
+  def feeds_with_top_tweets
+
+  end
+
 
   # GET /feeds/1
   def show

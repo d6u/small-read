@@ -37,10 +37,11 @@ SmallRead::Application.routes.draw do
   get   'bg/twitter_api_counts'       => 'background_opt#twitter_api_counts'
   post  'mark_all_read'               => 'background_opt#mark_all_read'
   post  '/bg/update_folder_positions' => 'background_opt#update_folder_positions'
-  post '/bg/manage_feeds'             => 'background_opt#manage_feeds'
+  post  '/bg/manage_feeds'             => 'background_opt#manage_feeds'
 
   # => Resources
-  get  '/tweets/:id/mark_read' => 'tweets#mark_read'
+  get  '/tweets/:id/mark_read'  => 'tweets#mark_read'
+  get  '/feeds_with_top_tweets' => 'feeds#feeds_with_top_tweets'
   resources :tweets
 
   resources :folders do

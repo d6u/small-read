@@ -1,0 +1,100 @@
+$maxColumns: 18;
+
+
+// Animations
+// ----------------------------------------
+.navbar-edge, .navbar-inner,
+.main, .main-inner
+{
+    transition: all 0.2s;
+    // Fixed postion of chidren element won't work if translateZ is enabled
+    // transform: translateZ(0);
+    // -webkit-transform: translateZ(0);
+}
+
+.navbar-edge {
+    width: 20px;
+    height: 100%;
+    position: fixed;
+    z-index: 200;
+    left: 0;
+    top: 0;
+
+    .hover-area {
+        width: 40px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+    }
+}
+
+.navbar-inner {
+    width: 200px;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    bottom: 0;
+}
+
+
+// Main Container
+// ----------------------------------------
+.main {
+    margin-left: 20px;
+}
+
+.main-inner {
+    padding-top: 50px;
+    padding-right: 20px;
+    margin: 0 auto;
+    width: 1020px; // media query set more details
+}
+
+
+// Hover State
+// ----------------------------------------
+.navbar-edge {
+    &:hover,
+    &.navbar-autohide-false {
+        width: 200px;
+        .navbar-inner {
+            right: 0;
+        }
+    }
+
+    &.navbar-autohide-false {
+        + .main {
+            margin-left: 200px;
+        }
+    }
+}
+
+
+// Different Screen Size
+// ----------------------------------------
+@for $columns from 1 through $maxColumns {
+
+    // init state
+    @media all and (max-width: 39px + ($columns + 1) * ($feedCardWidth + 20px)) and (min-width: 40px + $columns * ($feedCardWidth + 20px)) {
+
+        .main-inner {
+            width: $columns * ($feedCardWidth + 20px);
+        }
+    }
+
+    // hover state
+    @media all and (max-width: 219px + ($columns + 1) * ($feedCardWidth + 20px)) and (min-width: 220px + $columns * ($feedCardWidth + 20px)) {
+
+        .navbar-edge {
+            &.navbar-autohide-false {
+                + .main {
+                    .main-inner {
+                        width: $columns * ($feedCardWidth + 20px);
+                    }
+                }
+            }
+        }
+    }
+
+}

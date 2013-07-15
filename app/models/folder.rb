@@ -1,7 +1,7 @@
 class Folder < ActiveRecord::Base
   # Relationships
   belongs_to :user
-  has_many   :feeds,       :dependent => :destroy
+  has_many   :feeds
   has_many   :tweets,      :through => :feeds
   has_many   :read_tweets, :through => :feeds
 
@@ -23,6 +23,37 @@ class Folder < ActiveRecord::Base
     end
     self.save
     [self, feeds]
+  end
+
+
+  ##
+  # Callbacks
+  #
+  # ========================================
+  before_destroy :move_feeds_to_general_folder
+  # TODO: prevent general and muted folder from being deleted
+  before_create :normalize_fields
+
+
+  ##
+  # ========================================
+  private
+  ##
+  # Make sure remove every feeds belongs to this folder to general folder
+  #
+  # ----------------------------------------
+  def move_feeds_to_general_folder
+    general_folder = Folder.where(["user_id = ? AND lower(name) = 'general'", self.user_id]).first
+    self.feeds.update_all(:folder_id => general_folder.id)
+  end
+
+
+  ##
+  # Assign default value
+  #
+  # ----------------------------------------
+  def normalize_fields
+    self.unread_count = 0
   end
 
 end

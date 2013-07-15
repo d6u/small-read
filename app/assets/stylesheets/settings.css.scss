@@ -1,23 +1,38 @@
-// Variables and Mixins, Base, Component
-//= require framework
-
-
-// Custom Variables and Mixins
+// Variables
+// ----------------------------------------
 @import "variables_and_mixins/variables";
-@import "variables_and_mixins/mixins";
-@import "variables";
 
-// Layout
-@import "layout/inside_common";
+// Base
+// ----------------------------------------
+@import "base/reset";
+@import "base/basic";
+@import "base/type";
+@import "base/elements";
 
-// Module
-@import "module/inside_navbar";
-@import "module/settings/settings_section_nav";
-@import "module/settings/settings_form";
-@import "module/settings/manage_folders";
-@import "module/feedback_modal";
+// Components
+// ----------------------------------------
+@import "components/font-awesome";
+@import "components/buttons";
+@import "components/buttons_skin";
+@import "components/forms";
+@import "components/inputs";
 
-// State
+// Layouts
+// ----------------------------------------
+@import "layouts/grid";
+@import "layouts/settings";
 
-// Utility
-@import "utility/utilities"; // Has to be last to override when necessary
+// Modules
+// ----------------------------------------
+@import "modules/navbar_edge";
+@import "modules/navbar_edge_skin";
+@import "modules/settings_section_nav";
+@import "modules/settings_form";
+
+// Utilities
+// ----------------------------------------
+@import "utilities/mis";
+
+
+// TODO: clean up what's left
+@import "settings_shame";

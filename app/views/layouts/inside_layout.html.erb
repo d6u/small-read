@@ -1,6 +1,5 @@
 <%= render :layout => 'layouts/htmldoc' do %>
-    <%= render 'inside/navbar' %>
+    <%= render 'modules/navbar_edge' %>
     <%= yield %>
-    <%= render 'inside/feedback_modal' %>
-    <%= render 'layouts/mixpanel_inside_tracking' %>
+    <%= render 'inside/template' %>
 <% end %>

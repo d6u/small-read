@@ -1,24 +1,26 @@
-<div class="settings-body settings-folders">
+<div class="sr-title sr-title-setting">Grouping Feeds</div>
 
-    <!-- Feeds Management -->
-    <div class="feeds-management">
-        <p class="lead-title">Categorize Feeds</p>
-        <% @folders.each do |folder| %>
-        <div class="folder-container" <%= output_attributes_as_dataset(folder) %>>
-            <h3 class="folder-title">
-                <%= folder.name %>
-            </h3>
-            <div class="folder-feeds-container clearfix">
-                <% folder.feeds.each do |feed| %>
-                <div class="feed-item" <%= output_attributes_as_dataset(feed) %>>
-                    <img src="<%= feed.profile_image_url %>">
-                    <span class="feed-name"><%= feed.name %></span>
-                    <span class="feed-screen-name">@<%= feed.screen_name %></span>
-                </div>
-                <% end %>
+<!-- Feeds Management -->
+<div class="feeds-management" ng-controller="FeedsSortingCtrl">
+
+    <!-- Folder -->
+    <div class="manage-feeds-group" ng-repeat="folder in folders">
+        <div class="manage-feeds-group-title">{{folder.name}}</div>
+
+        <!-- Container -->
+        <div class="manage-feeds-container clearfix" jq-sortable jq-sortable-connect-with=".manage-feeds-container">
+
+            <!-- Feed -->
+            <div class="manage-feeds-feed"
+                 ng-repeat="feed in folder.feeds"
+                 ng-init="feed.selected = false"
+                 ng-click="feed.selected = !feed.selected"
+                 ng-class="feed.selected.toString()">
+                <img ng-src="{{feed.profile_image_url}}">
+                <span>{{feed.name}}</span>
             </div>
-        </div>
-        <% end %>
-    </div>
 
+        </div>
+
+    </div>
 </div>

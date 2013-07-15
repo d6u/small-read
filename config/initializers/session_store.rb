@@ -1,6 +1,8 @@
 # Be sure to restart your server when you modify this file.
 
-SmallRead::Application.config.session_store :cookie_store, key: '_social-feed_session'
+SmallRead::Application.config.session_store :cookie_store, key: '_small-read_session' if !Rails.env.production?
+
+SmallRead::Application.config.session_store :cookie_store, key: '_small-read_session', :domain => ".getsmallread.com" if Rails.env.production?
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

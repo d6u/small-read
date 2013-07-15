@@ -1,0 +1,93 @@
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:active,
+button:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+input[type="button"]:active,
+.button.full-width,
+button.full-width,
+input[type="submit"].full-width,
+input[type="reset"].full-width,
+input[type="button"].full-width
+
+    border: none
+    text-shadow: none
+
+
+.button
+    // Button with Colors
+    &.button-blue
+        background: $blue
+        color: white
+        &:hover
+            background: $blueDark
+
+    &.button-green
+        background: $green
+        color: white
+        &:hover
+            background: $greenDark
+
+    // 3D push button
+    &.button-push3D
+        position: relative
+        text-decoration: none
+        border-radius: 5px
+        text-align: center
+        -webkit-transition: all 0.1s
+        -moz-transition: all 0.1s
+        transition: all 0.1s
+        &:hover
+            top: 4px
+        &:active
+            top: 8px
+
+        // 3D blue
+        &.button-blue
+            -webkit-box-shadow: 0px 9px 0px $blue
+            -moz-box-shadow: 0px 9px 0px $blue
+            box-shadow: 0px 9px 0px $blue
+            &:hover
+                -webkit-box-shadow: 0px 5px 0px darken($blue, 10%)
+                -moz-box-shadow: 0px 5px 0px darken($blue, 10%)
+                box-shadow: 0px 5px 0px darken($blue, 10%)
+            &:active
+                -webkit-box-shadow: 0px 1px 0px darken($blue, 10%)
+                -moz-box-shadow: 0px 1px 0px darken($blue, 10%)
+                box-shadow: 0px 1px 0px darken($blue, 10%)
+
+        // 3D green
+        &.button-green
+            -webkit-box-shadow: 0px 9px 0px $greenDark
+            -moz-box-shadow: 0px 9px 0px $greenDark
+            box-shadow: 0px 9px 0px $greenDark
+            &:hover
+                -webkit-box-shadow: 0px 5px 0px darken($greenDark, 10%)
+                -moz-box-shadow: 0px 5px 0px darken($greenDark, 10%)
+                box-shadow: 0px 5px 0px darken($greenDark, 10%)
+            &:active
+                -webkit-box-shadow: 0px 1px 0px darken($greenDark, 10%)
+                -moz-box-shadow: 0px 1px 0px darken($greenDark, 10%)
+                box-shadow: 0px 1px 0px darken($greenDark, 10%)
+
+.square-button
+    width: 60px
+    height: 60px
+    display: inline-block
+    background: $blueDark
+    color: white
+    font-size: 36px
+    line-height: 60px
+    text-align: center
+    border-radius: 4px
+    &:hover
+        background: $blue

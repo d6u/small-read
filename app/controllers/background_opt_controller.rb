@@ -1,7 +1,6 @@
 class BackgroundOptController < ApplicationController
-  # Filter
-  # ======
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
 
 
   # Actions
@@ -14,11 +13,15 @@ class BackgroundOptController < ApplicationController
     render :nothing => true
   end
 
-  # load_folders_and_feeds
-  # ----------------------
+
+  ##
+  # Load folders and nests feeds related to each folder
+  #
+  # ----------------------------------------
   def load_folders_and_feeds
     render 'load_folders_and_feeds.json', :formats => [:json]
   end
+
 
   # feedback
   # --------
@@ -37,7 +40,10 @@ class BackgroundOptController < ApplicationController
   # ------------------
   def twitter_api_counts
     rate_limit_status = @user.twitters[0].rate_limit_status(:resources => 'statuses')
-    render :json => {:limits => rate_limit_status['resources']['statuses']['/statuses/home_timeline']['remaining']}
+    render :json => {
+      :remaining => rate_limit_status[:data]['resources']['statuses']['/statuses/home_timeline']['remaining'],
+      :reset => Time.at(rate_limit_status[:data]['resources']['statuses']['/statuses/home_timeline']['reset'])
+    }
   end
 
   # welmark_all_readcome

@@ -1,0 +1,189 @@
+$navbarEdgeColor: $cyan;
+$navbarInnerColor: $gray5;
+
+.navbar-edge {
+    background: $navbarEdgeColor;
+}
+
+
+.navbar-inner {
+    background-color: $navbarInnerColor;
+    color: white;
+    a {
+        color: white;
+    }
+}
+
+
+// Toolbar
+// ----------------------------------------
+$toolbarHeight: 45px;
+
+.navbar-inner-toolbar {
+    background-color: $gray6;
+    // height: $toolbarHeight;
+    width: 100%;
+    &.toolbar-bottom {
+        position: absolute;
+        bottom: 0;
+    }
+}
+
+.toolbar-button {
+    display: block;
+    text-align: center;
+    line-height: $toolbarHeight;
+    i {
+        float: left;
+        display: inline-block;
+        width: $toolbarHeight;
+        height: $toolbarHeight;
+        font-size: 21px;
+        line-height: inherit;
+    }
+    &:hover {
+        background-color: lighten($cyan, 10%);
+    }
+}
+
+.pin-navbar {
+    float: left;
+}
+
+.display-style {
+    float: right;
+    padding-right: 10px;
+}
+
+
+// User Profile
+// ----------------------------------------
+.navbar-user-profile {
+    padding: 10px;
+    position: relative;
+}
+
+.user-gravatar {
+    float: left;
+    img {
+        height: 40px;
+        width: 40px;
+        border-radius: 4px;
+    }
+}
+
+.user-profile-detail {
+    margin-left: 40px + 10px;
+    font-size: 12px;
+    min-height: 40px;
+    line-height: 1.15;
+}
+
+.user-profile-email {
+    font-weight: bold;
+    a {
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.user-profile-update-timer {
+    color: $gray1;
+}
+
+.user-profile-hover-menu {
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+    top: 60px;
+    left: 0;
+    background-color: white;
+    display: none;
+    a {
+        color: $gray6;
+        display: block;
+        line-height: 42px;
+        font-size: 16px;
+        text-indent: 10px;
+    }
+    ul {
+        margin-bottom: 0;
+    }
+    li {
+        margin-bottom: 0;
+        &:hover {
+            background-color: $gray2;
+        }
+    }
+}
+
+.navbar-user-profile {
+    &:hover {
+        .user-profile-hover-menu {
+            display: block;
+        }
+    }
+}
+
+
+// Navbar Content
+// ----------------------------------------
+.navbar-inner-container {
+
+}
+
+
+// Folders
+// ----------------------------------------
+.navbar-folder-group {
+    margin-top: 25px;
+    ul {
+        margin-top: 10px;
+    }
+    li {
+        padding-left: 15px;
+        margin-bottom: 0;
+        line-height: 35px;
+        font-size: 16px;
+    }
+}
+
+.navbar-groups-title {
+    font-size: 12px;
+    text-indent: 10px;
+    font-weight: bold;
+    color: $gray3;
+}
+
+.navbar-group-item {
+    a {
+        display: block;
+        color: white;
+        font-weight: bold;
+    }
+    &.active,
+    &:hover {
+        .navbar-unread-count {
+            background-color: white;
+            color: $gray6;
+        }
+    }
+    &.active {
+        background-color: $cyan;
+    }
+    &:hover {
+        background-color: lighten($cyan, 10%);
+    }
+}
+
+.navbar-unread-count {
+    float: right;
+    padding: 3px 5px;
+    margin-top: 8px;
+    margin-right: 10px;
+    font-size: 14px;
+    line-height: 1;
+    border-radius: 2px;
+    background-color: $cyan;
+}

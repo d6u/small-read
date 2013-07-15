@@ -1,12 +1,6 @@
-do_fetch_tweets:
+do_assign_updates:
   every: 15m
-  class: FetchTweets
+  class: AssignUpdates
+  queue: fetch_twitter_queue
   args:
-  description: "This job fetch content from Twitter every 15mins"
-
-do_database_maintenance:
-  every: 1d
-  class: DatabaseMaintenance
-  queue: database_maintenance_queue
-  args:
-  description: "This job do some basic database cleaning works every day at 2"
+  description: "This job assign works for updating twitters"

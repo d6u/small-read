@@ -1,12 +1,75 @@
 class Feed < ActiveRecord::Base
 
-  belongs_to  :twitter
-  belongs_to  :folder
-  has_many    :tweets, :dependent => :destroy
-  has_many    :read_tweets, :dependent => :destroy
+  belongs_to :twitter
+  belongs_to :folder
+  has_many   :tweets,        :dependent  => :destroy
+  has_many   :read_tweets,   :dependent  => :destroy
+  has_many   :unread_tweets, :class_name => 'Tweet', :conditions => 'tweets.read = false'
+  has_many   :top_tweets,       :class_name => 'Tweet', :conditions => 'tweets.read = false', :order => 'tweets.score DESC'
+  has_many   :top_image_tweets, :class_name => 'Tweet', :conditions => 'tweets.read = false AND tweets.with_image = true', :order => 'tweets.score DESC'
 
-  attr_accessible :id_str, :screen_name, :name, :profile_image_url,
-                  :folder_id, :unread_count
+  attr_accessible :id_str,
+                  :screen_name,
+                  :name,
+                  :profile_image_url,
+                  :folder_id,
+                  :twitter_id,
+                  :created_at,
+                  :updated_at,
+                  :unread_count,
+                  :top_tweets
+
+  ##
+  # Mass insert feeds from Twitter API user data
+  #
+  # ------------------------------------------
+  def self.mass_insert(twitter_users, twitter_id, folder_id)
+    return if twitter_users.empty?
+    # clean up raw data
+    users_cleaned = twitter_users.map do |user|
+      [
+        user['id_str'],
+        user['screen_name'],
+        user['name'],
+        user['profile_image_url'],
+        folder_id,
+        twitter_id,
+        Time.now, # created_at
+        Time.now  # updated_at
+      ]
+    end
+
+    # generate sql statements
+    insert_statements = users_cleaned.map do |user|
+      "(#{(user.map do |field|
+        if field.class == String
+          "'#{field.gsub("'", "''")}'"
+        elsif field.class == Time # TODO: make sure time zone is right
+          "'#{field.to_s}'"
+        else
+          field
+        end
+      end).join(',')})"
+    end
+
+    # insertion
+    sql_insert = "INSERT INTO feeds (id_str, screen_name, name, profile_image_url, folder_id, twitter_id, created_at, updated_at) VALUES #{insert_statements.join(',')};"
+
+    return ActiveRecord::Base.connection.execute(sql_insert)
+  end
+
+
+  ##
+  # Analyze unread tweets and marking top tweets
+  #
+  # options={} - if :all => true, update score of all tweets
+  # ----------------------------------------
+  def update_top_tweets(options={})
+    # calculate score
+    tweets = options[:all] ? self.tweets : self.unread_tweets
+    tweets.each {|t| t.detect_tweet_type.calculate_score }
+  end
+
 
   # self.create_from_raw(twitter_user)
   # ----------------------------------

@@ -1,10 +1,41 @@
-<section class="intro-section login-section">
-    <div class="container">
+<section id="sign_in_or_up" class="section section-gray section-flexheight">
+    <div class="container form-container">
+        <% if flash.now[:login_error] %>
+            <div class="columns eight center message message-error form-messages">
+                <%= flash.now[:login_error] %>
+            </div>
+        <% elsif flash[:reset_password_success] %>
+            <div class="columns eight center message message-success form-messages">
+                <%= flash[:reset_password_success] %>
+            </div>
+        <% end %>
 
-        <div class="six columns center">
-            <!-- Login form -->
-            <%= render "login_form" %>
+        <div class="columns six offset-by-one">
+            <%= link_to({:action => "twitter_login"}, {:class => "form-block login-with-twitter"}) do %>
+                <p>Login with Twitter</p>
+                <i class="icon-twitter"></i>
+            <% end %>
         </div>
-
+        <div class="columns two">
+            <div class="or-seperator">OR</div>
+        </div>
+        <div class="columns six">
+            <div class="form-block">
+                <%= form_for :user, :url => {:action => "login"}, :html => {:class => "form"} do |form| %>
+                    <div class="form-title">Login with Email</div>
+                    <div class="form-body">
+                        <%= form.email_field :email, :placeholder => "Email@dot.com" %>
+                        <%= form.password_field :password, :placeholder => "Password" %>
+                        <%= label_tag :remember_login, :class => "input-checkbox" do %>
+                            <%= check_box_tag :remember_login, 'yes' %> Remember Me
+                        <% end %>
+                        <p class="form-input-help"><%= link_to('Forget password? Click here.', {:action => 'forget_password'}) %></p>
+                    </div>
+                    <div class="form-action">
+                        <button type="submit" class="button button-green button-push3D">Submit</button>
+                    </div>
+                <% end %>
+            </div>
+        </div>
     </div>
 </section>

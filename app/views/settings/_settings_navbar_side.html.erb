@@ -1,0 +1,53 @@
+<div class="navbar-edge navbar-autohide-false">
+
+    <!-- Hover Area to increase the area that triggers to show navbar -->
+    <div class="hover-area"></div>
+
+    <!-- Inner Navbar -->
+    <div class="navbar-inner">
+
+        <!-- Toolbar -->
+        <div class="navbar-inner-toolbar">
+
+            <!-- User Profile -->
+            <div class="navbar-user-profile">
+                <div class="user-gravatar">
+                    <% if @user.email %>
+                        <%= image_tag Gravatar.new(@user.email).image_url, :alt => 'Gravatar Profile Image' %>
+                    <% else %>
+                        <%= image_tag "no_gravatar.jpg" %>
+                    <% end %>
+                </div>
+                <div class="user-profile-detail">
+                    <div class="user-profile-email">
+                        <%= @user.email || link_to("Please set up your email", :controller => 'settings', :action => 'manage_email') %>
+                    </div>
+                    <!-- <div class="user-profile-update-timer">
+                        Last update: <span>12 mins ago</span>
+                    </div> -->
+                </div>
+                <div class="user-profile-hover-menu">
+                    <ul>
+                        <li>
+                            <%= link_to "Setttings", :controller => 'settings', :action => 'settings' %>
+                        </li>
+                        <li>
+                            <%= link_to "Log Out", :controller => 'inside', :action => 'logout', :confirmation => 'yes' %>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Toolbar -->
+        <div class="navbar-inner-toolbar toolbar-bottom">
+            <%= link_to({:controller => 'inside', :action => 'index'}, :class => 'navbar-toolbar-button') do %>
+                <i class="icon-arrow-left"></i> Back to Reading
+            <% end %>
+        </div>
+
+
+    </div>
+</div>
+

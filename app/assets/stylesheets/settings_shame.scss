@@ -1,0 +1,130 @@
+.navbar-toolbar-button {
+    display: block;
+    height: 45px;
+    font-size: 16px;
+    line-height: 45px;
+    text-align: center;
+    &:hover {
+        background-color: white;
+        color: $gray6;
+    }
+}
+
+.setting-form-normal {
+    legend {
+        font-size: 18px;
+        margin-bottom: 14px;
+    }
+}
+
+.twitter-account-list-item {
+    padding: 0 15px;
+    height: 60px;
+    background-color: $blue;
+    width: 400px;
+    font-size: 32px;
+    line-height: 60px;
+    color: white;
+    margin-bottom: 20px;
+
+    a {
+        color: white;
+        &:hover {
+            color: $gray2;
+        }
+    }
+    i {
+        float: right;
+        line-height: 60px;
+        padding: 0 15px;
+    }
+}
+
+.sr-title {
+    font-weight: bold;
+    &.sr-title-setting {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+}
+
+.folder-list-item-rename {
+
+}
+
+.folder-list-item {
+    line-height: 29px;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 2px;
+    a {
+        margin-bottom: 0;
+        margin-right: 5px;
+    }
+    input {
+        margin-bottom: 0;
+        display: inline;
+    }
+    .folder-list-item-name {
+        margin-left: 100px;
+        display: block;
+    }
+    .folder-list-item-rename {
+        margin-left: 100px;
+        display: block;
+    }
+
+    &:hover {
+        background-color: $gray2;
+    }
+}
+
+.rearrange-folder,
+.rename-folder {
+    float: left;
+}
+
+.delete-folder {
+    float: right;
+    margin-right: 0 !important;
+}
+
+// Manage Feeds
+.feeds-management {
+    .manage-feeds-group-title {
+        font-size: 18px;
+        font-weight: bold;
+        border-bottom: 1px solid $blue;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    .manage-feeds-container {
+        min-height: 44px;
+    }
+    .manage-feeds-feed {
+        img {
+            height: 30px;
+            width: 30px;
+            vertical-align: middle;
+            border-radius: 2px;
+        }
+        height: 30px;
+        padding: 5px;
+        width: 114px;
+        line-height: 30px;
+        white-space: nowrap;
+        float: left;
+        margin: 2px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        &.false {
+
+        }
+        &.true {
+            transition: none;
+            background-color: $blue;
+            color: white;
+        }
+    }
+}

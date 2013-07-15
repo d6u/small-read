@@ -10,6 +10,7 @@ capybara-*.html
 /tmp/*
 /db/*.sqlite3
 /public/system/*
+/public/assets/*
 /coverage/
 /spec/tmp/*
 **.orig
@@ -26,3 +27,9 @@ dump.rdb
 
 # sublime text project file
 *.sublime-*
+
+# twitter api response sample
+sample
+
+# code kit
+codekit-*

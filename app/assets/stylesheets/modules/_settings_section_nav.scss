@@ -1,0 +1,30 @@
+.setting-section-nav {
+    width: 80px;
+    margin-right: 40px;
+    background-color: $greenDark;
+    color: white;
+    overflow: hidden;
+    float: left;
+    border-radius: 3px;
+}
+
+.settings-section-nav-inner {
+    a {
+        text-align: center;
+        color: white;
+        display: block;
+        float: left;
+        width: 60px;
+        padding: 10px;
+        span {
+            display: block;
+            height: 60px;
+            font-size: 35px;
+            line-height: 60px;
+        }
+        &:hover,
+        &.active {
+            background-color: $green;
+        }
+    }
+}

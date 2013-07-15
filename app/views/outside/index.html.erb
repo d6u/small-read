@@ -1,61 +1,54 @@
 <!-- Intro -->
-<section class="intro-section intro-banner">
+<section class="section section-black">
     <div class="container">
-        <div class="ten columns">
-            <div class="intro-description">
-                <h1 class="site-title">Welcome to <%= SiteInformation::NAME %></h1>
-                <p class="lead">A good place to organize your Twitter timeline into a news feeds reader.</p>
-            </div>
-        </div>
-        <div class="six columns">
-            <%= render "register_form" %>
+        <h1 class="columns sixteen center intro-title">Control Timeline, Read Different</h1>
+        <p class="columns nine center intro-lead">By change the visual appearance of your timelines, Small Read can help you read more effecient, never miss any news.</p>
+        <div class="columns six center intro-action">
+            <a href="#one_friend_one_feed" class="button button-green button-push3D">How could?</a>
+            <a href="#sign_in_or_up" class="button button-green button-push3D">Ok, I'm in!</a>
         </div>
     </div>
 </section>
 
-<section class="intro-section intro-read-count">
+
+<section id="one_friend_one_feed" class="section section-blue">
     <div class="container">
-        <div class="seven columns offset-by-nine">
-            <div class="intro-description">
-                <h3>Know your "feeds"</h3>
-                <p class="">Small Read fetch tweets from Twitter timeline automatically, so you know what you have ready read and what not.</p>
-            </div>
-        </div>
+        <h2 class="columns eight intro-title intro-left">One Friend, One Feed</h2>
+        <div class="clear"></div>
+        <p class="columns eight intro-lead intro-left">Put news/status from the same source under one feed. So you know where were, how many is new.</p>
     </div>
 </section>
 
-<section class="intro-section intro-manage-feeds">
+
+<section class="section section-green">
     <div class="container">
-        <div class="eight columns">
-            <div class="intro-description">
-                <h3>Pay attention to your favorite</h3>
-                <p class="">You decide what is important and what should be muted. Manage all your "feeds" as your wish them to.</p>
-            </div>
-        </div>
+        <h2 class="columns nine intro-title intro-left">Take Control, Organize Lists</h2>
+        <div class="clear"></div>
+        <p class="columns seven intro-lead intro-left">Group different source into different lists, seperates businesses with entertainments.</p>
     </div>
 </section>
 
-<section class="intro-section intro-about-beta">
+
+<%= render "modules/signup_form" %>
+
+
+<section id="newsletter_form" class="section section-black section-short section-newsletter">
     <div class="container">
-        <div class="eight columns center">
-            <div class="intro-description">
-                <h3>We are still in BETA</h3>
-                <p class="">Small Read is still beta testing. you can try it now. We will let you know when it's ready.</p>
-                <div class="login-register-form">
-                    <%= form_for :future_user do |f| %>
-                        <% if @future_user && !@future_user.errors[:email].empty? %>
-                            <% @future_user.errors[:email].each do |m| %>
-                                <span class="help-block alert alert-error"><%= m %></span>
-                            <% end %>
-                        <% end %>
-                        <div class="input-prepend input-block-level">
-                            <span class="add-on"><i class="icon-envelope-alt"></i></span>
-                            <%= f.text_field :email, placeholder: 'Email', class: 'input-block-level' %>
-                        </div>
-                        <%= f.button "Let me know when it's ready.", :class => 'btn btn-block btn-primary' %>
-                    <% end %>
+        <div class="columns ten center">
+            <h3 class="intro-title">Want to know when it's ready?</h3>
+            <% if flash[:newsletter_form_success] %>
+                <p class="message message-success"><%= flash[:newsletter_form_success] %></p>
+            <% elsif !@future_user.errors[:email].empty? %>
+                <p class="message message-error"><%= @future_user.errors[:email].join(" ") %></p>
+            <% else %>
+                <p class="intro-lead">We will send you an email when we are ready. We promise no spams.</p>
+            <% end %>
+            <%= form_for :future_user, :url => "#newsletter_form", :html => {:class => "newsletter-form"} do |form| %>
+                <div class="input-append">
+                    <%= form.email_field :email, :class => "input-box" %>
+                    <button type="submit" class="button button-green">OK</button>
                 </div>
-            </div>
+            <% end %>
         </div>
     </div>
 </section>

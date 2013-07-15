@@ -1,270 +1,296 @@
-//= require jquery-2.0.0.min.js
+//= require jquery-2.X.min.js
+//= require jquery.magnific-popup.min.js
+//= require modules/perfect-scrollbar-0.4.1.with-mousewheel.min.js
 //= require angular.min.js
 //= require angular-sanitize.js
-//= require modules/ng-infinite-scroll.js
-//= require jquery.icheck.min.js
-//= require bootstrap.tooltips.min.js
-//= require jquery.simplemodal.1.4.4.min.js
-//= require modules/feedback_modal.js
-//= require jquery.magnific-popup.min.js
+//= require modules/sr-feeds.js
+//= require modules/sr-filters.js
 
 
 // App Init
-// ========
-var app = angular.module('SmallRead', ['ngSanitize', 'infinite-scroll']);
-
-// MainCtrl
-// --------
-app.controller(
-    'AppCtrl',
-    ['$scope', '$http', function($scope, $http) {
-        // init
-        $scope.loadFoldersAndFeeds = function() {
-            $http.get('/bg/load_folders_and_feeds.json')
-            .success(function(data) {
-                $scope.folders = data;
-            });
-        };
-        $scope.loadFoldersAndFeeds();
-        // init API limit
-        $scope.updateTwitterAPILimit = function() {
-            $http.get('/bg/twitter_api_counts')
-            .success(function(data){
-                $('#twitter_api_counts').html(data.limits);
-                if (data.limits <= 3) {
-                    $('#twitter_api_counts').removeClass('badge-info').addClass('badge-important');
-                } else {
-                    $('#twitter_api_counts').removeClass('badge-important').addClass('badge-info');
-                }
-            });
-        };
-        $scope.updateTwitterAPILimit();
-        // tooltips
-        $('.gravatar-image-element').tooltip({
-            title: 'Change your profile image at Gravatar.com',
-            placement: 'right',
-            container: 'body'
-        });
-        $('#twitter_api_counts').tooltip({
-            title: '<p class="lead">What is this?</p><p>Twitter limits how many times each user can fetch contents from its sever within 15 minutes. The number indicates remaining counts untill next reset time (within 15 minutes).</p>',
-            html: true,
-            placement: 'right',
-            container: 'body'
-        });
-        // folder & feed
-        $scope.showFeedsList = function(showList) {
-            showList.list = showList.list === "show" ? "" : "show";
-        };
-        $scope.fetchWithTwitter = function() {
-            $scope.refresh_spin = "icon-spin";
-            $http.get('/bg/refresh')
-            .success(function(data, status) {
-                $scope.loadFoldersAndFeeds();
-                $scope.updateTwitterAPILimit();
-                $scope.refresh_spin = null;
-            });
-        };
-        // tweets
-        $scope.tweets = [];
-        $scope.loadTweets = function(type, id) {
-            if (type) $scope.souce_type = type;
-            if (id) $scope.souce_id = id;
-            if ((type && id) || ($scope.souce_type && $scope.souce_id)) {
-                $('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
-                if ( $scope.load_only_unread === true ) {
-                    $scope.baseUrl = '/'+$scope.souce_type+'s/'+$scope.souce_id+'/tweets';
-                } else {
-                    $scope.baseUrl = '/'+$scope.souce_type+'s/'+$scope.souce_id+'/tweets?all=true';
-                }
-                $http.get($scope.baseUrl)
-                .success(function(data){
-                    for (var i = 0; i < data.length; i++) {
-                        data[i].entities = angular.fromJson(data[i].entities);
-                    }
-                    $('.progress.progress-striped.active').remove();
-                    $scope.reaches_end = data.length < 20 ? true : false;
-                    if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
-                    $('.tweets-list').scrollTop(0);
-                    $scope.tweets = data;
-                });
-            }
-        };
-        // laod more tweets
-        $scope.busy = false;
-        $scope.listScrolling = function() {
-            if ($scope.reaches_end || $scope.busy || $scope.tweets.length === 0) return;
-            $('.tweets-list').append('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
-            $scope.busy = true;
-            if ( $scope.load_only_unread === true ) {
-                var url = $scope.baseUrl + "?max_id=" + $scope.max_tweet_id;
-            } else {
-                var url = $scope.baseUrl + "&max_id=" + $scope.max_tweet_id;
-            }
-            $http.get(url).success(function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    data[i].entities = angular.fromJson(data[i].entities);
-                }
-                $('.progress.progress-striped.active').remove();
-                $scope.tweets = $scope.tweets.concat(data);
-                if (data.length > 0) $scope.max_tweet_id = data[data.length - 1].id - 1;
-                $scope.reaches_end = data.length < 20 ? true : false;
-                $scope.busy = false;
-            });
-        };
-        // unread count
-        $scope.countUnread = function(feed_id) {
-            $scope.$broadcast('tweetMarkedRead', feed_id);
-        };
-        // load only unread
-        $scope.load_only_unread = true;
-        $('#display_only_unread').iCheck({
-            checkboxClass: 'icheckbox_square-blue display-only-unread-icheck',
-            increaseArea: '20%'
-        })
-        .on('ifChecked', function(event) {
-            $scope.load_only_unread = true;
-            $scope.loadTweets();
-
-        })
-        .on('ifUnchecked', function(event) {
-            $scope.load_only_unread = false;
-            $scope.loadTweets();
-        });
-        // mark all read
-        $scope.markAllRead = function() {
-            if ( $scope.souce_type && $scope.souce_id && confirm("Sure want to mark everything as read?") ) {
-                var sending_data = {};
-                sending_data[$scope.souce_type+'_id'] = $scope.souce_id;
-                $http.post( '/mark_all_read', sending_data)
-                .success(function() {
-                    $scope.$broadcast('markedAllRead', $scope.souce_type, $scope.souce_id);
-                });
-            }
-        };
-    }]
+// ========================================
+var app = angular.module('SmallRead',
+    [
+        'ngSanitize',
+        'small-read:feeds',
+        'small-read:filters'
+    ]
 );
 
+
+// Value
+// ----------------------------------------
+app.value('feedCardsStyle', function(data) {
+    for (var i = 0; i < data.length; i++) {
+        // cover image
+        if (data[i].coverTweet.withImage) {
+            data[i].coverBg = {
+                backgroundImage: "url(\""+data[i].coverTweet.entities.media[0].media_url+":small\")"
+            };
+        }
+        // styles
+        data[i].styles = (data[i].coverTweet.entities.media) ? "with-image" : "without-image";
+        data[i].styles += " with-top-tweets-"+data[i].topTweets.length;
+        if (data[i].coverTweet.lang === 'zh' && data[i].coverTweet.text.length > 100) data[i].styles += " very-long-zh-text"; // fix chinese long text overflow
+    }
+    return data;
+});
+
+
+// Config
+// ----------------------------------------
+app.config(
+['$routeProvider',
+function($routeProvider) {
+    $routeProvider
+    .when('/', {
+        templateUrl: 'cards_view.html',
+        controller: 'FeedShowcaseCtrl'
+    })
+    .when('/group/:groupId', {
+        templateUrl: 'cards_view.html',
+        controller: 'FeedShowcaseCtrl'
+    })
+    .when('/group/:groupId/feeds', {
+        templateUrl: 'reader_view.html',
+        controller: 'ReaderCtrl',
+        reloadOnSearch: false
+    })
+    .otherwise({
+        redirectTo: '/'
+    });
+}]);
+
+
+// Run
+// ----------------------------------------
+app.run(
+['$rootScope', 'Feeds', 'feedCardsStyle',
+function($rootScope, Feeds, feedCardsStyle) {
+    Feeds.getFeedCards(feedCardsStyle)
+    .then(function(data) {
+        $rootScope.feeds = data;
+    });
+}]);
+
+
+// Controllers
+// ========================================
+// App
+app.controller('AppCtrl',
+['$scope', '$location', '$http', '$rootScope',
+function($scope, $location, $http, $rootScope) {
+    $scope.navbar = {
+        pined: false,
+        cardFormat: true,
+        preferPinned: false,
+        styles: {
+            autoHide:      'navbar-autohide-true',
+            pin:           'icon-pushpin',
+            displayFormat: 'icon-list'
+        },
+        displayFormatButtonText: 'Reader Style',
+        pinNavbar: function() {
+            this.styles.autoHide = 'navbar-autohide-false';
+            this.styles.pin      = 'icon-remove';
+            this.pined           = true;
+        },
+        unpinNavbar: function() {
+            this.styles.autoHide = 'navbar-autohide-true';
+            this.styles.pin      = 'icon-pushpin';
+            this.pined           = false;
+        },
+        switchNavbar: function() {
+            if (this.pined) {
+                this.unpinNavbar();
+                this.preferPinned = false;
+            } else {
+                this.pinNavbar();
+                this.preferPinned = true;
+            }
+        },
+        changeToReaderFormat: function() {
+            this.pinNavbar();
+            this.styles.pin = 'hide';
+            this.styles.displayFormat = 'icon-th';
+            this.displayFormatButtonText = 'Card Style';
+            this.cardFormat = false;
+        },
+        changeToCardsFormat: function() {
+            this.preferPinned ? this.pinNavbar() : this.unpinNavbar();
+            this.styles.displayFormat = 'icon-list';
+            this.displayFormatButtonText = 'Reader Style';
+            this.cardFormat = true;
+        },
+        changeDisplayFormat: function() {
+            if (this.cardFormat) { // switch to reader
+                $location.path('/group/all/feeds');
+                $scope.feedsToolbar = {styles: 'hide'};
+            } else { // switch to cards
+                $location.path('/');
+                $location.search('feed_id', null);
+                $scope.feedsToolbar = {styles: null};
+            }
+        },
+        changeToGroup: function(groupId) {
+            if ($location.search.feed_id || /.+\/feeds.*/.exec($location.path())) {
+                $location.path('/group/'+groupId+'/feeds');
+                $location.search('feed_id', null);
+            } else {
+                if (groupId === 'all') {
+                    $location.path('/');
+                } else {
+                    $location.path('/group/'+groupId);
+                }
+            }
+        }
+    };
+    // functions
+    $scope.markAllRead = function(feedId) {
+        $http.post('/mark_all_read?feed_id='+feedId)
+        .success(function() {
+            var targetPosition = 0;
+            for (var i = 0; i < $rootScope.feeds.length; i++) {
+                if ($rootScope.feeds[i].id == feedId) {
+                    targetPosition = i;
+                    break;
+                }
+            };
+            $rootScope.feeds.splice(targetPosition, 1);
+        });
+    };
+}]);
+
+
+// Navbar
+app.controller('NavbarCtrl',
+['$scope', '$http',
+function($scope, $http) {
+
+}]);
+
+
+// FeedShowcase
+app.controller('FeedShowcaseCtrl',
+['$scope', 'Feeds', '$routeParams', '$rootScope', '$http',
+function($scope, Feeds, $routeParams, $rootScope, $http) {
+    // init
+    $scope.navbar.changeToCardsFormat();
+    $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+    $scope.groupId = $routeParams.groupId ? $routeParams.groupId : '';
+}]);
+
+
+// ReaderCtrl
+app.controller('ReaderCtrl',
+['$rootScope', '$scope', '$http', '$routeParams', '$window', 'Feeds',
+function($rootScope, $scope, $http, $routeParams, $window, Feeds) {
+    // init task
+    $scope.navbar.changeToReaderFormat();
+    $rootScope.$broadcast('activeGroup', $routeParams.groupId);
+    if ($routeParams.groupId === 'all') {
+        $scope.groupId = '';
+    } else {
+        $scope.groupId = $routeParams.groupId;
+    }
+    // load tweets
+    $scope.tweets = [];
+    $scope.tweetsLoading = false;
+    $scope.loadMoreTweets = function(reload) {
+        if ($scope.reachesEnd || $scope.tweetsLoading) return;
+        $scope.tweetsLoading = true;
+        if (reload === true) {
+            var maxId = null;
+        } else {
+            var maxId = $scope.tweets.length === 0 ? null : $scope.tweets[$scope.tweets.length - 1].id - 1;
+        }
+        Feeds.getTweets($scope.activeFeedId, maxId)
+        .then(function(data) {
+            if (data.length < 20) $scope.reachesEnd = true;
+            $scope.tweets = reload ? data : $scope.tweets.concat(data);
+            $scope.tweetsLoading = false;
+        });
+    }
+    // events $routeChangeSuccess
+    var routeChangeCallback = function(event, route) {
+        $scope.reachesEnd = false;
+        if (typeof route.params.feed_id === 'undefined' || route.params.feed_id === 'all') {
+            $scope.activeFeedId = null;
+        } else {
+            $scope.activeFeedId = route.params.feed_id;
+            $scope.loadMoreTweets(true);
+        }
+    }
+    $scope.$on('$routeChangeSuccess', routeChangeCallback);
+    $scope.$on('$routeUpdate', routeChangeCallback);
+}]);
+
+
+// Directive
+// ========================================
 // Folder
-app.directive(
-    'folder',
-    function() {
-        return {
-            controller: ['$scope', function($scope) {
-                $scope.showList = {
-                    list: ""
-                };
-                $scope.$on('feedReduceUnreadCount', function(event) {
-                    $scope.folder.unread_count--;
-                });
-                // mark all read
-                $scope.$on('markedAllRead', function(event, type, id) {
-                    if ( type === 'folder' && $scope.folder.id === id ) {
-                        $scope.folder.unread_count = 0;
-                        $scope.$broadcast('folderMarkedAllRead');
-                    }
-                });
-                $scope.$on('feedMarkedAllRead', function(event, feed_unread_count) {
-                    $scope.folder.unread_count -= feed_unread_count;
-                });
-            }],
-            link: function(scope, element, attrs) {
+app.directive('folder',
+function() {
+    return {
+        link: function(scope, element, attrs) {
+            scope.$on('activeGroup', function(event, groupId) {
+                if (groupId === attrs.folder) {
+                    element.addClass('active');
+                } else if (typeof groupId === 'undefined' && attrs.folder === 'all') {
+                    element.addClass('active');
+                } else {
+                    element.removeClass('active');
+                }
+            });
+        }
+    };
+});
+
+
+// feed
+app.directive('feed', function() {
+    return {
+        link: function(scope, element, attrs) {
+            var changeActiveState = function(event, route) {
+                var targetFeedId = typeof route !== 'undefined' ? route.params.feed_id : scope.activeFeedId;
+                if (scope.feed.id == targetFeedId) {
+                    element.addClass('active');
+                } else {
+                    element.removeClass('active');
+                }
             }
-        };
-    }
-);
+            changeActiveState();
+            scope.$on('$routeUpdate', changeActiveState);
+        }
+    };
+});
 
-// Feed
-app.directive(
-    'feed',
-    function() {
-        return {
-            controller: ['$scope', function($scope) {
-                $scope.$on('tweetMarkedRead', function(event, feed_id) {
-                    if ( feed_id == $scope.feed.id ) {
-                        $scope.feed.unread_count--;
-                        $scope.$emit('feedReduceUnreadCount');
-                    }
+
+// Tweet
+app.directive('tweet', function() {
+    return {
+        controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
+            $scope.markingRead = false;
+            $scope.markRead = function() {
+                $scope.markingRead = true;
+                $element.addClass('read');
+                $scope.tweet.read = true;
+                $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
+                .success(function() {
+                    $scope.markingRead = false;
                 });
-                // mark all read
-                $scope.$on('markedAllRead', function(event, type, id) {
-                    if ( type === 'feed' && $scope.folder.id === id ) {
-                        $scope.$emit('feedMarkedAllRead', $scope.feed.unread_count);
-                        $scope.feed.unread_count = 0;
-                    }
-                });
-                $scope.$on('folderMarkedAllRead', function(event) {
-                    $scope.feed.unread_count = 0;
-                });
-            }],
-            link: function(scope, element, attrs) {
-            }
-        };
-    }
-);
+            };
+        }],
+        link: function(scope, element, attrs) {
+            scope.$on('tweetsListScrolled', function(event) {
+                if (!scope.tweet.read && !scope.markingRead && element.position().top < -25) scope.markRead();
+            });
+        }
+    };
+});
 
-// Tweets
-app.controller(
-    'TweetsCtrl',
-    ['$scope', '$element', function($scope, $element) {
-        $element.children('.tweets-list').on('scroll', function() {
-            $scope.$broadcast( 'listScrolling', $element.children('.tweets-list').scrollTop() );
-        });
-    }]
-);
 
-app.directive(
-    'tweet',
-    ['$compile', function($compile) {
-        var non_retweet_template = document.querySelector('#tweet-template').innerHTML;
-        var retweet_template = document.querySelector('#retweet-template').innerHTML;
-
-        var getTemplate = function(retweeted_status_id_str) {
-            // TODO: simplify
-            if (retweeted_status_id_str) {
-                return retweet_template;
-            } else {
-                return non_retweet_template;
-            }
-        };
-
-        var link = function(scope, element, attrs) {
-            element.html(getTemplate(scope.tweet.retweeted_status_id_str));
-            $compile(element.contents())(scope);
-        };
-
-        return {
-            controller: ['$scope', '$element', '$http', function($scope, $element, $http) {
-
-                $scope.$on('listScrolling', function(event, parentScrollTop){
-                    if ($element.position().top < -20) {
-                        $scope.markRead();
-                    }
-                });
-
-                $scope.marking_read = false;
-                $scope.markRead = function() {
-                    if ($scope.tweet.read || $scope.marking_read) return;
-                    $scope.marking_read = true;
-                    $scope.tweet.read = true;
-                    // TODO: wait for angular.js fix
-                    // use get function to avoid angular.js repid put error
-                    $http.get('/tweets/'+$scope.tweet.id+'/mark_read')
-                    .success(function() {
-                        $element.addClass('read');
-                        $scope.marking_read = false;
-                        $scope.countUnread($scope.tweet.feed_id);
-                    });
-                };
-                // mark all read
-                $scope.$on('markedAllRead', function(event) {
-                    $scope.tweet.read = true;
-                });
-            }],
-            link: link
-        };
-    }]
-);
-
+// magnificPopup
 app.directive('magnificPopup', function() {
     return {
         template: '<img ng-src="{{ media.media_url }}:thumb" />',
@@ -274,55 +300,30 @@ app.directive('magnificPopup', function() {
     };
 });
 
-// Filters
-app.filter(
-    'tweetTextFilter',
-    function() {
-        return function(input, entities) {
-            // extract and sort entities
-            var entity_array = [];
-            for(var entity in entities) {
-                angular.forEach(entities[entity], function(value, key){
-                    value.type = entity;
-                    entity_array.push(value);
-                });
-            }
-            entity_array.sort(function(a,b){
-                return a.indices[0] - b.indices[0];
+// perfect-scrollbar
+app.directive('perfectScrollbar', function() {
+    return {
+        link: function(scope, element) {
+            element.perfectScrollbar({
+                wheelSpeed: 25
             });
-            // extract input pieces
-            var input_pieces = [];
-            var beginning_point = 0;
-            angular.forEach(entity_array, function(value, key) {
-                input_pieces.push(input.slice(beginning_point, value.indices[0]));
-                switch (value.type) {
-                    case "urls":
-                        input_pieces.push('<a href="'+value.expanded_url+'" target="_blank">'+value.display_url+'</a>');
-                        break;
-                    case "hashtags":
-                        input_pieces.push('<a href="https://twitter.com/search?q=%23'+value.text+'&src=hash" target="_blank>#'+value.text+'</a>');
-                        break;
-                    case "user_mentions":
-                        input_pieces.push('<a href="http://twitter.com/'+value.screen_name+'" target="_blank>@'+value.screen_name+'</a>');
-                        break;
-                    case "media":
-                        input_pieces.push('<a href="'+value.media_url+'" target="_blank>'+value.display_url+'</a>');
-                        break;
-                }
-                beginning_point = value.indices[1];
-            });
-            input_pieces.push(input.slice(beginning_point));
-            // return input
-            return input_pieces.join("");
-        };
+        }
     }
-);
+});
 
-app.filter(
-    'tweetReadFilter',
-    function() {
-        return function(input) {
-            return input ? 'read' : '';
-        };
+// tweets-list
+app.directive('tweetsList', function() {
+    return {
+        link: function(scope, element) {
+            element.on('scroll', function(event) {
+                scope.$broadcast('tweetsListScrolled');
+                var distanceToTop = element.children('.tweets-list-item').last().position().top;
+                if (distanceToTop - 100 < element.height()) scope.loadMoreTweets();
+            });
+            scope.$on('$routeUpdate', function(event, route) {
+                element.scrollTop(0);
+                element.perfectScrollbar('update');
+            });
+        }
     }
-);
+});

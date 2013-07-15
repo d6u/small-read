@@ -1,0 +1,22 @@
+<div class="setting-section-nav">
+    <div class="settings-section-nav-inner clearfix">
+        <%= link_to({action: 'settings'}, {:class => indicator_if("settings")}) do %>
+            <span class="icon-user"></span>General
+        <% end %>
+        <%= link_to({action: 'manage_folders'}, {:class => indicator_if("manage_folders")}) do %>
+            <span class="icon-folder-close"></span>Folders
+        <% end %>
+        <%= link_to({action: 'manage_feeds'}, {:class => indicator_if("manage_feeds")}) do %>
+            <span class="icon-comments"></span>Feeds
+        <% end %>
+        <%= link_to({action: 'manage_twitter_account'}, {:class => indicator_if("manage_twitter_account")}) do %>
+            <span class="icon-twitter"></span>Twitters
+        <% end %>
+        <%= link_to({action: 'manage_email'}, {:class => indicator_if("manage_email")}) do %>
+            <span class="icon-envelope"></span>Email
+        <% end %>
+        <%= link_to({action: 'manage_password'}, {:class => indicator_if("manage_password")}) do %>
+            <span class="icon-lock"></span>Password
+        <% end %>
+    </div>
+</div>

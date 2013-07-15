@@ -1,9 +1,0 @@
-<% if Rails.env.production? %>
-    <script type="text/javascript">
-    mixpanel.identify(<%= @user.id %>);
-    mixpanel.people.set({'$email': '<%= @user.email %>'});
-    <% if @user.twitters[0] %>
-    mixpanel.people.set({'screen_name': '<%= @user.twitters[0].screen_name %>'});
-    <% end %>
-    </script>
-<% end %>

@@ -1,23 +1,26 @@
 class FoldersController < ApplicationController
-  # Filter
-  before_filter :redirect_if_not_logged_in
+  # Filters
+  # =======
 
+
+  # Actions
+  # =======
   # GET /folders
   def index
-    @folders = @user.folders.all.order('position ASC')
-    render json: @folders
+    @folders = @user.folders.select('color, name, id, position, reserved').order('position ASC')
+    render :json => @folders
   end
 
   # GET /folders/1
   def show
     @folder = @user.folders.find(params[:id])
-    render json: @folder
+    render :json => @folder
   end
 
   # GET /folders/new
   def new
     @folder = @user.folders.new
-    render json: @folder
+    render :json => @folder
   end
 
   # GET /folders/1/edit
@@ -30,9 +33,9 @@ class FoldersController < ApplicationController
     @folder = @user.folders.new(params[:folder])
 
     if @folder.save
-      render json: @folder, status: :created, location: @folder
+      render :json => @folder, :status => :created, :location => @folder
     else
-      render json: @folder.errors, status: :unprocessable_entity
+      render :json => @folder.errors, :status => :unprocessable_entity
     end
   end
 
@@ -40,10 +43,14 @@ class FoldersController < ApplicationController
   def update
     @folder = Folder.find(params[:id])
     # TODO: prevent updating Muted and General folder :name and :reserved
-    if @folder.update_attributes(params[:folder])
+    # TODO: mass assginments
+    if @folder.update_attributes({
+        :name => params[:folder][:name],
+        :position => params[:folder][:position]
+      })
       head :no_content
     else
-      render json: @folder.errors, status: :unprocessable_entity
+      render :json => @folder.errors, :status => :unprocessable_entity
     end
   end
 
