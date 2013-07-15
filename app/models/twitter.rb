@@ -104,12 +104,19 @@ class Twitter < ActiveRecord::Base
   def update_existing_users(feeds, existing_users)
     existing_users_list = Hash[(existing_users.map {|u| [u['id_str'], u]})]
     feeds.each do |feed|
-      feed.attributes = {
-        :screen_name => existing_users_list[feed.id_str]['screen_name'],
-        :name => existing_users_list[feed.id_str]['name'],
-        :profile_image_url => existing_users_list[feed.id_str]['profile_image_url']
-      }
-      feed.save if feed.changed?
+      begin
+        feed.attributes = {
+          :screen_name => existing_users_list[feed.id_str]['screen_name'],
+          :name => existing_users_list[feed.id_str]['name'],
+          :profile_image_url => existing_users_list[feed.id_str]['profile_image_url']
+        }
+        feed.save if feed.changed?
+      rescue NoMethodError
+        puts "--> NoMethodError:"
+        ap feed
+        ap existing_users_list[feed.id_str]
+        puts "--> Rescue finish."
+      end
     end
   end
 
