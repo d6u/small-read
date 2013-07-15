@@ -103,4 +103,3 @@ function(Feeds) {
         element.sortable(options);
     };
 }]);
-

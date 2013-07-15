@@ -13,11 +13,15 @@ class BackgroundOptController < ApplicationController
     render :nothing => true
   end
 
-  # load_folders_and_feeds
-  # ----------------------
+
+  ##
+  # Load folders and nests feeds related to each folder
+  #
+  # ----------------------------------------
   def load_folders_and_feeds
     render 'load_folders_and_feeds.json', :formats => [:json]
   end
+
 
   # feedback
   # --------

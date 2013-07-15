@@ -79,6 +79,17 @@ SmallRead.factory('Feeds',
                 var http = $http.get(url);
                 return http.then(function(response) {return response.data;});
             },
+            updateFeeds: function(feeds) {
+                var httpRequests = [];
+                for (var i = 0; i < feeds.length; i++) {
+                    var http = $http.put(
+                        '/feeds/'+feeds[i].id,
+                        {feed: feeds[i]}
+                    );
+                    httpRequests.push(http);
+                };
+                return $q.all(httpRequests);
+            },
             getTweets: function(sourceId, maxId, sourceType, readOnly) {
                 // default args
                 sourceId   = typeof sourceId !== 'undefined' ? sourceId : null;
@@ -124,7 +135,6 @@ SmallRead.factory('Feeds',
             updateFolders: function(folders) {
                 var httpRequests = [];
                 for (var i = 0; i < folders.length; i++) {
-                    folders[i]
                     var http = $http.put(
                         '/folders/'+folders[i].id,
                         {folder: folders[i]}
@@ -135,6 +145,10 @@ SmallRead.factory('Feeds',
             },
             deleteFolder: function(id) {
                 return $http.delete('/folders/'+id);
+            },
+            getGroupsAndFeeds: function() {
+                var http = $http.get('/bg/load_folders_and_feeds');
+                return http.then(function(response) {return response.data;});
             }
         };
     }]

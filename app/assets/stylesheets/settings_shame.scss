@@ -88,3 +88,43 @@
     float: right;
     margin-right: 0 !important;
 }
+
+// Manage Feeds
+.feeds-management {
+    .manage-feeds-group-title {
+        font-size: 18px;
+        font-weight: bold;
+        border-bottom: 1px solid $blue;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    .manage-feeds-container {
+        min-height: 44px;
+    }
+    .manage-feeds-feed {
+        img {
+            height: 30px;
+            width: 30px;
+            vertical-align: middle;
+            border-radius: 2px;
+        }
+        height: 30px;
+        padding: 5px;
+        width: 114px;
+        line-height: 30px;
+        white-space: nowrap;
+        float: left;
+        margin: 2px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        &.false {
+
+        }
+        &.true {
+            transition: none;
+            background-color: $blue;
+            color: white;
+        }
+    }
+}

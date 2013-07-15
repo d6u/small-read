@@ -1,6 +1,26 @@
-<div class="sr-title sr-title-setting">Categorize Feeds</div>
+<div class="sr-title sr-title-setting">Grouping Feeds</div>
 
 <!-- Feeds Management -->
-<div class="feeds-management">
+<div class="feeds-management" ng-controller="FeedsSortingCtrl">
 
+    <!-- Folder -->
+    <div class="manage-feeds-group" ng-repeat="folder in folders">
+        <div class="manage-feeds-group-title">{{folder.name}}</div>
+
+        <!-- Container -->
+        <div class="manage-feeds-container clearfix" jq-sortable jq-sortable-connect-with=".manage-feeds-container">
+
+            <!-- Feed -->
+            <div class="manage-feeds-feed"
+                 ng-repeat="feed in folder.feeds"
+                 ng-init="feed.selected = false"
+                 ng-click="feed.selected = !feed.selected"
+                 ng-class="feed.selected.toString()">
+                <img ng-src="{{feed.profile_image_url}}">
+                <span>{{feed.name}}</span>
+            </div>
+
+        </div>
+
+    </div>
 </div>
