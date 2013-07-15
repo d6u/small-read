@@ -13,8 +13,9 @@ class CleanDuplicateTweets
   def self.perform
     timer = Time.now
 
-    Feed.all.each do |feed|
-      feed.tweets.inject([]) do |inject, tweet|
+    Feed.select(:id).pluck(:id).each do |feed_id|
+      tweets = Tweet.select('id, id_str').where('feed_id = ?', feed_id)
+      tweets.inject([]) do |inject, tweet|
         if !inject.include? tweet.id_str
           inject << tweet.id_str
         else
@@ -23,13 +24,13 @@ class CleanDuplicateTweets
         inject
       end
     end
+    puts "--> CleanDuplicateTweets task part 1 finished, #{Time.now - timer} seconds used."
+
 
     puts "--> Updating score of tweets"
-    Feed.all.each do |feed|
-      feed.tweets.each do |tweet|
-        tweet.detect_tweet_type.calculate_score
-      end
-    end
+    twitter = Twitter.select(:id).pluck(:id)
+    twitter.each {|twitter_id| Tweet.analyze_tweets_for_twitter_id twitter_id, {:count => :all}}
+
 
     puts "--> CleanDuplicateTweets task finished, #{Time.now - timer} seconds used."
   end

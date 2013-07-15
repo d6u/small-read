@@ -27,7 +27,7 @@ class Twitter < ActiveRecord::Base
     removing_ids = friends_id_local - friends_id_remote
     Feed.destroy_all(:id_str => removing_ids, :twitter_id => self.id) if !removing_ids.empty?
 
-    home_timeline = self.home_timeline({:count => 200}, {:pages => 5})[:data]
+    home_timeline = self.home_timeline({:count => 200}, {:pages => 4})[:data]
     # home_timeline is not empty (not exceeding API limits)
     if !home_timeline.empty?
       # 2. assamble user data from home_timeline
@@ -76,21 +76,6 @@ class Twitter < ActiveRecord::Base
         self.update_attribute(:newest_tweet_id, home_timeline.first['id_str'])
         Feed.where(:id_str => friends_id_timeline, :twitter_id => self.id).each {|f| f.count_unread}
         Folder.where(:user_id => self.local_user_id).each {|f| f.count_unread}
-      end
-    end
-  end
-
-
-  ##
-  # Analyze timeline, arrange top tweet for show
-  #
-  # ----------------------------------------
-  def self.analyze_timeline(twitter_id, options={})
-    if options[:all]
-      Twitter.find_by_id(twitter_id).feeds.each {|feed| feed.update_top_tweets(options)}
-    else
-      ActiveRecord::Base.transaction do
-        Twitter.find_by_id(twitter_id).feeds.each {|feed| feed.update_top_tweets(options)}
       end
     end
   end
