@@ -12,6 +12,11 @@ class InsideController < ApplicationController
   # -----
   def index
     @folders = @user.folders.order('position ASC')
+    if @user.twitters.first.feeds.count === 0
+      render 'index_not_synced_yet'
+    else
+      render 'index'
+    end
   end
 
   # logout
